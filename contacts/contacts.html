@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>CM Contacts</title>
+  
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#F0F4F9">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CM Contacts">
+  <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='192' height='192'><rect width='192' height='192' fill='%230A56D0'/><text x='50%' y='50%' font-size='80' text-anchor='middle' dy='.3em' fill='%23fff' font-family='sans-serif'>CM</text></svg>">
+  <link rel="manifest" id="manifest-link">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+  
+  <!-- Google Fonts: Outfit -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Material 3 Design Tokens */
+    :root {
+      --m3-bg: #F0F4F9;
+      --m3-surface: #F7F9FC;
+      --m3-surface-container: #E9EEF6;
+      --m3-surface-container-high: #DDE3EA;
+      
+      --m3-primary: #0A56D0;
+      --m3-on-primary: #FFFFFF;
+      --m3-primary-container: #D3E3FD;
+      --m3-on-primary-container: #041E49;
+      
+      --m3-text-main: #1F1F1F;
+      --m3-text-variant: #444746;
+      --m3-text-muted: #74777F;
+      
+      --m3-outline-variant: #C4C7C5;
+      --m3-whatsapp: #25D366;
+      --m3-error: #B3261E;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Outfit', system-ui, sans-serif;
+      background-color: #e5e7eb;
+      color: var(--m3-text-main);
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Shared Mobile Container */
+    .app-container {
+      width: 100%;
+      max-width: 412px;
+      height: 100%;
+      background-color: var(--m3-surface);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    /* Views Toggling */
+    .view {
+      display: none;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+    }
+    .view.active {
+      display: flex;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- LOGIN SCREEN UI --- */
+    .login-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 32px;
+      background-color: var(--m3-surface);
+    }
+    .login-icon {
+      width: 64px;
+      height: 64px;
+      background-color: var(--m3-primary-container);
+      color: var(--m3-primary);
+      border-radius: 20px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 24px;
+    }
+    .login-title {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .login-subtitle {
+      color: var(--m3-text-variant);
+      margin-bottom: 32px;
+    }
+    .m3-input {
+      width: 100%;
+      background-color: var(--m3-surface-container);
+      border: 2px solid transparent;
+      border-radius: 16px;
+      padding: 16px;
+      font-family: inherit;
+      font-size: 1rem;
+      color: var(--m3-text-main);
+      margin-bottom: 16px;
+      transition: all 0.2s;
+      outline: none;
+    }
+    .m3-input:focus {
+      background-color: #FFFFFF;
+      border-color: var(--m3-primary);
+    }
+    
+    /* Password Field Specifics */
+    .password-wrapper {
+      position: relative;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+    .password-wrapper .m3-input {
+      margin-bottom: 0;
+      padding-right: 48px;
+    }
+    .toggle-pwd-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      color: var(--m3-text-muted);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      padding: 4px;
+      border-radius: 50%;
+    }
+    .toggle-pwd-btn:active {
+      background-color: var(--m3-surface-container-high);
+    }
+
+    .m3-btn {
+      width: 100%;
+      background-color: var(--m3-primary);
+      color: var(--m3-on-primary);
+      border: none;
+      border-radius: 9999px;
+      padding: 16px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background-color 0.2s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+    .m3-btn:active {
+      background-color: #0842A0;
+    }
+    .m3-btn:disabled {
+      background-color: var(--m3-surface-container-high);
+      color: var(--m3-text-muted);
+      cursor: not-allowed;
+    }
+    .error-msg {
+      color: var(--m3-error);
+      font-size: 0.875rem;
+      margin-top: 12px;
+      text-align: center;
+      min-height: 20px;
+    }
+
+    /* --- APP UI (Shared) --- */
+    .search-header {
+      padding: 16px;
+      background-color: var(--m3-surface);
+      z-index: 10;
+    }
+    .search-bar {
+      background-color: var(--m3-surface-container);
+      border-radius: 9999px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: background-color 0.2s;
+    }
+    .search-bar:focus-within {
+      background-color: #FFFFFF;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .search-bar input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: 1rem;
+      color: var(--m3-text-main);
+    }
+    .search-bar input::placeholder {
+      color: var(--m3-text-variant);
+    }
+
+    /* Scrollable Areas */
+    .scroll-area {
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 90px; 
+    }
+    .scroll-area::-webkit-scrollbar {
+      display: none;
+    }
+    .scroll-area {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Tab Content Wrappers */
+    .tab-content {
+      display: none;
+      flex-direction: column;
+      height: 100%;
+    }
+    .tab-content.active {
+      display: flex;
+    }
+
+    /* Contact List Item */
+    .contact-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      gap: 16px;
+      transition: background-color 0.2s;
+    }
+    .contact-item:active {
+      background-color: var(--m3-surface-container);
+    }
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background-color: var(--m3-primary-container);
+      color: var(--m3-on-primary-container);
+      display: grid;
+      place-items: center;
+      font-size: 1.2rem;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+    .contact-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .contact-name {
+      font-size: 1.05rem;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .contact-id {
+      font-size: 0.85rem;
+      color: var(--m3-text-variant);
+      margin-top: 2px;
+    }
+    .contact-actions {
+      display: flex;
+      gap: 4px;
+    }
+    
+    .action-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      color: var(--m3-text-variant);
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .action-btn:active {
+      background-color: var(--m3-surface-container-high);
+    }
+    .action-call { color: var(--m3-primary); }
+    .action-whatsapp { color: var(--m3-whatsapp); }
+    .action-save { color: var(--m3-text-muted); }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 80px;
+      background-color: var(--m3-bg);
+      border-top: 1px solid var(--m3-surface-container);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding-bottom: env(safe-area-inset-bottom, 0); 
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--m3-text-variant);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      width: 72px;
+    }
+    .nav-icon-container {
+      width: 64px;
+      height: 32px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      transition: background-color 0.2s;
+    }
+    .nav-item.active .nav-icon-container {
+      background-color: var(--m3-primary-container);
+      color: var(--m3-on-primary-container);
+    }
+    .nav-item.active {
+      color: var(--m3-text-main);
+      font-weight: 600;
+    }
+    .nav-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    
+    .loader {
+      border: 2px solid transparent;
+      border-top: 2px solid var(--m3-on-primary);
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
+      display: none;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* Custom Cards for Notes & Links */
+    .data-card {
+      background: #FFFFFF;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid var(--m3-surface-container);
+    }
+  </style>
+
+  <!-- PWA Manifest Generation -->
+  <script>
+    const manifest = {
+      "name": "CM Contacts",
+      "short_name": "CM Contacts",
+      "start_url": ".",
+      "display": "standalone",
+      "background_color": "#F0F4F9",
+      "theme_color": "#F0F4F9",
+      "icons": [{
+        "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='192' height='192'><rect width='192' height='192' fill='%230A56D0'/><text x='50%' y='50%' font-size='80' text-anchor='middle' dy='.3em' fill='%23fff' font-family='sans-serif'>CM</text></svg>",
+        "sizes": "192x192",
+        "type": "image/svg+xml"
+      }]
+    };
+    const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+    document.getElementById('manifest-link').href = URL.createObjectURL(manifestBlob);
+
+    // Inline Service Worker for PWA compliance
+    const swCode = `
+      self.addEventListener('install', (e) => self.skipWaiting());
+      self.addEventListener('activate', (e) => self.clients.claim());
+      self.addEventListener('fetch', (e) => {});
+    `;
+    const swBlob = new Blob([swCode], {type: 'application/javascript'});
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+    }
+  </script>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- LOGIN VIEW -->
+    <div id="loginView" class="view active">
+      <div class="login-wrapper">
+        <div class="login-icon">
+          <i data-lucide="shield-check" class="w-8 h-8"></i>
+        </div>
+        <h1 class="login-title">CM Contacts</h1>
+        <p class="login-subtitle">Sign in to access workspace</p>
+        
+        <form id="loginForm">
+          <input type="email" id="emailInput" class="m3-input" placeholder="Email" required autocomplete="email">
+          
+          <div class="password-wrapper">
+            <input type="password" id="passwordInput" class="m3-input" placeholder="Password" required autocomplete="current-password">
+            <button type="button" id="togglePwdBtn" class="toggle-pwd-btn" tabindex="-1" title="Toggle Password">
+              <i data-lucide="eye" id="pwdIcon" class="w-5 h-5"></i>
+            </button>
+          </div>
+
+          <button type="submit" id="loginBtn" class="m3-btn">
+            <span id="loginBtnText">Login</span>
+            <div class="loader" id="loginLoader"></div>
+          </button>
+        </form>
+        <div id="loginError" class="error-msg"></div>
+      </div>
+    </div>
+
+    <!-- MAIN APP VIEW -->
+    <div id="appView" class="view">
+      
+      <!-- TAB 1: CONTACTS -->
+      <div id="tab-contacts" class="tab-content active">
+        <header class="search-header">
+          <div class="search-bar">
+            <i data-lucide="search" class="w-5 h-5 text-[var(--m3-text-variant)]"></i>
+            <input type="text" id="searchInput" placeholder="Search clients, IDs...">
+            <button id="logoutBtn" class="border-none bg-transparent p-0 rounded-full cursor-pointer" title="Logout">
+              <span class="w-7 h-7 rounded-full bg-[var(--m3-primary)] text-white text-xs font-semibold grid place-items-center shadow-sm">CM</span>
+            </button>
+          </div>
+        </header>
+
+        <main class="scroll-area" id="contactList">
+          <!-- Contacts Generated via JS -->
+        </main>
+      </div>
+
+      <!-- TAB 2: NOTES -->
+      <div id="tab-notes" class="tab-content bg-[var(--m3-surface)]">
+        <header class="search-header flex items-center justify-between">
+          <h2 class="text-xl font-semibold text-[var(--m3-text-main)]">Notes</h2>
+        </header>
+        
+        <main class="scroll-area px-4">
+          <form id="noteForm" class="bg-white p-4 rounded-2xl shadow-sm mb-6 border border-[var(--m3-surface-container)]">
+            <!-- Searchable Datalist for Client -->
+            <input type="text" list="clientDatalist" id="noteClient" class="m3-input !mb-3 !p-3" placeholder="Select Client..." required>
+            <datalist id="clientDatalist"></datalist>
+            
+            <textarea id="noteContent" class="m3-input !mb-3 !p-3" placeholder="Write a note..." rows="3" required></textarea>
+            
+            <label class="block text-sm text-[var(--m3-text-muted)] font-medium mb-1 ml-1">Reminder Date & Time</label>
+            <input type="datetime-local" id="noteReminder" class="m3-input !mb-4 !p-3">
+            
+            <button type="submit" id="noteSubmitBtn" class="m3-btn !mt-0 !py-3">Save Note</button>
+          </form>
+
+          <div id="notesListContainer" class="flex flex-col gap-2">
+            <!-- Notes Generated via JS -->
+          </div>
+        </main>
+      </div>
+
+      <!-- TAB 3: MY LINKS -->
+      <div id="tab-links" class="tab-content bg-[var(--m3-surface)]">
+        <header class="search-header flex items-center justify-between">
+          <h2 class="text-xl font-semibold text-[var(--m3-text-main)]">My Links</h2>
+        </header>
+        
+        <main class="scroll-area px-4">
+          <form id="linkForm" class="bg-white p-4 rounded-2xl shadow-sm mb-6 border border-[var(--m3-surface-container)]">
+            <input type="hidden" id="editLinkId" value="">
+            <input type="text" id="linkName" class="m3-input !mb-3 !p-3" placeholder="Website Name" required>
+            <input type="url" id="linkUrl" class="m3-input !mb-4 !p-3" placeholder="https://..." required>
+            
+            <button type="submit" id="linkSubmitBtn" class="m3-btn !mt-0 !py-3">Add Link</button>
+            <button type="button" id="linkCancelBtn" class="m3-btn !mt-2 !py-3 !bg-transparent !text-[var(--m3-text-main)] border border-[var(--m3-outline-variant)] hidden">Cancel Edit</button>
+          </form>
+
+          <div id="linksListContainer" class="flex flex-col gap-2">
+            <!-- Links Generated via JS -->
+          </div>
+        </main>
+      </div>
+
+      <!-- Bottom Navigation -->
+      <nav class="bottom-nav">
+        <button class="nav-item active" data-target="tab-contacts">
+          <div class="nav-icon-container">
+            <i data-lucide="users" class="w-6 h-6"></i>
+          </div>
+          <span class="nav-label">Contacts</span>
+        </button>
+        <button class="nav-item" data-target="tab-notes">
+          <div class="nav-icon-container">
+            <i data-lucide="file-text" class="w-6 h-6"></i>
+          </div>
+          <span class="nav-label">Notes</span>
+        </button>
+        <button class="nav-item" data-target="tab-links">
+          <div class="nav-icon-container">
+            <i data-lucide="link" class="w-6 h-6"></i>
+          </div>
+          <span class="nav-label">My Links</span>
+        </button>
+      </nav>
+    </div>
+
+  </div>
+
+  <!-- Firebase & App Logic as ES Module -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+    import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, orderBy, query } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCXyKSTlmlzkYnH2LW408cVVWV1CPvlfBo",
+      authDomain: "cmfilings-6a37c.firebaseapp.com",
+      projectId: "cmfilings-6a37c",
+      storageBucket: "cmfilings-6a37c.firebasestorage.app",
+      messagingSenderId: "138705123778",
+      appId: "1:138705123778:web:9561bff9f0f5d89bb6fe5b",
+      measurementId: "G-09DM4NZF8D"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let clients = [];
+    let myLinks = []; 
+    let myNotes = []; 
+
+    lucide.createIcons();
+
+    // DOM Elements - Login
+    const loginView = document.getElementById("loginView");
+    const appView = document.getElementById("appView");
+    const loginForm = document.getElementById("loginForm");
+    const loginBtn = document.getElementById("loginBtn");
+    const loginBtnText = document.getElementById("loginBtnText");
+    const loginLoader = document.getElementById("loginLoader");
+    const loginError = document.getElementById("loginError");
+    const logoutBtn = document.getElementById("logoutBtn");
+    
+    // Password Toggle
+    const togglePwdBtn = document.getElementById('togglePwdBtn');
+    const passwordInput = document.getElementById('passwordInput');
+    const pwdIcon = document.getElementById('pwdIcon');
+    
+    togglePwdBtn.addEventListener('click', () => {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      if (type === 'text') {
+        pwdIcon.setAttribute('data-lucide', 'eye-off');
+      } else {
+        pwdIcon.setAttribute('data-lucide', 'eye');
+      }
+      lucide.createIcons();
+    });
+
+    // View Toggling
+    function showView(viewId) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById(viewId).classList.add('active');
+    }
+
+    document.querySelectorAll(".nav-item").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+        btn.classList.add("active");
+        
+        const targetId = btn.getAttribute("data-target");
+        document.querySelectorAll(".tab-content").forEach(tc => tc.classList.remove("active"));
+        document.getElementById(targetId).classList.add("active");
+      });
+    });
+
+    function setLoginLoading(isLoading) {
+      if (isLoading) {
+        loginBtn.disabled = true;
+        loginBtnText.style.display = 'none';
+        loginLoader.style.display = 'block';
+      } else {
+        loginBtn.disabled = false;
+        loginBtnText.style.display = 'block';
+        loginLoader.style.display = 'none';
+      }
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        showView("appView");
+        fetchClients(); 
+        fetchLinks();
+        fetchNotes();
+      } else {
+        showView("loginView");
+        clients = []; myLinks = []; myNotes = [];
+        renderContacts(); renderLinks(); renderNotes();
+      }
+    });
+
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("emailInput").value;
+      const password = passwordInput.value;
+      loginError.textContent = "";
+      setLoginLoading(true);
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+      } catch (error) {
+        console.error("Login Error: ", error);
+        loginError.textContent = "Invalid email or password.";
+      } finally {
+        setLoginLoading(false);
+      }
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      signOut(auth).catch(err => console.error("Logout Error:", err));
+    });
+
+    // --- CONTACTS ---
+    const searchInput = document.getElementById("searchInput");
+
+    function getInitials(name) { return name ? name.substring(0, 1).toUpperCase() : "?"; }
+    function formatWhatsApp(mobile) {
+      if (!mobile) return "";
+      let num = mobile.replace(/\D/g, '');
+      if (num.length === 10) num = "91" + num; 
+      return `https://wa.me/${num}`;
+    }
+
+    function renderContacts(query = "") {
+      const listContainer = document.getElementById("contactList");
+      listContainer.innerHTML = "";
+      
+      const filtered = clients.filter(c => 
+        (c.name && c.name.toLowerCase().includes(query.toLowerCase())) || 
+        (c.id && c.id.toLowerCase().includes(query.toLowerCase())) ||
+        (c.mobile && c.mobile.includes(query))
+      );
+
+      if (filtered.length === 0) {
+        listContainer.innerHTML = `
+          <div class="flex flex-col items-center justify-center h-48 text-[var(--m3-text-muted)]">
+            <i data-lucide="search-x" class="w-10 h-10 mb-2"></i>
+            <p>No clients found.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      filtered.forEach(client => {
+        const addContactBtn = !client.isSavedInPhone 
+          ? `<a href="tel:${client.mobile || ''}" class="action-btn action-save" title="Save to Phone Contacts">
+               <i data-lucide="user-plus" class="w-5 h-5"></i>
+             </a>` 
+          : '';
+
+        const html = `
+          <div class="contact-item">
+            <div class="avatar">${getInitials(client.name)}</div>
+            <div class="contact-info">
+              <div class="contact-name">${client.name}</div>
+              <div class="contact-id">ID: ${client.id}</div>
+            </div>
+            <div class="contact-actions">
+              ${addContactBtn}
+              <a href="${formatWhatsApp(client.mobile)}" target="_blank" rel="noopener noreferrer" class="action-btn action-whatsapp" title="WhatsApp">
+                <i data-lucide="message-circle" class="w-5 h-5"></i>
+              </a>
+              <a href="tel:${client.mobile || ''}" class="action-btn action-call" title="Call">
+                <i data-lucide="phone" class="w-5 h-5"></i>
+              </a>
+            </div>
+          </div>
+        `;
+        listContainer.insertAdjacentHTML('beforeend', html);
+      });
+      lucide.createIcons();
+    }
+
+    function populateClientDatalist() {
+      const datalist = document.getElementById("clientDatalist");
+      datalist.innerHTML = "";
+      clients.forEach(c => {
+        const option = document.createElement('option');
+        option.value = `${c.name} (${c.id})`;
+        datalist.appendChild(option);
+      });
+    }
+
+    async function fetchClients() {
+      const listContainer = document.getElementById("contactList");
+      listContainer.innerHTML = `<div class="flex justify-center items-center h-24"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--m3-primary)]"></div></div>`;
+
+      try {
+        const querySnapshot = await getDocs(collection(db, "clients"));
+        clients = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          clients.push({
+            id: data.clientId || doc.id,
+            name: data.clientName || 'Unknown Name',
+            mobile: data.mobile || '',
+            isSavedInPhone: data.isSavedInPhone === true
+          });
+        });
+        clients.sort((a, b) => a.name.localeCompare(b.name));
+        renderContacts();
+        populateClientDatalist();
+      } catch (error) {
+        listContainer.innerHTML = `<div class="flex flex-col items-center justify-center h-48 text-[var(--m3-error)]"><i data-lucide="alert-circle" class="w-10 h-10 mb-2"></i><p>Failed to load clients.</p></div>`;
+        lucide.createIcons();
+      }
+    }
+
+    searchInput.addEventListener("input", (e) => renderContacts(e.target.value));
+
+    // --- LINKS ---
+    const linkForm = document.getElementById("linkForm");
+    const linkName = document.getElementById("linkName");
+    const linkUrl = document.getElementById("linkUrl");
+    const editLinkId = document.getElementById("editLinkId");
+    const linkSubmitBtn = document.getElementById("linkSubmitBtn");
+    const linkCancelBtn = document.getElementById("linkCancelBtn");
+
+    function renderLinks() {
+      const container = document.getElementById("linksListContainer");
+      container.innerHTML = "";
+      if(myLinks.length === 0) {
+        container.innerHTML = `<p class="text-center text-sm text-[var(--m3-text-muted)] mt-4">No links saved yet.</p>`;
+        return;
+      }
+
+      myLinks.forEach(link => {
+        const html = `
+          <div class="data-card flex items-center justify-between">
+            <div class="flex-1 min-w-0 pr-3">
+              <h3 class="font-semibold text-[1.05rem] truncate text-[var(--m3-primary)]">${link.name}</h3>
+              <p class="text-xs text-[var(--m3-text-muted)] truncate">${link.url}</p>
+            </div>
+            <div class="flex items-center gap-1">
+              <a href="${link.url}" target="_blank" class="action-btn !text-[var(--m3-primary)]" title="Visit">
+                <i data-lucide="external-link" class="w-5 h-5"></i>
+              </a>
+              <button onclick="window.editLink('${link.id}')" class="action-btn !text-[var(--m3-text-muted)]" title="Edit">
+                <i data-lucide="edit-2" class="w-4 h-4"></i>
+              </button>
+              <button onclick="window.deleteLink('${link.id}')" class="action-btn !text-[var(--m3-error)]" title="Delete">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        `;
+        container.insertAdjacentHTML('beforeend', html);
+      });
+      lucide.createIcons();
+    }
+
+    async function fetchLinks() {
+      try {
+        const q = query(collection(db, "links"));
+        const snapshot = await getDocs(q);
+        myLinks = [];
+        snapshot.forEach(doc => myLinks.push({ id: doc.id, ...doc.data() }));
+        renderLinks();
+      } catch (err) { console.error("Error fetching links:", err); }
+    }
+
+    linkForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id = editLinkId.value;
+      let urlStr = linkUrl.value.trim();
+      if (!/^https?:\/\//i.test(urlStr)) urlStr = 'https://' + urlStr;
+      
+      const linkData = { name: linkName.value.trim(), url: urlStr, timestamp: Date.now() };
+      
+      linkSubmitBtn.disabled = true;
+      linkSubmitBtn.textContent = "Saving...";
+
+      try {
+        if (id) {
+          await updateDoc(doc(db, "links", id), linkData);
+          const index = myLinks.findIndex(l => l.id === id);
+          if(index > -1) myLinks[index] = { id, ...linkData };
+        } else {
+          const docRef = await addDoc(collection(db, "links"), linkData);
+          myLinks.push({ id: docRef.id, ...linkData });
+        }
+        renderLinks();
+        resetLinkForm();
+      } catch(err) { console.error("Error saving link:", err); }
+      finally {
+        linkSubmitBtn.disabled = false;
+        linkSubmitBtn.textContent = id ? "Update Link" : "Add Link";
+      }
+    });
+
+    function resetLinkForm() {
+      editLinkId.value = "";
+      linkSubmitBtn.textContent = "Add Link";
+      linkCancelBtn.classList.add("hidden");
+      linkForm.reset();
+    }
+    linkCancelBtn.addEventListener("click", resetLinkForm);
+
+    window.editLink = (id) => {
+      const link = myLinks.find(l => l.id === id);
+      if(link) {
+        editLinkId.value = link.id;
+        linkName.value = link.name;
+        linkUrl.value = link.url;
+        linkSubmitBtn.textContent = "Update Link";
+        linkCancelBtn.classList.remove("hidden");
+        document.querySelector("#tab-links .scroll-area").scrollTop = 0;
+      }
+    };
+
+    window.deleteLink = async (id) => {
+      if(confirm("Delete this link?")) {
+        try {
+          await deleteDoc(doc(db, "links", id));
+          myLinks = myLinks.filter(l => l.id !== id);
+          renderLinks();
+        } catch(err) { console.error("Error deleting link:", err); }
+      }
+    };
+
+
+    // --- NOTES ---
+    const noteForm = document.getElementById("noteForm");
+    const noteClient = document.getElementById("noteClient");
+    const noteContent = document.getElementById("noteContent");
+    const noteReminder = document.getElementById("noteReminder");
+    const noteSubmitBtn = document.getElementById("noteSubmitBtn");
+
+    function renderNotes() {
+      const container = document.getElementById("notesListContainer");
+      container.innerHTML = "";
+      if(myNotes.length === 0) {
+        container.innerHTML = `<p class="text-center text-sm text-[var(--m3-text-muted)] mt-4">No notes saved yet.</p>`;
+        return;
+      }
+
+      const sortedNotes = [...myNotes].sort((a,b) => b.timestamp - a.timestamp);
+
+      sortedNotes.forEach(note => {
+        let reminderHtml = '';
+        if (note.reminder) {
+          const dateObj = new Date(note.reminder);
+          const formatted = dateObj.toLocaleString([], {month:'short', day:'numeric', hour: '2-digit', minute:'2-digit'});
+          reminderHtml = `
+            <div class="flex items-center gap-1 text-xs font-medium text-[var(--m3-primary)] mt-3 bg-[var(--m3-primary-container)] w-max px-2 py-1 rounded-md">
+              <i data-lucide="bell" class="w-3 h-3"></i> ${formatted}
+            </div>
+          `;
+        }
+        const html = `
+          <div class="data-card relative">
+            <button onclick="window.deleteNote('${note.id}')" class="absolute top-3 right-3 text-[var(--m3-text-muted)] hover:text-[var(--m3-error)] transition-colors bg-transparent border-none">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+            <h3 class="font-semibold text-[1.05rem] pr-6">${note.clientRef}</h3>
+            <p class="text-sm mt-2 text-[var(--m3-text-variant)] whitespace-pre-wrap">${note.content}</p>
+            ${reminderHtml}
+          </div>
+        `;
+        container.insertAdjacentHTML('beforeend', html);
+      });
+      lucide.createIcons();
+    }
+
+    async function fetchNotes() {
+      try {
+        const q = query(collection(db, "notes"), orderBy("timestamp", "desc"));
+        const snapshot = await getDocs(q);
+        myNotes = [];
+        snapshot.forEach(doc => myNotes.push({ id: doc.id, ...doc.data() }));
+        renderNotes();
+      } catch (err) { 
+        // Fallback if index isn't created yet for ordering
+        console.warn("Index might be missing, fetching unordered", err);
+        const snapshot2 = await getDocs(collection(db, "notes"));
+        myNotes = [];
+        snapshot2.forEach(doc => myNotes.push({ id: doc.id, ...doc.data() }));
+        renderNotes();
+      }
+    }
+
+    noteForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      const noteData = {
+        clientRef: noteClient.value.trim(),
+        content: noteContent.value.trim(),
+        reminder: noteReminder.value,
+        timestamp: Date.now()
+      };
+      
+      noteSubmitBtn.disabled = true;
+      noteSubmitBtn.textContent = "Saving...";
+
+      try {
+        const docRef = await addDoc(collection(db, "notes"), noteData);
+        myNotes.push({ id: docRef.id, ...noteData });
+        renderNotes();
+        noteForm.reset();
+      } catch(err) { console.error("Error saving note:", err); }
+      finally {
+        noteSubmitBtn.disabled = false;
+        noteSubmitBtn.textContent = "Save Note";
+      }
+    });
+
+    window.deleteNote = async (id) => {
+      if(confirm("Delete this note?")) {
+        try {
+          await deleteDoc(doc(db, "notes", id));
+          myNotes = myNotes.filter(n => n.id !== id);
+          renderNotes();
+        } catch(err) { console.error("Error deleting note:", err); }
+      }
+    };
+  </script>
+</body>
+</html>
