@@ -6,7 +6,7 @@
   <title>CM Contacts</title>
   
   <!-- PWA Meta Tags -->
-  <meta name="theme-color" content="#F0F4F9">
+  <meta name="theme-color" content="#F7F9FC">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="CM Contacts">
@@ -282,6 +282,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      color: var(--m3-text-main);
     }
     .contact-id {
       font-size: 0.85rem;
@@ -321,7 +322,6 @@
       right: 0;
       height: 80px;
       background-color: var(--m3-bg);
-      border-top: 1px solid var(--m3-surface-container);
       display: flex;
       justify-content: space-around;
       align-items: center;
@@ -388,8 +388,8 @@
       "short_name": "CM Contacts",
       "start_url": ".",
       "display": "standalone",
-      "background_color": "#F0F4F9",
-      "theme_color": "#F0F4F9",
+      "background_color": "#F7F9FC",
+      "theme_color": "#F7F9FC",
       "icons": [{
         "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='192' height='192'><rect width='192' height='192' fill='%230A56D0'/><text x='50%' y='50%' font-size='80' text-anchor='middle' dy='.3em' fill='%23fff' font-family='sans-serif'>CM</text></svg>",
         "sizes": "192x192",
@@ -453,7 +453,7 @@
             <i data-lucide="search" class="w-5 h-5 text-[var(--m3-text-variant)]"></i>
             <input type="text" id="searchInput" placeholder="Search clients, IDs...">
             <button id="logoutBtn" class="border-none bg-transparent p-0 rounded-full cursor-pointer" title="Logout">
-              <span class="w-7 h-7 rounded-full bg-[var(--m3-primary)] text-white text-xs font-semibold grid place-items-center shadow-sm">CM</span>
+              <span class="w-8 h-8 rounded-full bg-[var(--m3-primary)] text-white text-xs font-semibold grid place-items-center shadow-sm">CM</span>
             </button>
           </div>
         </header>
@@ -515,19 +515,19 @@
       <nav class="bottom-nav">
         <button class="nav-item active" data-target="tab-contacts">
           <div class="nav-icon-container">
-            <i data-lucide="users" class="w-6 h-6"></i>
+            <i data-lucide="users" class="w-[22px] h-[22px]"></i>
           </div>
           <span class="nav-label">Contacts</span>
         </button>
         <button class="nav-item" data-target="tab-notes">
           <div class="nav-icon-container">
-            <i data-lucide="file-text" class="w-6 h-6"></i>
+            <i data-lucide="file-text" class="w-[22px] h-[22px]"></i>
           </div>
           <span class="nav-label">Notes</span>
         </button>
         <button class="nav-item" data-target="tab-links">
           <div class="nav-icon-container">
-            <i data-lucide="link" class="w-6 h-6"></i>
+            <i data-lucide="link" class="w-[22px] h-[22px]"></i>
           </div>
           <span class="nav-label">My Links</span>
         </button>
@@ -684,9 +684,10 @@
       }
 
       filtered.forEach(client => {
+        // As per requirements, if not saved, show add to contacts icon (user-plus)
         const addContactBtn = !client.isSavedInPhone 
           ? `<a href="tel:${client.mobile || ''}" class="action-btn action-save" title="Save to Phone Contacts">
-               <i data-lucide="user-plus" class="w-5 h-5"></i>
+               <i data-lucide="user-plus" class="w-[22px] h-[22px]"></i>
              </a>` 
           : '';
 
@@ -700,10 +701,10 @@
             <div class="contact-actions">
               ${addContactBtn}
               <a href="${formatWhatsApp(client.mobile)}" target="_blank" rel="noopener noreferrer" class="action-btn action-whatsapp" title="WhatsApp">
-                <i data-lucide="message-circle" class="w-5 h-5"></i>
+                <i data-lucide="message-circle" class="w-[22px] h-[22px]"></i>
               </a>
               <a href="tel:${client.mobile || ''}" class="action-btn action-call" title="Call">
-                <i data-lucide="phone" class="w-5 h-5"></i>
+                <i data-lucide="phone" class="w-[22px] h-[22px]"></i>
               </a>
             </div>
           </div>
@@ -736,6 +737,7 @@
             id: data.clientId || doc.id,
             name: data.clientName || 'Unknown Name',
             mobile: data.mobile || '',
+            // Assuming this field exists, otherwise it defaults to falsy, showing the "add" icon as seen in screenshot
             isSavedInPhone: data.isSavedInPhone === true
           });
         });
@@ -743,6 +745,7 @@
         renderContacts();
         populateClientDatalist();
       } catch (error) {
+        console.error("Failed to fetch clients:", error);
         listContainer.innerHTML = `<div class="flex flex-col items-center justify-center h-48 text-[var(--m3-error)]"><i data-lucide="alert-circle" class="w-10 h-10 mb-2"></i><p>Failed to load clients.</p></div>`;
         lucide.createIcons();
       }
