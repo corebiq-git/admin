@@ -511,6 +511,29 @@
         </main>
       </div>
 
+      <!-- TAB 4: AI ASSISTANT -->
+      <div id="tab-ai" class="tab-content bg-[var(--m3-surface)] h-full flex flex-col relative">
+        <header class="search-header flex items-center justify-between shrink-0 z-10 shadow-sm border-b border-[var(--m3-surface-container)]">
+          <div class="flex items-center gap-2">
+            <i data-lucide="sparkles" class="w-5 h-5 text-[#8A2BE2]"></i>
+            <h2 class="text-xl font-semibold text-[var(--m3-text-main)]">AI Assistant</h2>
+          </div>
+        </header>
+        <div id="chatHistory" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3 pb-[100px]">
+          <div class="bg-[var(--m3-surface-container)] text-[var(--m3-text-main)] p-3 rounded-2xl rounded-tl-sm self-start max-w-[85%] text-sm">
+            Hi! I'm your CM Contacts AI Assistant. Ask me to search clients, summarize notes, or answer questions!
+          </div>
+        </div>
+        <div class="absolute bottom-[80px] left-0 right-0 p-3 bg-[var(--m3-surface)] border-t border-[var(--m3-surface-container)] z-10">
+          <form id="aiChatForm" class="flex gap-2 items-center">
+            <input type="text" id="aiInput" class="m3-input !mb-0 !p-3 flex-1 !rounded-full" placeholder="Ask about clients, notes..." required autocomplete="off">
+            <button type="submit" id="aiSendBtn" class="w-11 h-11 rounded-full bg-[var(--m3-primary)] text-white flex items-center justify-center shrink-0 disabled:opacity-50">
+              <i data-lucide="send" class="w-5 h-5 ml-1"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+
       <!-- Bottom Navigation -->
       <nav class="bottom-nav">
         <button class="nav-item active" data-target="tab-contacts">
@@ -531,9 +554,38 @@
           </div>
           <span class="nav-label">My Links</span>
         </button>
+        <button class="nav-item" data-target="tab-ai">
+          <div class="nav-icon-container">
+            <i data-lucide="sparkles" class="w-[22px] h-[22px]"></i>
+          </div>
+          <span class="nav-label">Assistant</span>
+        </button>
       </nav>
     </div>
 
+  </div>
+
+  <!-- Iframe Modal Overlay -->
+  <div id="iframeModal" class="fixed inset-0 bg-black/50 z-[100] hidden flex-col items-center justify-end">
+    <div class="bg-[var(--m3-surface)] w-full max-w-[412px] h-[85vh] rounded-t-3xl flex flex-col shadow-2xl transform transition-transform duration-300">
+      <div class="p-3 flex justify-between items-center border-b border-[var(--m3-surface-container)]">
+        <div class="flex items-center gap-2 overflow-hidden px-2">
+          <i data-lucide="globe" class="w-5 h-5 text-[var(--m3-text-muted)] shrink-0"></i>
+          <h3 id="iframeTitle" class="font-semibold text-[var(--m3-text-main)] truncate text-sm"></h3>
+        </div>
+        <button onclick="window.closeIframe()" class="p-2 bg-[var(--m3-surface-container)] rounded-full text-[var(--m3-text-main)] shrink-0 hover:bg-[var(--m3-surface-container-high)] border-none">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="flex-1 w-full bg-white relative rounded-b-none">
+        <!-- Background Loader -->
+        <div class="absolute inset-0 flex items-center justify-center z-0 bg-white">
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--m3-primary)]"></div>
+        </div>
+        <!-- Iframe with Sandbox configurations -->
+        <iframe id="contentIframe" class="w-full h-full border-none z-10 relative bg-transparent" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+      </div>
+    </div>
   </div>
 
   <!-- Firebase & App Logic as ES Module -->
@@ -662,6 +714,33 @@
       return `https://wa.me/${num}`;
     }
 
+    // App Helper Methods
+    window.saveContact = (name, phone) => {
+      const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL;TYPE=CELL:${phone}\nEND:VCARD`;
+      const blob = new Blob([vcard], { type: "text/vcard" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${name}.vcf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
+
+    window.openIframe = (url, name) => {
+      document.getElementById('iframeTitle').textContent = name || url;
+      document.getElementById('contentIframe').src = url;
+      document.getElementById('iframeModal').classList.remove('hidden');
+      document.getElementById('iframeModal').classList.add('flex');
+    };
+
+    window.closeIframe = () => {
+      document.getElementById('iframeModal').classList.add('hidden');
+      document.getElementById('iframeModal').classList.remove('flex');
+      document.getElementById('contentIframe').src = '';
+    };
+
     function renderContacts(query = "") {
       const listContainer = document.getElementById("contactList");
       listContainer.innerHTML = "";
@@ -686,9 +765,9 @@
       filtered.forEach(client => {
         // As per requirements, if not saved, show add to contacts icon (user-plus)
         const addContactBtn = !client.isSavedInPhone 
-          ? `<a href="tel:${client.mobile || ''}" class="action-btn action-save" title="Save to Phone Contacts">
+          ? `<button onclick="window.saveContact('${client.name}', '${client.mobile || ''}')" class="action-btn action-save" title="Save to Phone Contacts">
                <i data-lucide="user-plus" class="w-[22px] h-[22px]"></i>
-             </a>` 
+             </button>` 
           : '';
 
         const html = `
@@ -777,9 +856,9 @@
               <p class="text-xs text-[var(--m3-text-muted)] truncate">${link.url}</p>
             </div>
             <div class="flex items-center gap-1">
-              <a href="${link.url}" target="_blank" class="action-btn !text-[var(--m3-primary)]" title="Visit">
+              <button onclick="window.openIframe('${link.url}', '${link.name}')" class="action-btn !text-[var(--m3-primary)]" title="Visit">
                 <i data-lucide="external-link" class="w-5 h-5"></i>
-              </a>
+              </button>
               <button onclick="window.editLink('${link.id}')" class="action-btn !text-[var(--m3-text-muted)]" title="Edit">
                 <i data-lucide="edit-2" class="w-4 h-4"></i>
               </button>
@@ -958,6 +1037,92 @@
         } catch(err) { console.error("Error deleting note:", err); }
       }
     };
+
+    // --- GEMINI AI ASSISTANT ---
+    const aiChatForm = document.getElementById('aiChatForm');
+    const aiInput = document.getElementById('aiInput');
+    const chatHistoryContainer = document.getElementById('chatHistory');
+    const aiSendBtn = document.getElementById('aiSendBtn');
+
+    let chatMessages = [];
+
+    function appendMessage(text, sender, isTyping = false) {
+      const msgDiv = document.createElement('div');
+      const id = 'msg-' + Date.now();
+      msgDiv.id = id;
+      msgDiv.className = `p-3 rounded-2xl text-sm max-w-[85%] ${
+        sender === 'user' 
+          ? 'bg-[var(--m3-primary)] text-white self-end rounded-tr-sm' 
+          : 'bg-[var(--m3-surface-container)] text-[var(--m3-text-main)] self-start rounded-tl-sm'
+      } ${isTyping ? 'animate-pulse' : ''}`;
+      
+      let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+      msgDiv.innerHTML = formattedText;
+      
+      chatHistoryContainer.appendChild(msgDiv);
+      chatHistoryContainer.scrollTop = chatHistoryContainer.scrollHeight;
+      return id;
+    }
+
+    if (aiChatForm) {
+      aiChatForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const userText = aiInput.value.trim();
+        if(!userText) return;
+
+        appendMessage(userText, 'user');
+        aiInput.value = '';
+        aiSendBtn.disabled = true;
+
+        const contextStr = `
+          Context Data:
+          Clients: ${JSON.stringify(clients.map(c => ({name: c.name, mobile: c.mobile, id: c.id}))) || 'No clients'}
+          Notes: ${JSON.stringify(myNotes.map(n => ({client: n.clientRef, content: n.content}))) || 'No notes'}
+          Links: ${JSON.stringify(myLinks.map(l => ({name: l.name, url: l.url}))) || 'No links'}
+        `;
+
+        chatMessages.push({ role: "user", parts: [{ text: userText }] });
+
+        const systemPrompt = `You are an AI assistant for the 'CM Contacts' app. You help the user manage their clients, notes, and links. Use the provided context data to answer questions directly. Be concise and helpful. ${contextStr}`;
+
+        const payload = {
+            contents: chatMessages,
+            systemInstruction: { parts: [{ text: systemPrompt }] }
+        };
+
+        const apiKey = ""; // Canvas natively populates API Key 
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+        const typingId = appendMessage('...', 'model', true);
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            
+            document.getElementById(typingId).remove();
+
+            if (result.candidates && result.candidates.length > 0) {
+                const aiText = result.candidates[0].content.parts[0].text;
+                chatMessages.push({ role: "model", parts: [{ text: aiText }] });
+                appendMessage(aiText, 'model');
+            } else {
+                appendMessage("Sorry, I couldn't process that. Please try again.", 'model');
+            }
+        } catch (error) {
+            console.error("AI Error:", error);
+            const el = document.getElementById(typingId);
+            if (el) el.remove();
+            appendMessage("An error occurred connecting to the AI assistant.", 'model');
+        } finally {
+            aiSendBtn.disabled = false;
+        }
+      });
+    }
+
   </script>
 </body>
 </html>
