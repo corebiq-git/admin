@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+  COREBIQ Admin
+</title>
+
+</head>
+
+
+<body>
+
+
+<!-- =======================================================
+     LOGIN SCREEN
+     ======================================================= -->
+
+<section id="loginScreen">
+
+  <h1>
+    COREBIQ ADMIN
+  </h1>
+
+  <p>
+    Firebase Database Administration
+  </p>
+
+
+  <h2>
+    Administrator Login
+  </h2>
+
+
+  <!-- EMAIL -->
+
+  <div>
+
+    <label for="email">
+      Email
+    </label>
+
+    <br>
+
+    <input
+      id="email"
+      type="email"
+      placeholder="Administrator email"
+      autocomplete="username"
+      spellcheck="false"
+    >
+
+  </div>
+
+
+  <br>
+
+
+  <!-- PASSWORD -->
+
+  <div>
+
+    <label for="password">
+      Password
+    </label>
+
+    <br>
+
+    <input
+      id="password"
+      type="password"
+      placeholder="Password"
+      autocomplete="current-password"
+    >
+
+    <button
+      id="passwordToggle"
+      type="button"
+    >
+      Show
+    </button>
+
+  </div>
+
+
+  <br>
+
+
+  <!-- LOGIN -->
+
+  <button
+    id="loginBtn"
+    type="button"
+  >
+    Sign In
+  </button>
+
+
+  <p
+    id="loginError"
+  ></p>
+
+
+</section>
+
+
+
+<!-- =======================================================
+     ADMIN APPLICATION
+     ======================================================= -->
+
+<section
+  id="app"
+  hidden
+>
+
+
+  <h1>
+    COREBIQ ADMIN
+  </h1>
+
+
+  <p>
+    Firebase Database Administration
+  </p>
+
+
+  <hr>
+
+
+  <!-- USER -->
+
+  <p>
+
+    Logged in as:
+
+    <strong id="adminUser">
+      —
+    </strong>
+
+  </p>
+
+
+  <!-- LOGOUT -->
+
+  <button
+    id="logoutBtn"
+    type="button"
+  >
+    Sign Out
+  </button>
+
+
+  <hr>
+
+
+  <!-- =====================================================
+       FIREBASE STATUS
+       ===================================================== -->
+
+  <h2>
+    Firebase Status
+  </h2>
+
+
+  <p>
+
+    Project:
+
+    <strong id="projectId">
+      —
+    </strong>
+
+  </p>
+
+
+  <p>
+
+    Authentication:
+
+    <strong id="authStatus">
+      —
+    </strong>
+
+  </p>
+
+
+  <p>
+
+    Firestore:
+
+    <strong id="firestoreStatus">
+      Connecting...
+    </strong>
+
+  </p>
+
+
+  <hr>
+
+
+  <!-- =====================================================
+       DATABASE TEST
+       ===================================================== -->
+
+  <h2>
+    Firestore Database Test
+  </h2>
+
+
+  <p>
+
+    Test Collection:
+
+    <strong>
+      admin_test
+    </strong>
+
+  </p>
+
+
+  <p>
+
+    Documents:
+
+    <strong id="documentCount">
+      —
+    </strong>
+
+  </p>
+
+
+  <button
+    id="refreshBtn"
+    type="button"
+  >
+    Refresh
+  </button>
+
+
+  <button
+    id="createTestBtn"
+    type="button"
+  >
+    Create Test Document
+  </button>
+
+
+  <hr>
+
+
+  <!-- =====================================================
+       COLLECTION DATA
+       ===================================================== -->
+
+  <h2>
+    Collection Data
+  </h2>
+
+
+  <div
+    id="collectionGrid"
+  >
+
+    Loading...
+
+  </div>
+
+
+</section>
+
+
+
+<!-- =======================================================
+     FIREBASE APPLICATION
+     ======================================================= -->
+
+<script type="module">
+
+
+/* =========================================================
+   IMPORT FIREBASE CONNECTION
+   =========================================================
+
+   IMPORTANT:
+
+   Firebase configuration/API key is NOT stored here.
+
+   It is loaded from:
+
+   assets/js/firebase.js
+
+   ========================================================= */
+
+import {
+  auth,
+  db,
+  firebaseConfig
+} from "./assets/js/firebase.js";
+
+
+/* =========================================================
+   FIREBASE AUTH FUNCTIONS
+   ========================================================= */
+
+import {
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+
+/* =========================================================
+   FIRESTORE FUNCTIONS
+   ========================================================= */
+
+import {
+  collection,
+  getDocs,
+  addDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+
+
+/* =========================================================
+   TEST COLLECTION
+   ========================================================= */
+
+const TEST_COLLECTION =
+  "admin_test";
+
+
+
+/* =========================================================
+   DOM ELEMENTS
+   ========================================================= */
+
+const loginScreen =
+  document.getElementById(
+    "loginScreen"
+  );
+
+
+const appScreen =
+  document.getElementById(
+    "app"
+  );
+
+
+const emailInput =
+  document.getElementById(
+    "email"
+  );
+
+
+const passwordInput =
+  document.getElementById(
+    "password"
+  );
+
+
+const passwordToggle =
+  document.getElementById(
+    "passwordToggle"
+  );
+
+
+const loginBtn =
+  document.getElementById(
+    "loginBtn"
+  );
+
+
+const loginError =
+  document.getElementById(
+    "loginError"
+  );
+
+
+const logoutBtn =
+  document.getElementById(
+    "logoutBtn"
+  );
+
+
+const adminUser =
+  document.getElementById(
+    "adminUser"
+  );
+
+
+const projectId =
+  document.getElementById(
+    "projectId"
+  );
+
+
+const authStatus =
+  document.getElementById(
+    "authStatus"
+  );
+
+
+const firestoreStatus =
+  document.getElementById(
+    "firestoreStatus"
+  );
+
+
+const documentCount =
+  document.getElementById(
+    "documentCount"
+  );
+
+
+const collectionGrid =
+  document.getElementById(
+    "collectionGrid"
+  );
+
+
+const refreshBtn =
+  document.getElementById(
+    "refreshBtn"
+  );
+
+
+const createTestBtn =
+  document.getElementById(
+    "createTestBtn"
+  );
+
+
+
+/* =========================================================
+   PROJECT ID
+   ========================================================= */
+
+projectId.textContent =
+  firebaseConfig.projectId;
+
+
+
+/* =========================================================
+   PASSWORD SHOW / HIDE
+   ========================================================= */
+
+passwordToggle.addEventListener(
+  "click",
+  () => {
+
+    const showing =
+      passwordInput.type === "text";
+
+
+    if(showing){
+
+      passwordInput.type =
+        "password";
+
+      passwordToggle.textContent =
+        "Show";
+
+    }else{
+
+      passwordInput.type =
+        "text";
+
+      passwordToggle.textContent =
+        "Hide";
+
+    }
+
+  }
+);
+
+
+
+/* =========================================================
+   LOGIN BUTTON
+   ========================================================= */
+
+loginBtn.addEventListener(
+  "click",
+  login
+);
+
+
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
+async function login(){
+
+  loginError.textContent =
+    "";
+
+
+  const email =
+    emailInput.value.trim();
+
+
+  const password =
+    passwordInput.value;
+
+
+  /* -------------------------------------------------------
+     VALIDATION
+     ------------------------------------------------------- */
+
+  if(!email){
+
+    loginError.textContent =
+      "Please enter your email.";
+
+    emailInput.focus();
+
+    return;
+
+  }
+
+
+  if(!password){
+
+    loginError.textContent =
+      "Please enter your password.";
+
+    passwordInput.focus();
+
+    return;
+
+  }
+
+
+  /* -------------------------------------------------------
+     BUTTON
+     ------------------------------------------------------- */
+
+  loginBtn.disabled =
+    true;
+
+  loginBtn.textContent =
+    "Signing in...";
+
+
+  try{
+
+    const result =
+      await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+
+    console.log(
+      "Firebase Authentication successful:",
+      result.user.email
+    );
+
+
+  }catch(error){
+
+    console.error(
+      "LOGIN ERROR:",
+      error
+    );
+
+
+    loginError.textContent =
+      getAuthError(
+        error
+      );
+
+  }
+
+
+  loginBtn.disabled =
+    false;
+
+  loginBtn.textContent =
+    "Sign In";
+
+}
+
+
+
+/* =========================================================
+   ENTER KEY
+   ========================================================= */
+
+emailInput.addEventListener(
+  "keydown",
+  event => {
+
+    if(
+      event.key === "Enter"
+    ){
+
+      passwordInput.focus();
+
+    }
+
+  }
+);
+
+
+passwordInput.addEventListener(
+  "keydown",
+  event => {
+
+    if(
+      event.key === "Enter"
+    ){
+
+      login();
+
+    }
+
+  }
+);
+
+
+
+/* =========================================================
+   AUTH STATE
+   ========================================================= */
+
+onAuthStateChanged(
+  auth,
+  async user => {
+
+    console.log(
+      "AUTH STATE:",
+      user
+    );
+
+
+    if(user){
+
+      /* ---------------------------------------------------
+         SHOW APPLICATION
+         --------------------------------------------------- */
+
+      loginScreen.hidden =
+        true;
+
+      appScreen.hidden =
+        false;
+
+
+      /* ---------------------------------------------------
+         USER
+         --------------------------------------------------- */
+
+      adminUser.textContent =
+        user.email ||
+        "Authenticated User";
+
+
+      authStatus.textContent =
+        "Authenticated";
+
+
+      /* ---------------------------------------------------
+         FORCE TOKEN REFRESH
+         --------------------------------------------------- */
+
+      try{
+
+        await user.getIdToken(
+          true
+        );
+
+      }catch(error){
+
+        console.warn(
+          "Token refresh warning:",
+          error
+        );
+
+      }
+
+
+      /* ---------------------------------------------------
+         LOAD FIRESTORE
+         --------------------------------------------------- */
+
+      await loadTestCollection();
+
+
+    }else{
+
+      /* ---------------------------------------------------
+         LOGGED OUT
+         --------------------------------------------------- */
+
+      loginScreen.hidden =
+        false;
+
+      appScreen.hidden =
+        true;
+
+
+      authStatus.textContent =
+        "Not authenticated";
+
+
+      firestoreStatus.textContent =
+        "Not connected";
+
+    }
+
+  }
+);
+
+
+
+/* =========================================================
+   LOAD TEST COLLECTION
+   ========================================================= */
+
+async function loadTestCollection(){
+
+  firestoreStatus.textContent =
+    "Connecting...";
+
+
+  documentCount.textContent =
+    "Loading...";
+
+
+  collectionGrid.innerHTML =
+    `
+      <p>
+        Loading Firestore collection:
+        <strong>
+          ${TEST_COLLECTION}
+        </strong>
+      </p>
+    `;
+
+
+  try{
+
+    console.log(
+      "Reading Firestore collection:",
+      TEST_COLLECTION
+    );
+
+
+    /* -----------------------------------------------------
+       GET DOCUMENTS
+       ----------------------------------------------------- */
+
+    const snapshot =
+      await getDocs(
+        collection(
+          db,
+          TEST_COLLECTION
+        )
+      );
+
+
+    console.log(
+      "Firestore snapshot:",
+      snapshot
+    );
+
+
+    /* -----------------------------------------------------
+       CONVERT DOCUMENTS
+       ----------------------------------------------------- */
+
+    const documents =
+      snapshot.docs.map(
+        doc => {
+
+          return {
+
+            id:
+              doc.id,
+
+            ...doc.data()
+
+          };
+
+        }
+      );
+
+
+    /* -----------------------------------------------------
+       SUCCESS
+       ----------------------------------------------------- */
+
+    firestoreStatus.textContent =
+      "Connected";
+
+
+    documentCount.textContent =
+      documents.length;
+
+
+    renderDocuments(
+      documents
+    );
+
+
+  }catch(error){
+
+    console.error(
+      "FIRESTORE READ ERROR:",
+      error
+    );
+
+
+    firestoreStatus.textContent =
+      "Error";
+
+
+    documentCount.textContent =
+      "!";
+
+
+    collectionGrid.innerHTML =
+      `
+
+        <h3>
+          Firestore Read Error
+        </h3>
+
+        <p>
+          ${escapeHtml(
+            getFirestoreError(
+              error
+            )
+          )}
+        </p>
+
+        <p>
+
+          Error Code:
+
+          <strong>
+            ${escapeHtml(
+              error.code ||
+              "unknown"
+            )}
+          </strong>
+
+        </p>
+
+        <p>
+
+          Collection:
+
+          <strong>
+            ${TEST_COLLECTION}
+          </strong>
+
+        </p>
+
+      `;
+
+  }
+
+}
+
+
+
+/* =========================================================
+   CREATE TEST DOCUMENT
+   ========================================================= */
+
+createTestBtn.addEventListener(
+  "click",
+  createTestDocument
+);
+
+
+
+async function createTestDocument(){
+
+  createTestBtn.disabled =
+    true;
+
+  createTestBtn.textContent =
+    "Creating...";
+
+
+  try{
+
+    const user =
+      auth.currentUser;
+
+
+    if(!user){
+
+      throw new Error(
+        "You are not authenticated."
+      );
+
+    }
+
+
+    console.log(
+      "Creating test document as:",
+      user.email
+    );
+
+
+    /* -----------------------------------------------------
+       CREATE
+       ----------------------------------------------------- */
+
+    const documentReference =
+      await addDoc(
+        collection(
+          db,
+          TEST_COLLECTION
+        ),
+        {
+
+          testId:
+            "TEST-001",
+
+          name:
+            "Firestore Test Data",
+
+          module:
+            "COREBIQ Admin",
+
+          status:
+            "Active",
+
+          message:
+            "Firestore connection is working.",
+
+          createdBy:
+            user.email,
+
+          createdAt:
+            serverTimestamp()
+
+        }
+      );
+
+
+    console.log(
+      "Created document:",
+      documentReference.id
+    );
+
+
+    alert(
+      "Test document created successfully.\n\n" +
+      "Document ID:\n" +
+      documentReference.id
+    );
+
+
+    await loadTestCollection();
+
+
+  }catch(error){
+
+    console.error(
+      "FIRESTORE WRITE ERROR:",
+      error
+    );
+
+
+    alert(
+      "Unable to create test document.\n\n" +
+      getFirestoreError(
+        error
+      )
+    );
+
+  }
+
+
+  createTestBtn.disabled =
+    false;
+
+  createTestBtn.textContent =
+    "Create Test Document";
+
+}
+
+
+
+/* =========================================================
+   RENDER DOCUMENTS
+   ========================================================= */
+
+function renderDocuments(
+  documents
+){
+
+  if(!documents.length){
+
+    collectionGrid.innerHTML =
+      `
+
+        <h3>
+          ${TEST_COLLECTION}
+        </h3>
+
+        <p>
+          Collection is empty.
+        </p>
+
+        <p>
+          Click
+          <strong>
+            Create Test Document
+          </strong>
+          to test Firestore write access.
+        </p>
+
+      `;
+
+    return;
+
+  }
+
+
+  let html = `
+
+    <h3>
+      ${TEST_COLLECTION}
+    </h3>
+
+    <p>
+      ${documents.length}
+      document(s) found.
+    </p>
+
+  `;
+
+
+  documents.forEach(
+    (documentData, index) => {
+
+      html += `
+
+        <hr>
+
+        <h4>
+          Document ${index + 1}
+        </h4>
+
+        <p>
+
+          Document ID:
+
+          <strong>
+            ${escapeHtml(
+              documentData.id
+            )}
+          </strong>
+
+        </p>
+
+        <pre>${escapeHtml(
+          JSON.stringify(
+            documentData,
+            firestoreReplacer,
+            2
+          )
+        )}</pre>
+
+      `;
+
+    }
+  );
+
+
+  collectionGrid.innerHTML =
+    html;
+
+}
+
+
+
+/* =========================================================
+   FIRESTORE ERROR
+   ========================================================= */
+
+function getFirestoreError(
+  error
+){
+
+  const code =
+    error?.code || "";
+
+
+  if(
+    code ===
+    "permission-denied"
+  ){
+
+    return `
+      Permission denied.
+
+      Authentication succeeded, but your
+      Firestore Security Rules did not allow
+      this authenticated account to access
+      "${TEST_COLLECTION}".
+    `;
+
+  }
+
+
+  if(
+    code ===
+    "unauthenticated"
+  ){
+
+    return `
+      Firebase considers this request
+      unauthenticated.
+    `;
+
+  }
+
+
+  if(
+    code ===
+    "not-found"
+  ){
+
+    return `
+      Firestore database or requested resource
+      was not found.
+    `;
+
+  }
+
+
+  if(
+    code ===
+    "unavailable"
+  ){
+
+    return `
+      Firestore is temporarily unavailable.
+      Check the network connection and try again.
+    `;
+
+  }
+
+
+  return (
+    error?.message ||
+    "Unknown Firestore error."
+  );
+
+}
+
+
+
+/* =========================================================
+   AUTH ERROR
+   ========================================================= */
+
+function getAuthError(
+  error
+){
+
+  const code =
+    error?.code || "";
+
+
+  const errors = {
+
+    "auth/invalid-credential":
+      "Invalid email or password.",
+
+    "auth/invalid-login-credentials":
+      "Invalid email or password.",
+
+    "auth/user-not-found":
+      "No Firebase Authentication account was found.",
+
+    "auth/wrong-password":
+      "Incorrect password.",
+
+    "auth/invalid-email":
+      "Invalid email address.",
+
+    "auth/user-disabled":
+      "This Firebase account has been disabled.",
+
+    "auth/too-many-requests":
+      "Too many login attempts. Please try again later.",
+
+    "auth/network-request-failed":
+      "Network connection failed."
+
+  };
+
+
+  return (
+    errors[code] ||
+    error?.message ||
+    "Unable to sign in."
+  );
+
+}
+
+
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
+logoutBtn.addEventListener(
+  "click",
+  async () => {
+
+    try{
+
+      await signOut(
+        auth
+      );
+
+    }catch(error){
+
+      console.error(
+        "LOGOUT ERROR:",
+        error
+      );
+
+    }
+
+  }
+);
+
+
+
+/* =========================================================
+   REFRESH
+   ========================================================= */
+
+refreshBtn.addEventListener(
+  "click",
+  async () => {
+
+    await loadTestCollection();
+
+  }
+);
+
+
+
+/* =========================================================
+   FIRESTORE VALUE REPLACER
+   ========================================================= */
+
+function firestoreReplacer(
+  key,
+  value
+){
+
+  if(
+    value &&
+    typeof value === "object" &&
+    typeof value.toDate === "function"
+  ){
+
+    try{
+
+      return value.toDate()
+        .toISOString();
+
+    }catch{
+
+      return String(
+        value
+      );
+
+    }
+
+  }
+
+
+  return value;
+
+}
+
+
+
+/* =========================================================
+   ESCAPE HTML
+   ========================================================= */
+
+function escapeHtml(
+  value
+){
+
+  return String(value)
+
+    .replaceAll(
+      "&",
+      "&amp;"
+    )
+
+    .replaceAll(
+      "<",
+      "&lt;"
+    )
+
+    .replaceAll(
+      ">",
+      "&gt;"
+    )
+
+    .replaceAll(
+      '"',
+      "&quot;"
+    )
+
+    .replaceAll(
+      "'",
+      "&#039;"
+    );
+
+}
+
+</script>
+
+
+</body>
+
+</html>
