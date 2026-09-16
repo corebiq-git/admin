@@ -1,0 +1,2692 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, viewport-fit=cover"
+>
+
+<title>Pay Online | CM INNOVATIONS</title>
+
+<meta
+  name="description"
+  content="Secure UPI payment for CM INNOVATIONS."
+>
+
+<meta name="theme-color" content="#8B1E2D">
+
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="site.webmanifest">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link
+  href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Google+Sans+Text:wght@400;500;600&display=swap"
+  rel="stylesheet"
+>
+
+<!-- EXISTING SITE CSS -->
+<link rel="stylesheet" href="assets/styles.css">
+
+<!-- QR LIBRARY -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<!-- LUCIDE -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<!-- FIREBASE -->
+<script type="module">
+
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+
+/* =========================================================
+   FIREBASE CONFIG
+   Replace these values with your Firebase Web App config.
+   ========================================================= */
+
+const firebaseConfig = {
+
+  apiKey: "YOUR_FIREBASE_API_KEY",
+
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+
+  projectId: "YOUR_PROJECT_ID",
+
+  storageBucket: "YOUR_PROJECT.firebasestorage.app",
+
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+
+  appId: "YOUR_FIREBASE_APP_ID"
+
+};
+
+
+const app =
+  initializeApp(firebaseConfig);
+
+const db =
+  getFirestore(app);
+
+
+/* =========================================================
+   MAKE FIREBASE AVAILABLE TO PAYMENT SCRIPT
+   ========================================================= */
+
+window.CM_FIREBASE = {
+
+  db,
+
+  collection,
+
+  addDoc,
+
+  serverTimestamp
+
+};
+
+</script>
+
+</head>
+
+
+<body>
+
+<a class="skip" href="#main">
+  Skip to content
+</a>
+
+
+<!-- =========================================================
+     HEADER
+     ========================================================= -->
+
+<header class="site-header">
+
+  <div class="container header-inner">
+
+    <a
+      class="brand"
+      href="index.html"
+      aria-label="CM INNOVATIONS home"
+    >
+
+      <img
+        src="assets/logo.svg"
+        alt="CM INNOVATIONS logo"
+      >
+
+      <span>
+
+        <span class="brand-name">
+          CM INNOVATIONS
+        </span>
+
+        <span class="brand-sub">
+          Tax Experts &amp; Business Innovators
+        </span>
+
+      </span>
+
+    </a>
+
+
+    <nav
+      class="desktop-nav"
+      aria-label="Primary navigation"
+    >
+
+      <a class="nav-link" href="services.html">
+        Services
+      </a>
+
+      <a class="nav-link" href="solutions.html">
+        Solutions
+      </a>
+
+      <a class="nav-link" href="about.html">
+        About
+      </a>
+
+      <a class="nav-link" href="faq.html">
+        FAQ
+      </a>
+
+      <a class="nav-link" href="contact.html">
+        Contact
+      </a>
+
+    </nav>
+
+
+    <div class="header-actions">
+
+      <a
+        class="cta gradient desktop-cta"
+        href="payment.html"
+        aria-current="page"
+      >
+
+        <i data-lucide="credit-card"></i>
+
+        Pay Online
+
+      </a>
+
+
+      <button
+        id="menuToggle"
+        class="icon-btn mobile-only"
+        aria-label="Open menu"
+        aria-expanded="false"
+      >
+
+        <i data-lucide="menu"></i>
+
+      </button>
+
+    </div>
+
+  </div>
+
+</header>
+
+
+<!-- =========================================================
+     MOBILE MENU
+     ========================================================= -->
+
+<div
+  id="mobileOverlay"
+  class="mobile-overlay"
+  aria-hidden="true"
+></div>
+
+
+<nav
+  id="mobileMenu"
+  class="mobile-menu"
+  aria-label="Mobile navigation"
+>
+
+  <div class="mobile-menu-inner">
+
+    <a
+      class="mobile-link"
+      href="services.html"
+    >
+      <i data-lucide="briefcase-business"></i>
+      <span>Services</span>
+    </a>
+
+    <a
+      class="mobile-link"
+      href="solutions.html"
+    >
+      <i data-lucide="sparkles"></i>
+      <span>Solutions</span>
+    </a>
+
+    <a
+      class="mobile-link"
+      href="about.html"
+    >
+      <i data-lucide="building-2"></i>
+      <span>About</span>
+    </a>
+
+    <a
+      class="mobile-link"
+      href="faq.html"
+    >
+      <i data-lucide="circle-help"></i>
+      <span>FAQ</span>
+    </a>
+
+    <a
+      class="mobile-link"
+      href="contact.html"
+    >
+      <i data-lucide="mail"></i>
+      <span>Contact</span>
+    </a>
+
+    <a
+      class="cta gradient"
+      href="payment.html"
+    >
+      <i data-lucide="credit-card"></i>
+      Pay Online
+    </a>
+
+  </div>
+
+</nav>
+
+
+<!-- =========================================================
+     MAIN
+     ========================================================= -->
+
+<main id="main">
+
+
+<section class="page-hero">
+
+  <div class="container">
+
+    <div class="breadcrumbs">
+
+      <a href="index.html">
+        Home
+      </a>
+
+      <span>›</span>
+
+      <span>Payment</span>
+
+    </div>
+
+
+    <h1>
+      Secure <span class="gradient-text">Payment</span>
+    </h1>
+
+
+    <p>
+      Enter your payment details to generate your
+      personalised UPI QR code.
+    </p>
+
+  </div>
+
+</section>
+
+
+<section class="section">
+
+<div class="container">
+
+
+<div class="payment-layout">
+
+
+<!-- =======================================================
+     PAYMENT FORM
+     ======================================================= -->
+
+<div
+  id="paymentFormCard"
+  class="card payment-card"
+>
+
+  <div class="card-icon">
+    <i data-lucide="wallet-cards"></i>
+  </div>
+
+
+  <div class="kicker">
+    Direct UPI
+  </div>
+
+
+  <h2 class="payment-title">
+    Make a Payment
+  </h2>
+
+
+  <p class="payment-intro">
+    Enter the required details below.
+    Your unique transaction reference and UPI
+    QR will be generated after submission.
+  </p>
+
+
+  <form
+    id="paymentForm"
+    class="form"
+    novalidate
+  >
+
+
+    <!-- NAME -->
+
+    <div class="field">
+
+      <label for="customerName">
+        Full Name <span class="required">*</span>
+      </label>
+
+      <input
+        id="customerName"
+        name="customerName"
+        type="text"
+        autocomplete="name"
+        placeholder="Enter your full name"
+        required
+      >
+
+      <small
+        class="field-error"
+        id="nameError"
+      ></small>
+
+    </div>
+
+
+    <!-- MOBILE -->
+
+    <div class="field">
+
+      <label for="customerMobile">
+        Mobile Number <span class="required">*</span>
+      </label>
+
+      <input
+        id="customerMobile"
+        name="customerMobile"
+        type="tel"
+        inputmode="numeric"
+        autocomplete="tel"
+        maxlength="10"
+        placeholder="10 digit mobile number"
+        required
+      >
+
+      <small
+        class="field-error"
+        id="mobileError"
+      ></small>
+
+    </div>
+
+
+    <!-- AMOUNT -->
+
+    <div class="field">
+
+      <label for="amount">
+        Payment Amount <span class="required">*</span>
+      </label>
+
+      <div class="amount-input">
+
+        <span>₹</span>
+
+        <input
+          id="amount"
+          name="amount"
+          type="number"
+          inputmode="decimal"
+          min="1"
+          step="0.01"
+          placeholder="Enter amount"
+          required
+        >
+
+      </div>
+
+      <small
+        class="field-error"
+        id="amountError"
+      ></small>
+
+    </div>
+
+
+    <!-- DESCRIPTION -->
+
+    <div class="field">
+
+      <label for="description">
+        Payment Description <span class="required">*</span>
+      </label>
+
+      <textarea
+        id="description"
+        name="description"
+        maxlength="120"
+        placeholder="Example: ITR Filing Fee / GST Return / Consultancy Fee"
+        required
+      ></textarea>
+
+      <small
+        class="field-error"
+        id="descriptionError"
+      ></small>
+
+    </div>
+
+
+    <!-- SUBMIT -->
+
+    <button
+      id="generatePayment"
+      class="cta gradient submit-payment"
+      type="submit"
+    >
+
+      <i data-lucide="qr-code"></i>
+
+      Generate UPI QR
+
+    </button>
+
+
+    <div class="secure-note">
+
+      <i data-lucide="shield-check"></i>
+
+      <span>
+        Your payment reference is generated securely
+        before the QR is created.
+      </span>
+
+    </div>
+
+
+  </form>
+
+</div>
+
+
+
+<!-- =======================================================
+     QR RESULT
+     ======================================================= -->
+
+<div
+  id="qrResult"
+  class="qr-result-card"
+  hidden
+>
+
+
+  <!-- RESULT HEADER -->
+
+  <div class="qr-result-head">
+
+    <div>
+
+      <div class="kicker">
+        Payment QR
+      </div>
+
+      <h2>
+        Scan &amp; Pay
+      </h2>
+
+    </div>
+
+
+    <span class="generated-pill">
+
+      <i data-lucide="badge-check"></i>
+
+      Generated
+
+    </span>
+
+  </div>
+
+
+  <!-- TRANSACTION -->
+
+  <div class="transaction-box">
+
+    <span>
+      Transaction Reference
+    </span>
+
+    <strong id="transactionNumber">
+      CMQR-000000
+    </strong>
+
+  </div>
+
+
+  <!-- CUSTOMER SUMMARY -->
+
+  <div class="payment-summary">
+
+    <div>
+
+      <span>Name</span>
+
+      <strong id="resultName">
+        —
+      </strong>
+
+    </div>
+
+
+    <div>
+
+      <span>Mobile</span>
+
+      <strong id="resultMobile">
+        —
+      </strong>
+
+    </div>
+
+
+    <div>
+
+      <span>Description</span>
+
+      <strong id="resultDescription">
+        —
+      </strong>
+
+    </div>
+
+
+    <div>
+
+      <span>Amount</span>
+
+      <strong id="resultAmount">
+        ₹0.00
+      </strong>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       PREMIUM QR
+       ===================================================== -->
+
+  <div class="premium-qr-wrapper">
+
+
+    <div class="qr-top-label">
+
+      <span class="qr-live-dot"></span>
+
+      DIRECT UPI PAYMENT
+
+    </div>
+
+
+    <div
+      id="qrCanvasArea"
+      class="premium-qr"
+    >
+
+      <div
+        id="qrcode"
+        class="qr-code"
+      ></div>
+
+
+      <!-- CENTER BRAND -->
+
+      <div class="qr-center-logo">
+
+        <div class="qr-center-inner">
+
+          <span>CM</span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="qr-payee">
+
+      <strong>
+        CM INNOVATIONS
+      </strong>
+
+      <span>
+        cminnovation@upi
+      </span>
+
+    </div>
+
+
+    <!-- POWERED BY COREBIQ -->
+
+    <div class="powered-by">
+
+      <span>
+        Powered by
+      </span>
+
+      <img
+        src="assets/logo-corebiq.png"
+        alt="COREBIQ"
+      >
+
+    </div>
+
+
+  </div>
+
+
+  <!-- INSTRUCTIONS -->
+
+  <div class="scan-instructions">
+
+    <div class="instruction">
+
+      <div class="instruction-icon">
+        <i data-lucide="scan-line"></i>
+      </div>
+
+      <div>
+
+        <strong>
+          Scan the QR
+        </strong>
+
+        <span>
+          Open any UPI app and scan this QR code.
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <div class="instruction">
+
+      <div class="instruction-icon">
+        <i data-lucide="indian-rupee"></i>
+      </div>
+
+      <div>
+
+        <strong>
+          Verify the amount
+        </strong>
+
+        <span>
+          Check the payee and amount before paying.
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ACTIONS -->
+
+  <div class="qr-actions">
+
+    <button
+      id="openUPI"
+      class="cta gradient"
+      type="button"
+    >
+
+      <i data-lucide="smartphone"></i>
+
+      Open UPI App
+
+    </button>
+
+
+    <button
+      id="downloadQR"
+      class="cta light"
+      type="button"
+    >
+
+      <i data-lucide="download"></i>
+
+      Download QR
+
+    </button>
+
+
+    <button
+      id="copyTransaction"
+      class="cta light"
+      type="button"
+    >
+
+      <i data-lucide="copy"></i>
+
+      Copy Reference
+
+    </button>
+
+  </div>
+
+
+  <button
+    id="newPayment"
+    class="new-payment"
+    type="button"
+  >
+
+    <i data-lucide="refresh-cw"></i>
+
+    Create another payment
+
+  </button>
+
+
+</div>
+
+</div>
+
+
+<!-- =======================================================
+     RAZORPAY ALTERNATIVE
+     ======================================================= -->
+
+<div class="razorpay-alternative">
+
+  <div>
+
+    <span class="kicker">
+      Alternative Payment
+    </span>
+
+    <h3>
+      Prefer Razorpay?
+    </h3>
+
+    <p>
+      You can also continue through the CM INNOVATIONS
+      Razorpay payment page.
+    </p>
+
+  </div>
+
+
+  <a
+    class="cta light"
+    href="https://razorpay.me/@cminnovations"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+
+    <i data-lucide="external-link"></i>
+
+    Pay with Razorpay
+
+  </a>
+
+</div>
+
+
+</div>
+
+</section>
+
+</main>
+
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+
+<footer class="site-footer">
+
+<div class="container">
+
+<div class="footer-grid">
+
+
+<div class="footer-brand">
+
+<a
+  class="brand"
+  href="index.html"
+>
+
+<img
+  src="assets/logo.svg"
+  alt="CM INNOVATIONS logo"
+>
+
+<span>
+
+<span class="brand-name">
+  CM INNOVATIONS
+</span>
+
+<span
+  class="brand-sub"
+  style="color:#aeb1b6"
+>
+  Tax Experts &amp; Business Innovators
+</span>
+
+</span>
+
+</a>
+
+
+<p>
+Professional support across taxation,
+compliance, accounting, business setup,
+advisory and technology-enabled business
+solutions.
+</p>
+
+
+<a
+  class="link"
+  style="color:#fff"
+  href="mailto:info@cmfilings.com"
+>
+
+<i data-lucide="mail"></i>
+
+info@cmfilings.com
+
+</a>
+
+</div>
+
+
+<div class="footer-col">
+
+<h3>Services</h3>
+
+<a href="services/taxation-gst.html">
+Taxation &amp; GST
+</a>
+
+<a href="services/accounting-finance.html">
+Accounting &amp; Finance
+</a>
+
+<a href="services/business-registration.html">
+Business Registration
+</a>
+
+<a href="services/compliance.html">
+Compliance
+</a>
+
+<a href="services/advisory.html">
+Advisory
+</a>
+
+<a href="services/business-solutions.html">
+Business Solutions
+</a>
+
+</div>
+
+
+<div class="footer-col">
+
+<h3>Company</h3>
+
+<a href="about.html">About</a>
+<a href="solutions.html">Solutions</a>
+<a href="faq.html">FAQ</a>
+<a href="contact.html">Contact</a>
+
+</div>
+
+
+<div class="footer-col">
+
+<h3>Legal</h3>
+
+<a href="privacy.html">
+Privacy Policy
+</a>
+
+<a href="terms.html">
+Terms of Use
+</a>
+
+<a href="cookies.html">
+Cookie Policy
+</a>
+
+<a href="mailto:info@cmfilings.com">
+Email us
+</a>
+
+</div>
+
+
+</div>
+
+
+<div class="footer-bottom">
+
+<span>
+© <span data-year></span>
+CM INNOVATIONS. All rights reserved.
+</span>
+
+<span>
+Shakthi Complex, Mahe,
+Kannur District, Kerala 670672
+</span>
+
+</div>
+
+</div>
+
+</footer>
+
+
+<div
+  id="toast"
+  class="toast"
+  role="status"
+></div>
+
+
+
+<!-- =========================================================
+     PAYMENT CSS
+     Uses your existing CSS variables/theme.
+     ========================================================= -->
+
+<style>
+
+.payment-layout{
+  max-width:980px;
+  margin:0 auto;
+}
+
+
+.payment-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+
+.payment-card{
+  padding:30px;
+  border-radius:28px;
+}
+
+
+.payment-title{
+  font-size:32px;
+  margin-top:5px;
+}
+
+
+.payment-intro{
+  color:var(--muted);
+  font-size:14px;
+  margin-bottom:24px;
+}
+
+
+.required{
+  color:var(--red2);
+}
+
+
+.amount-input{
+  position:relative;
+}
+
+
+.amount-input > span{
+  position:absolute;
+  left:14px;
+  top:50%;
+  transform:translateY(-50%);
+  font-weight:700;
+  color:var(--muted);
+  z-index:2;
+}
+
+
+.amount-input input{
+  padding-left:34px!important;
+}
+
+
+.field-error{
+  min-height:15px;
+  color:#b3261e;
+  font-size:11px;
+}
+
+
+.field.invalid input,
+.field.invalid textarea{
+  border-color:#b3261e!important;
+  box-shadow:0 0 0 3px rgba(179,38,30,.08)!important;
+}
+
+
+.submit-payment{
+  width:100%;
+  margin-top:5px;
+}
+
+
+.secure-note{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  color:var(--muted);
+  font-size:12px;
+  margin-top:15px;
+}
+
+
+.secure-note svg{
+  flex:none;
+  width:16px;
+  height:16px;
+  color:var(--red2);
+}
+
+
+/* =========================================================
+   QR RESULT
+   ========================================================= */
+
+.qr-result-card{
+  margin-top:20px;
+  background:#fff;
+  border:1px solid #e1e3e6;
+  border-radius:30px;
+  padding:30px;
+  box-shadow:0 12px 45px rgba(60,64,67,.08);
+}
+
+
+.qr-result-card[hidden]{
+  display:none;
+}
+
+
+.qr-result-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:20px;
+  margin-bottom:18px;
+}
+
+
+.qr-result-head h2{
+  font-size:32px;
+  margin:4px 0 0;
+}
+
+
+.generated-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:7px 11px;
+  border-radius:999px;
+  background:#f1f8f4;
+  color:#27734a;
+  border:1px solid #d8eadf;
+  font-size:11px;
+  font-weight:700;
+}
+
+
+.generated-pill svg{
+  width:14px;
+}
+
+
+.transaction-box{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  background:linear-gradient(
+    135deg,
+    #fff6f7,
+    #fff
+  );
+  border:1px solid #f0d9dd;
+  border-radius:16px;
+  padding:13px 16px;
+  margin-bottom:18px;
+}
+
+
+.transaction-box span{
+  color:var(--muted);
+  font-size:12px;
+}
+
+
+.transaction-box strong{
+  color:var(--red);
+  font-size:14px;
+  letter-spacing:.7px;
+}
+
+
+.payment-summary{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1px;
+  background:#e5e7e9;
+  border:1px solid #e5e7e9;
+  border-radius:18px;
+  overflow:hidden;
+  margin-bottom:22px;
+}
+
+
+.payment-summary > div{
+  background:#fff;
+  padding:13px 15px;
+}
+
+
+.payment-summary span{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  margin-bottom:3px;
+}
+
+
+.payment-summary strong{
+  display:block;
+  color:var(--ink);
+  font-size:13px;
+  word-break:break-word;
+}
+
+
+.payment-summary > div:last-child strong{
+  color:var(--red);
+  font-size:17px;
+}
+
+
+/* =========================================================
+   PREMIUM QR
+   ========================================================= */
+
+.premium-qr-wrapper{
+  position:relative;
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(181,42,59,.12),
+      transparent 45%
+    ),
+    #fafbfc;
+  border:1px solid #e2e4e7;
+  border-radius:26px;
+  padding:24px 20px 20px;
+  text-align:center;
+  overflow:hidden;
+}
+
+
+.premium-qr-wrapper::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  border:1px solid rgba(255,255,255,.8);
+  border-radius:26px;
+}
+
+
+.qr-top-label{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:6px 10px;
+  border:1px solid #e1e3e6;
+  background:#fff;
+  border-radius:999px;
+  color:#5f6368;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.9px;
+}
+
+
+.qr-live-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#2e7d52;
+  box-shadow:0 0 0 3px rgba(46,125,82,.10);
+}
+
+
+.premium-qr{
+  width:240px;
+  height:240px;
+  max-width:100%;
+  margin:18px auto 13px;
+  background:#fff;
+  border:8px solid #fff;
+  border-radius:18px;
+  position:relative;
+  display:grid;
+  place-items:center;
+  box-shadow:
+    0 12px 30px rgba(32,33,36,.12),
+    0 2px 6px rgba(32,33,36,.06);
+}
+
+
+.qr-code{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+
+.qr-code canvas,
+.qr-code img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain;
+  display:block;
+}
+
+
+/* Center logo */
+
+.qr-center-logo{
+  position:absolute;
+  width:48px;
+  height:48px;
+  border-radius:13px;
+  background:#fff;
+  padding:5px;
+  box-shadow:
+    0 2px 10px rgba(0,0,0,.15);
+}
+
+
+.qr-center-inner{
+  width:100%;
+  height:100%;
+  border-radius:9px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(
+    135deg,
+    #8B1E2D,
+    #B52A3B,
+    #D44758
+  );
+  color:#fff;
+  font-size:15px;
+  font-weight:800;
+  letter-spacing:-.5px;
+}
+
+
+.qr-payee{
+  display:grid;
+  gap:2px;
+}
+
+
+.qr-payee strong{
+  font-size:15px;
+  letter-spacing:.2px;
+}
+
+
+.qr-payee span{
+  color:var(--muted);
+  font-size:12px;
+}
+
+
+.powered-by{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+  margin-top:15px;
+  padding-top:12px;
+  border-top:1px solid #e7e8ea;
+}
+
+
+.powered-by span{
+  color:#8a8d91;
+  font-size:10px;
+  white-space:nowrap;
+}
+
+
+.powered-by img{
+  width:112px;
+  max-width:112px;
+  height:auto;
+  max-height:28px;
+  object-fit:contain;
+}
+
+
+/* =========================================================
+   INSTRUCTIONS
+   ========================================================= */
+
+.scan-instructions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:15px;
+}
+
+
+.instruction{
+  display:flex;
+  gap:10px;
+  padding:13px;
+  border:1px solid #e5e7e9;
+  border-radius:16px;
+  background:#fff;
+}
+
+
+.instruction-icon{
+  width:34px;
+  height:34px;
+  flex:none;
+  border-radius:10px;
+  display:grid;
+  place-items:center;
+  background:#fff1f3;
+  color:var(--red2);
+}
+
+
+.instruction-icon svg{
+  width:17px;
+}
+
+
+.instruction strong{
+  display:block;
+  font-size:12px;
+  margin-bottom:2px;
+}
+
+
+.instruction span{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.45;
+}
+
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.qr-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:9px;
+  margin-top:16px;
+}
+
+
+.qr-actions .cta{
+  width:100%;
+  padding-left:10px;
+  padding-right:10px;
+}
+
+
+.new-payment{
+  width:100%;
+  margin-top:10px;
+  padding:10px;
+  border:0;
+  background:transparent;
+  color:var(--muted);
+  font-size:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+}
+
+
+.new-payment:hover{
+  color:var(--red);
+}
+
+
+.new-payment svg{
+  width:14px;
+}
+
+
+/* =========================================================
+   RAZORPAY
+   ========================================================= */
+
+.razorpay-alternative{
+  max-width:980px;
+  margin:20px auto 0;
+  padding:20px 22px;
+  border:1px solid #e1e3e6;
+  border-radius:22px;
+  background:var(--surface);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
+
+
+.razorpay-alternative h3{
+  margin:4px 0;
+  font-size:18px;
+}
+
+
+.razorpay-alternative p{
+  margin:0;
+  color:var(--muted);
+  font-size:13px;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media(max-width:680px){
+
+  .payment-layout{
+    width:100%;
+  }
+
+
+  .payment-grid{
+    grid-template-columns:1fr;
+  }
+
+
+  .payment-card,
+  .qr-result-card{
+    padding:21px;
+    border-radius:23px;
+  }
+
+
+  .payment-title,
+  .qr-result-head h2{
+    font-size:27px;
+  }
+
+
+  .payment-summary{
+    grid-template-columns:1fr;
+  }
+
+
+  .premium-qr{
+    width:220px;
+    height:220px;
+  }
+
+
+  .scan-instructions{
+    grid-template-columns:1fr;
+  }
+
+
+  .qr-actions{
+    grid-template-columns:1fr;
+  }
+
+
+  .razorpay-alternative{
+    display:grid;
+    padding:18px;
+  }
+
+
+  .razorpay-alternative .cta{
+    width:100%;
+  }
+
+
+  .transaction-box{
+    display:grid;
+    gap:4px;
+  }
+
+}
+
+</style>
+
+
+
+<!-- =========================================================
+     EXISTING SITE SCRIPT
+     ========================================================= -->
+
+<script src="assets/script.js"></script>
+
+
+
+<!-- =========================================================
+     PAYMENT LOGIC
+     ========================================================= -->
+
+<script>
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function(){
+
+    const UPI_ID =
+      "cminnovation@upi";
+
+    const UPI_NAME =
+      "CM INNOVATIONS";
+
+
+    const form =
+      document.getElementById(
+        "paymentForm"
+      );
+
+
+    const formCard =
+      document.getElementById(
+        "paymentFormCard"
+      );
+
+
+    const qrResult =
+      document.getElementById(
+        "qrResult"
+      );
+
+
+    const amountInput =
+      document.getElementById(
+        "amount"
+      );
+
+
+    const nameInput =
+      document.getElementById(
+        "customerName"
+      );
+
+
+    const mobileInput =
+      document.getElementById(
+        "customerMobile"
+      );
+
+
+    const descriptionInput =
+      document.getElementById(
+        "description"
+      );
+
+
+    const transactionNumber =
+      document.getElementById(
+        "transactionNumber"
+      );
+
+
+    const qrcode =
+      document.getElementById(
+        "qrcode"
+      );
+
+
+    let currentUPIUrl = "";
+
+
+
+    /* =====================================================
+       RANDOM TRANSACTION NUMBER
+       Format:
+       CMQR-ABC123
+       ===================================================== */
+
+    function generateTransactionNumber(){
+
+      const chars =
+        "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+      let result = "";
+
+      for(
+        let i = 0;
+        i < 6;
+        i++
+      ){
+
+        result +=
+          chars.charAt(
+            Math.floor(
+              Math.random() *
+              chars.length
+            )
+          );
+
+      }
+
+      return "CMQR-" + result;
+
+    }
+
+
+
+    /* =====================================================
+       CLEAN MOBILE
+       ===================================================== */
+
+    mobileInput.addEventListener(
+      "input",
+      function(){
+
+        this.value =
+          this.value
+            .replace(/\D/g,"")
+            .slice(0,10);
+
+      }
+    );
+
+
+
+    /* =====================================================
+       VALIDATION
+       ===================================================== */
+
+    function validate(){
+
+      let valid = true;
+
+
+      const name =
+        nameInput.value.trim();
+
+
+      const mobile =
+        mobileInput.value.trim();
+
+
+      const amount =
+        parseFloat(
+          amountInput.value
+        );
+
+
+      const description =
+        descriptionInput.value.trim();
+
+
+      document
+        .querySelectorAll(
+          ".field"
+        )
+        .forEach(
+          field =>
+            field.classList.remove(
+              "invalid"
+            )
+        );
+
+
+      document
+        .querySelectorAll(
+          ".field-error"
+        )
+        .forEach(
+          error =>
+            error.textContent = ""
+        );
+
+
+      if(!name){
+
+        const field =
+          nameInput.closest(".field");
+
+        field.classList.add(
+          "invalid"
+        );
+
+        document.getElementById(
+          "nameError"
+        ).textContent =
+          "Name is required.";
+
+        valid = false;
+
+      }
+
+
+      if(
+        !/^[6-9]\d{9}$/.test(
+          mobile
+        )
+      ){
+
+        const field =
+          mobileInput.closest(".field");
+
+        field.classList.add(
+          "invalid"
+        );
+
+        document.getElementById(
+          "mobileError"
+        ).textContent =
+          "Enter a valid 10 digit mobile number.";
+
+        valid = false;
+
+      }
+
+
+      if(
+        !amount ||
+        amount <= 0
+      ){
+
+        const field =
+          amountInput.closest(".field");
+
+        field.classList.add(
+          "invalid"
+        );
+
+        document.getElementById(
+          "amountError"
+        ).textContent =
+          "Enter a valid payment amount.";
+
+        valid = false;
+
+      }
+
+
+      if(!description){
+
+        const field =
+          descriptionInput.closest(
+            ".field"
+          );
+
+        field.classList.add(
+          "invalid"
+        );
+
+        document.getElementById(
+          "descriptionError"
+        ).textContent =
+          "Payment description is required.";
+
+        valid = false;
+
+      }
+
+
+      return valid;
+
+    }
+
+
+
+    /* =====================================================
+       CREATE UPI URL
+       ===================================================== */
+
+    function createUPIUrl(
+      transactionId
+    ){
+
+      const amount =
+        parseFloat(
+          amountInput.value
+        );
+
+
+      const description =
+        descriptionInput.value
+          .trim();
+
+
+      /*
+       UPI transaction note.
+       Keep it concise for maximum UPI compatibility.
+      */
+
+      const note =
+        transactionId +
+        " - " +
+        description;
+
+
+      const params =
+        new URLSearchParams({
+
+          pa:
+            UPI_ID,
+
+          pn:
+            UPI_NAME,
+
+          am:
+            amount.toFixed(2),
+
+          cu:
+            "INR",
+
+          tn:
+            note.substring(
+              0,
+              80
+            )
+
+        });
+
+
+      return (
+        "upi://pay?" +
+        params.toString()
+      );
+
+    }
+
+
+
+    /* =====================================================
+       GENERATE QR
+       ===================================================== */
+
+    function generateQR(
+      transactionId
+    ){
+
+      currentUPIUrl =
+        createUPIUrl(
+          transactionId
+        );
+
+
+      qrcode.innerHTML = "";
+
+
+      new QRCode(
+        qrcode,
+        {
+
+          text:
+            currentUPIUrl,
+
+          width:
+            204,
+
+          height:
+            204,
+
+          correctLevel:
+            QRCode.CorrectLevel.H
+
+        }
+      );
+
+    }
+
+
+
+    /* =====================================================
+       SAVE FIREBASE
+       ===================================================== */
+
+    async function savePaymentRecord(
+      transactionId
+    ){
+
+      if(
+        !window.CM_FIREBASE
+      ){
+
+        throw new Error(
+          "Firebase is not configured."
+        );
+
+      }
+
+
+      const {
+        db,
+        collection,
+        addDoc,
+        serverTimestamp
+      } =
+        window.CM_FIREBASE;
+
+
+      const amount =
+        parseFloat(
+          amountInput.value
+        );
+
+
+      const paymentData = {
+
+        transactionId:
+          transactionId,
+
+        customerName:
+          nameInput.value.trim(),
+
+        mobile:
+          mobileInput.value.trim(),
+
+        amount:
+          amount,
+
+        currency:
+          "INR",
+
+        description:
+          descriptionInput.value.trim(),
+
+        upiId:
+          UPI_ID,
+
+        paymentMethod:
+          "DIRECT_UPI_QR",
+
+        qrGenerated:
+          true,
+
+        status:
+          "QR_GENERATED",
+
+        generatedAt:
+          serverTimestamp(),
+
+        generatedDate:
+          new Date().toISOString(),
+
+        createdFrom:
+          "CM INNOVATIONS Payment Page"
+
+      };
+
+
+      const docRef =
+        await addDoc(
+          collection(
+            db,
+            "cm_innovations_payment_qr"
+          ),
+          paymentData
+        );
+
+
+      return docRef.id;
+
+    }
+
+
+
+    /* =====================================================
+       FORM SUBMIT
+       ===================================================== */
+
+    form.addEventListener(
+      "submit",
+      async function(event){
+
+        event.preventDefault();
+
+
+        if(
+          !validate()
+        ){
+
+          return;
+
+        }
+
+
+        const button =
+          document.getElementById(
+            "generatePayment"
+          );
+
+
+        const originalHTML =
+          button.innerHTML;
+
+
+        button.disabled =
+          true;
+
+
+        button.innerHTML =
+          `
+          <i data-lucide="loader-circle"></i>
+          Generating secure QR...
+          `;
+
+
+        lucide.createIcons();
+
+
+        try{
+
+
+          /*
+           Generate unique reference
+          */
+
+          const transactionId =
+            generateTransactionNumber();
+
+
+          /*
+           Save to Firebase first.
+          */
+
+          await savePaymentRecord(
+            transactionId
+          );
+
+
+          /*
+           Generate QR only after
+           Firebase save succeeds.
+          */
+
+          generateQR(
+            transactionId
+          );
+
+
+          /*
+           Populate result
+          */
+
+          transactionNumber.textContent =
+            transactionId;
+
+
+          document.getElementById(
+            "resultName"
+          ).textContent =
+            nameInput.value.trim();
+
+
+          document.getElementById(
+            "resultMobile"
+          ).textContent =
+            mobileInput.value.trim();
+
+
+          document.getElementById(
+            "resultDescription"
+          ).textContent =
+            descriptionInput.value.trim();
+
+
+          const amount =
+            parseFloat(
+              amountInput.value
+            );
+
+
+          document.getElementById(
+            "resultAmount"
+          ).textContent =
+            "₹" +
+            amount.toLocaleString(
+              "en-IN",
+              {
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+              }
+            );
+
+
+          /*
+           Hide form and show QR
+          */
+
+          formCard.style.display =
+            "none";
+
+
+          qrResult.hidden =
+            false;
+
+
+          qrResult.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+          });
+
+
+          showToast(
+            "QR generated successfully."
+          );
+
+
+          lucide.createIcons();
+
+
+        }catch(error){
+
+          console.error(
+            error
+          );
+
+
+          showToast(
+            "Unable to generate QR. Please try again."
+          );
+
+
+        }finally{
+
+          button.disabled =
+            false;
+
+          button.innerHTML =
+            originalHTML;
+
+          lucide.createIcons();
+
+        }
+
+      }
+    );
+
+
+
+    /* =====================================================
+       OPEN UPI APP
+       ===================================================== */
+
+    document
+      .getElementById(
+        "openUPI"
+      )
+      .addEventListener(
+        "click",
+        function(){
+
+          if(
+            !currentUPIUrl
+          ) return;
+
+
+          window.location.href =
+            currentUPIUrl;
+
+        }
+      );
+
+
+
+    /* =====================================================
+       DOWNLOAD PREMIUM QR
+       ===================================================== */
+
+    document
+      .getElementById(
+        "downloadQR"
+      )
+      .addEventListener(
+        "click",
+        async function(){
+
+          const canvas =
+            qrcode.querySelector(
+              "canvas"
+            );
+
+
+          if(!canvas){
+
+            showToast(
+              "QR is not ready."
+            );
+
+            return;
+
+          }
+
+
+          /*
+           Create downloadable
+           premium QR image.
+          */
+
+          const size =
+            900;
+
+
+          const output =
+            document.createElement(
+              "canvas"
+            );
+
+
+          output.width =
+            size;
+
+          output.height =
+            1080;
+
+
+          const ctx =
+            output.getContext(
+              "2d"
+            );
+
+
+          /*
+           Background
+          */
+
+          ctx.fillStyle =
+            "#ffffff";
+
+          ctx.fillRect(
+            0,
+            0,
+            output.width,
+            output.height
+          );
+
+
+          /*
+           Heading
+          */
+
+          ctx.fillStyle =
+            "#8B1E2D";
+
+          ctx.font =
+            "bold 32px Arial";
+
+          ctx.textAlign =
+            "center";
+
+          ctx.fillText(
+            "CM INNOVATIONS",
+            size / 2,
+            70
+          );
+
+
+          ctx.fillStyle =
+            "#5F6368";
+
+          ctx.font =
+            "20px Arial";
+
+          ctx.fillText(
+            "DIRECT UPI PAYMENT",
+            size / 2,
+            105
+          );
+
+
+          /*
+           QR
+          */
+
+          const qrSize =
+            620;
+
+
+          const qrX =
+            (size - qrSize) / 2;
+
+
+          const qrY =
+            150;
+
+
+          ctx.drawImage(
+            canvas,
+            qrX,
+            qrY,
+            qrSize,
+            qrSize
+          );
+
+
+          /*
+           Reference
+          */
+
+          ctx.fillStyle =
+            "#8B1E2D";
+
+          ctx.font =
+            "bold 26px Arial";
+
+          ctx.fillText(
+            transactionNumber.textContent,
+            size / 2,
+            825
+          );
+
+
+          /*
+           UPI
+          */
+
+          ctx.fillStyle =
+            "#5F6368";
+
+          ctx.font =
+            "22px Arial";
+
+          ctx.fillText(
+            "cminnovation@upi",
+            size / 2,
+            865
+          );
+
+
+          /*
+           Powered by
+          */
+
+          ctx.fillStyle =
+            "#8A8D91";
+
+          ctx.font =
+            "16px Arial";
+
+          ctx.fillText(
+            "Powered by",
+            size / 2 - 65,
+            930
+          );
+
+
+          /*
+           COREBIQ logo
+          */
+
+          const logo =
+            new Image();
+
+
+          logo.onload =
+            function(){
+
+              const logoWidth =
+                190;
+
+
+              const logoHeight =
+                logo.height *
+                (
+                  logoWidth /
+                  logo.width
+                );
+
+
+              ctx.drawImage(
+                logo,
+                size / 2 + 10,
+                905,
+                logoWidth,
+                logoHeight
+              );
+
+
+              const link =
+                document.createElement(
+                  "a"
+                );
+
+
+              link.download =
+                transactionNumber.textContent +
+                "-UPI-QR.png";
+
+
+              link.href =
+                output.toDataURL(
+                  "image/png"
+                );
+
+
+              link.click();
+
+
+              showToast(
+                "Premium QR downloaded."
+              );
+
+            };
+
+
+          logo.onerror =
+            function(){
+
+              const link =
+                document.createElement(
+                  "a"
+                );
+
+
+              link.download =
+                transactionNumber.textContent +
+                "-UPI-QR.png";
+
+
+              link.href =
+                output.toDataURL(
+                  "image/png"
+                );
+
+
+              link.click();
+
+
+              showToast(
+                "QR downloaded."
+              );
+
+            };
+
+
+          logo.src =
+            "assets/logo-corebiq.png";
+
+        }
+      );
+
+
+
+    /* =====================================================
+       COPY TRANSACTION
+       ===================================================== */
+
+    document
+      .getElementById(
+        "copyTransaction"
+      )
+      .addEventListener(
+        "click",
+        async function(){
+
+          const id =
+            transactionNumber.textContent;
+
+
+          try{
+
+            await navigator.clipboard.writeText(
+              id
+            );
+
+
+            showToast(
+              "Transaction reference copied."
+            );
+
+          }catch{
+
+            showToast(
+              id
+            );
+
+          }
+
+        }
+      );
+
+
+
+    /* =====================================================
+       NEW PAYMENT
+       ===================================================== */
+
+    document
+      .getElementById(
+        "newPayment"
+      )
+      .addEventListener(
+        "click",
+        function(){
+
+          qrResult.hidden =
+            true;
+
+
+          formCard.style.display =
+            "";
+
+
+          form.reset();
+
+
+          qrcode.innerHTML =
+            "";
+
+
+          currentUPIUrl =
+            "";
+
+
+          window.scrollTo({
+
+            top:
+              formCard.offsetTop - 90,
+
+            behavior:
+              "smooth"
+
+          });
+
+        }
+      );
+
+
+
+    /* =====================================================
+       TOAST
+       ===================================================== */
+
+    function showToast(
+      message
+    ){
+
+      const toast =
+        document.getElementById(
+          "toast"
+        );
+
+
+      if(!toast) return;
+
+
+      toast.textContent =
+        message;
+
+
+      toast.classList.add(
+        "show"
+      );
+
+
+      setTimeout(
+        function(){
+
+          toast.classList.remove(
+            "show"
+          );
+
+        },
+        2800
+      );
+
+    }
+
+
+
+    /*
+     Initial icons
+    */
+
+    if(
+      window.lucide
+    ){
+
+      lucide.createIcons();
+
+    }
+
+  }
+);
+
+</script>
+
+</body>
+</html>
