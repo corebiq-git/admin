@@ -17,7 +17,7 @@
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="./style.css">
   <style>
-    /* Fix Tailwind flex overriding .tab-content display:none */
+    /* Prevent Tailwind flex from overriding hidden views/tabs */
     .view:not(.active) {
       display: none !important;
     }
@@ -35,7 +35,8 @@
       width: 100%;
       height: calc(100vh - 136px);
       border: none;
-      background: #ffffff;
+      background: #F7F9FC;
+      display: block;
     }
   </style>
 </head>
@@ -70,7 +71,7 @@
     <!-- APP VIEW -->
     <div id="appView" class="view">
 
-      <!-- 1. HOME MODULE CONTAINER (home.html) -->
+      <!-- 1. HOME MODULE CONTAINER (Linked to ./home.html) -->
       <div id="tab-home" class="tab-content bg-[var(--m3-surface)]">
         <header class="search-header flex items-center justify-between shrink-0">
           <div class="flex items-center gap-2">
@@ -79,11 +80,11 @@
           </div>
         </header>
         <main class="scroll-area flex-1 p-0 overflow-hidden">
-          <iframe data-src="./home.html" class="module-frame" title="Home"></iframe>
+          <iframe src="./home.html" class="module-frame" loading="lazy" title="Home"></iframe>
         </main>
       </div>
 
-      <!-- 2. CONTACTS MODULE (Original Intact) -->
+      <!-- 2. CONTACTS MODULE (Original Intact for app.js) -->
       <div id="tab-contacts" class="tab-content active">
         <header class="search-header">
           <div class="search-bar">
@@ -107,7 +108,7 @@
         <main class="scroll-area" id="contactList"></main>
       </div>
 
-      <!-- 3. COMPLIANCE MODULE CONTAINER (compliance.html) -->
+      <!-- 3. COMPLIANCE MODULE CONTAINER (Linked to ./compliance.html) -->
       <div id="tab-compliance" class="tab-content bg-[var(--m3-surface)]">
         <header class="search-header flex items-center justify-between shrink-0">
           <div class="flex items-center gap-2">
@@ -116,11 +117,11 @@
           </div>
         </header>
         <main class="scroll-area flex-1 p-0 overflow-hidden">
-          <iframe data-src="./compliance.html" class="module-frame" title="Compliance"></iframe>
+          <iframe src="./compliance.html" class="module-frame" loading="lazy" title="Compliance"></iframe>
         </main>
       </div>
 
-      <!-- 4. CREDENTIALS MODULE CONTAINER (credentials.html) -->
+      <!-- 4. CREDENTIALS MODULE CONTAINER (Linked to ./credentials.html) -->
       <div id="tab-credentials" class="tab-content bg-[var(--m3-surface)]">
         <header class="search-header flex items-center justify-between shrink-0">
           <div class="flex items-center gap-2">
@@ -129,7 +130,7 @@
           </div>
         </header>
         <main class="scroll-area flex-1 p-0 overflow-hidden">
-          <iframe data-src="./credentials.html" class="module-frame" title="Credentials"></iframe>
+          <iframe src="./credentials.html" class="module-frame" loading="lazy" title="Credentials"></iframe>
         </main>
       </div>
 
@@ -144,15 +145,15 @@
         <main class="scroll-area px-4 pb-28 pt-2">
           <p class="text-xs font-semibold uppercase tracking-wider text-[var(--m3-text-muted)] mb-3 ml-1">Workspace Tools</p>
           <div class="grid grid-cols-3 gap-3 mb-6">
-            <button type="button" onclick="openModule('tab-notes')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+            <button type="button" data-open-module="tab-notes" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition cursor-pointer">
               <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 grid place-items-center"><i data-lucide="file-text" class="w-5 h-5"></i></div>
               <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Notes</span>
             </button>
-            <button type="button" onclick="openModule('tab-links')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+            <button type="button" data-open-module="tab-links" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition cursor-pointer">
               <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 grid place-items-center"><i data-lucide="link" class="w-5 h-5"></i></div>
               <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">My Links</span>
             </button>
-            <button type="button" onclick="openModule('tab-ai')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+            <button type="button" data-open-module="tab-ai" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition cursor-pointer">
               <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 grid place-items-center"><i data-lucide="sparkles" class="w-5 h-5"></i></div>
               <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Assistant</span>
             </button>
@@ -160,63 +161,63 @@
 
           <p class="text-xs font-semibold uppercase tracking-wider text-[var(--m3-text-muted)] mb-3 ml-1">All Modules</p>
           <div class="grid grid-cols-3 gap-3">
-            <button type="button" onclick="openModule('tab-reminders')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+            <button type="button" data-open-module="tab-reminders" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition cursor-pointer">
               <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 grid place-items-center"><i data-lucide="bell" class="w-5 h-5"></i></div>
               <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Reminders</span>
             </button>
-            <button type="button" onclick="openModule('tab-transactions')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+            <button type="button" data-open-module="tab-transactions" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition cursor-pointer">
               <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 grid place-items-center"><i data-lucide="arrow-left-right" class="w-5 h-5"></i></div>
               <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Transactions</span>
             </button>
-            <button type="button" onclick="openModule('tab-cashbook')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+            <button type="button" data-open-module="tab-cashbook" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition cursor-pointer">
               <div class="w-10 h-10 rounded-xl bg-green-50 text-green-600 grid place-items-center"><i data-lucide="wallet" class="w-5 h-5"></i></div>
               <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Cash Book</span>
             </button>
-            <button type="button" onclick="openModule('tab-bankbook')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+            <button type="button" data-open-module="tab-bankbook" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition cursor-pointer">
               <div class="w-10 h-10 rounded-xl bg-cyan-50 text-cyan-600 grid place-items-center"><i data-lucide="landmark" class="w-5 h-5"></i></div>
               <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Bank Book</span>
             </button>
-            <button type="button" onclick="openModule('tab-chequerecord')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+            <button type="button" data-open-module="tab-chequerecord" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition cursor-pointer">
               <div class="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 grid place-items-center"><i data-lucide="receipt" class="w-5 h-5"></i></div>
               <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Cheque Record</span>
             </button>
-            <button type="button" onclick="openModule('tab-paymentqr')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+            <button type="button" data-open-module="tab-paymentqr" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition cursor-pointer">
               <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 grid place-items-center"><i data-lucide="qr-code" class="w-5 h-5"></i></div>
               <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Payment QR</span>
             </button>
-            <button type="button" onclick="openModule('tab-paymentgateway')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+            <button type="button" data-open-module="tab-paymentgateway" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition cursor-pointer">
               <div class="w-10 h-10 rounded-xl bg-violet-50 text-violet-600 grid place-items-center"><i data-lucide="credit-card" class="w-5 h-5"></i></div>
               <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Payment Gateway</span>
             </button>
-            <button type="button" onclick="openModule('tab-letterhead')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+            <button type="button" data-open-module="tab-letterhead" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition cursor-pointer">
               <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 grid place-items-center"><i data-lucide="file-badge" class="w-5 h-5"></i></div>
               <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Letterhead</span>
             </button>
-            <button type="button" onclick="openModule('tab-invoice')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+            <button type="button" data-open-module="tab-invoice" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition cursor-pointer">
               <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 grid place-items-center"><i data-lucide="file-spreadsheet" class="w-5 h-5"></i></div>
               <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Invoice</span>
             </button>
-            <button type="button" onclick="openModule('tab-stampseal')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+            <button type="button" data-open-module="tab-stampseal" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition cursor-pointer">
               <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 grid place-items-center"><i data-lucide="stamp" class="w-5 h-5"></i></div>
               <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Stamp Seal</span>
             </button>
-            <button type="button" onclick="openModule('tab-businesscard')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+            <button type="button" data-open-module="tab-businesscard" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition cursor-pointer">
               <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 grid place-items-center"><i data-lucide="id-card" class="w-5 h-5"></i></div>
               <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Business Card</span>
             </button>
-            <button type="button" onclick="openModule('tab-data')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+            <button type="button" data-open-module="tab-data" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition cursor-pointer">
               <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-700 grid place-items-center"><i data-lucide="database" class="w-5 h-5"></i></div>
               <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Data</span>
             </button>
-            <button type="button" onclick="openModule('tab-report')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+            <button type="button" data-open-module="tab-report" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition cursor-pointer">
               <div class="w-10 h-10 rounded-xl bg-fuchsia-50 text-fuchsia-600 grid place-items-center"><i data-lucide="bar-chart-3" class="w-5 h-5"></i></div>
               <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Report</span>
             </button>
-            <button type="button" onclick="openModule('tab-privacy')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+            <button type="button" data-open-module="tab-privacy" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition cursor-pointer">
               <div class="w-10 h-10 rounded-xl bg-zinc-100 text-zinc-700 grid place-items-center"><i data-lucide="lock" class="w-5 h-5"></i></div>
               <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Privacy</span>
             </button>
-            <button type="button" onclick="openModule('tab-more')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+            <button type="button" data-open-module="tab-more" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition cursor-pointer">
               <div class="w-10 h-10 rounded-xl bg-gray-100 text-gray-700 grid place-items-center"><i data-lucide="more-horizontal" class="w-5 h-5"></i></div>
               <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">More</span>
             </button>
@@ -224,11 +225,11 @@
         </main>
       </div>
 
-      <!-- ORIGINAL 3 MODULES (Notes, My Links, Assistant - Preserved for app.js) -->
+      <!-- ORIGINAL 3 MODULES (Notes, My Links, Assistant - Intact for app.js) -->
       <div id="tab-notes" class="tab-content bg-[var(--m3-surface)]">
         <header class="search-header flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent cursor-pointer"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+            <button type="button" data-open-module="tab-menu" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent cursor-pointer"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
             <h2 class="text-xl font-semibold text-[var(--m3-text-main)]">Notes</h2>
           </div>
         </header>
@@ -248,7 +249,7 @@
       <div id="tab-links" class="tab-content bg-[var(--m3-surface)]">
         <header class="search-header flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent cursor-pointer"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+            <button type="button" data-open-module="tab-menu" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent cursor-pointer"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
             <h2 class="text-xl font-semibold text-[var(--m3-text-main)]">My Links</h2>
           </div>
         </header>
@@ -267,7 +268,7 @@
       <div id="tab-ai" class="tab-content bg-[var(--m3-surface)] h-full flex flex-col relative">
         <header class="search-header flex items-center justify-between shrink-0 z-10 shadow-sm border-b border-[var(--m3-surface-container)]">
           <div class="flex items-center gap-2">
-            <button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent cursor-pointer"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+            <button type="button" data-open-module="tab-menu" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent cursor-pointer"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
             <i data-lucide="sparkles" class="w-5 h-5 text-[#8A2BE2]"></i>
             <h2 class="text-xl font-semibold text-[var(--m3-text-main)]">AI Assistant</h2>
           </div>
@@ -285,101 +286,101 @@
         </div>
       </div>
 
-      <!-- 15 MENU MODULE CONTAINERS (Connected to same name .html) -->
+      <!-- 15 MENU MODULE CONTAINERS (Directly Linked via src="./filename.html") -->
       <div id="tab-reminders" class="tab-content bg-[var(--m3-surface)]">
-        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Reminders</h2></header>
-        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./reminders.html" class="module-frame" title="Reminders"></iframe></main>
+        <header class="search-header flex items-center gap-2"><button type="button" data-open-module="tab-menu" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent cursor-pointer"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Reminders</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe src="./reminders.html" class="module-frame" loading="lazy" title="Reminders"></iframe></main>
       </div>
 
       <div id="tab-transactions" class="tab-content bg-[var(--m3-surface)]">
-        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Transactions</h2></header>
-        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./transactions.html" class="module-frame" title="Transactions"></iframe></main>
+        <header class="search-header flex items-center gap-2"><button type="button" data-open-module="tab-menu" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent cursor-pointer"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Transactions</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe src="./transactions.html" class="module-frame" loading="lazy" title="Transactions"></iframe></main>
       </div>
 
       <div id="tab-cashbook" class="tab-content bg-[var(--m3-surface)]">
-        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Cash Book</h2></header>
-        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./cashbook.html" class="module-frame" title="Cash Book"></iframe></main>
+        <header class="search-header flex items-center gap-2"><button type="button" data-open-module="tab-menu" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent cursor-pointer"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Cash Book</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe src="./cashbook.html" class="module-frame" loading="lazy" title="Cash Book"></iframe></main>
       </div>
 
       <div id="tab-bankbook" class="tab-content bg-[var(--m3-surface)]">
-        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Bank Book</h2></header>
-        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./bankbook.html" class="module-frame" title="Bank Book"></iframe></main>
+        <header class="search-header flex items-center gap-2"><button type="button" data-open-module="tab-menu" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent cursor-pointer"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Bank Book</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe src="./bankbook.html" class="module-frame" loading="lazy" title="Bank Book"></iframe></main>
       </div>
 
       <div id="tab-chequerecord" class="tab-content bg-[var(--m3-surface)]">
-        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Cheque Record</h2></header>
-        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./chequerecord.html" class="module-frame" title="Cheque Record"></iframe></main>
+        <header class="search-header flex items-center gap-2"><button type="button" data-open-module="tab-menu" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent cursor-pointer"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Cheque Record</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe src="./chequerecord.html" class="module-frame" loading="lazy" title="Cheque Record"></iframe></main>
       </div>
 
       <div id="tab-paymentqr" class="tab-content bg-[var(--m3-surface)]">
-        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Payment QR</h2></header>
-        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./paymentqr.html" class="module-frame" title="Payment QR"></iframe></main>
+        <header class="search-header flex items-center gap-2"><button type="button" data-open-module="tab-menu" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent cursor-pointer"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Payment QR</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe src="./paymentqr.html" class="module-frame" loading="lazy" title="Payment QR"></iframe></main>
       </div>
 
       <div id="tab-paymentgateway" class="tab-content bg-[var(--m3-surface)]">
-        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Payment Gateway</h2></header>
-        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./paymentgateway.html" class="module-frame" title="Payment Gateway"></iframe></main>
+        <header class="search-header flex items-center gap-2"><button type="button" data-open-module="tab-menu" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent cursor-pointer"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Payment Gateway</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe src="./paymentgateway.html" class="module-frame" loading="lazy" title="Payment Gateway"></iframe></main>
       </div>
 
       <div id="tab-letterhead" class="tab-content bg-[var(--m3-surface)]">
-        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Letterhead</h2></header>
-        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./letterhead.html" class="module-frame" title="Letterhead"></iframe></main>
+        <header class="search-header flex items-center gap-2"><button type="button" data-open-module="tab-menu" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent cursor-pointer"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Letterhead</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe src="./letterhead.html" class="module-frame" loading="lazy" title="Letterhead"></iframe></main>
       </div>
 
       <div id="tab-invoice" class="tab-content bg-[var(--m3-surface)]">
-        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Invoice</h2></header>
-        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./invoice.html" class="module-frame" title="Invoice"></iframe></main>
+        <header class="search-header flex items-center gap-2"><button type="button" data-open-module="tab-menu" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent cursor-pointer"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Invoice</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe src="./invoice.html" class="module-frame" loading="lazy" title="Invoice"></iframe></main>
       </div>
 
       <div id="tab-stampseal" class="tab-content bg-[var(--m3-surface)]">
-        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Stamp Seal</h2></header>
-        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./stampseal.html" class="module-frame" title="Stamp Seal"></iframe></main>
+        <header class="search-header flex items-center gap-2"><button type="button" data-open-module="tab-menu" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent cursor-pointer"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Stamp Seal</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe src="./stampseal.html" class="module-frame" loading="lazy" title="Stamp Seal"></iframe></main>
       </div>
 
       <div id="tab-businesscard" class="tab-content bg-[var(--m3-surface)]">
-        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Business Card</h2></header>
-        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./businesscard.html" class="module-frame" title="Business Card"></iframe></main>
+        <header class="search-header flex items-center gap-2"><button type="button" data-open-module="tab-menu" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent cursor-pointer"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Business Card</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe src="./businesscard.html" class="module-frame" loading="lazy" title="Business Card"></iframe></main>
       </div>
 
       <div id="tab-data" class="tab-content bg-[var(--m3-surface)]">
-        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Data</h2></header>
-        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./data.html" class="module-frame" title="Data"></iframe></main>
+        <header class="search-header flex items-center gap-2"><button type="button" data-open-module="tab-menu" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent cursor-pointer"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Data</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe src="./data.html" class="module-frame" loading="lazy" title="Data"></iframe></main>
       </div>
 
       <div id="tab-report" class="tab-content bg-[var(--m3-surface)]">
-        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Report</h2></header>
-        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./report.html" class="module-frame" title="Report"></iframe></main>
+        <header class="search-header flex items-center gap-2"><button type="button" data-open-module="tab-menu" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent cursor-pointer"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Report</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe src="./report.html" class="module-frame" loading="lazy" title="Report"></iframe></main>
       </div>
 
       <div id="tab-privacy" class="tab-content bg-[var(--m3-surface)]">
-        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Privacy</h2></header>
-        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./privacy.html" class="module-frame" title="Privacy"></iframe></main>
+        <header class="search-header flex items-center gap-2"><button type="button" data-open-module="tab-menu" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent cursor-pointer"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Privacy</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe src="./privacy.html" class="module-frame" loading="lazy" title="Privacy"></iframe></main>
       </div>
 
       <div id="tab-more" class="tab-content bg-[var(--m3-surface)]">
-        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">More</h2></header>
-        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./more.html" class="module-frame" title="More"></iframe></main>
+        <header class="search-header flex items-center gap-2"><button type="button" data-open-module="tab-menu" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent cursor-pointer"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">More</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe src="./more.html" class="module-frame" loading="lazy" title="More"></iframe></main>
       </div>
 
-      <!-- UPDATED BOTTOM NAVIGATION -->
+      <!-- BOTTOM NAVIGATION -->
       <nav class="bottom-nav">
-        <button class="nav-item" data-target="tab-home" onclick="openModule('tab-home')">
+        <button type="button" class="nav-item" data-target="tab-home">
           <div class="nav-icon-container"><i data-lucide="home" class="w-[22px] h-[22px]"></i></div>
           <span class="nav-label">Home</span>
         </button>
-        <button class="nav-item active" data-target="tab-contacts" onclick="openModule('tab-contacts')">
+        <button type="button" class="nav-item active" data-target="tab-contacts">
           <div class="nav-icon-container"><i data-lucide="users" class="w-[22px] h-[22px]"></i></div>
           <span class="nav-label">Contacts</span>
         </button>
-        <button class="nav-item" data-target="tab-compliance" onclick="openModule('tab-compliance')">
+        <button type="button" class="nav-item" data-target="tab-compliance">
           <div class="nav-icon-container"><i data-lucide="clipboard-check" class="w-[22px] h-[22px]"></i></div>
           <span class="nav-label">Compliance</span>
         </button>
-        <button class="nav-item" data-target="tab-credentials" onclick="openModule('tab-credentials')">
+        <button type="button" class="nav-item" data-target="tab-credentials">
           <div class="nav-icon-container"><i data-lucide="key-round" class="w-[22px] h-[22px]"></i></div>
           <span class="nav-label">Credentials</span>
         </button>
-        <button class="nav-item" data-target="tab-menu" onclick="openModule('tab-menu')">
+        <button type="button" class="nav-item" data-target="tab-menu">
           <div class="nav-icon-container"><i data-lucide="menu" class="w-[22px] h-[22px]"></i></div>
           <span class="nav-label">Menu</span>
         </button>
@@ -408,37 +409,44 @@
     </div>
   </div>
 
-  <!-- MODULE ROUTER & LAZY LOADER -->
+  <script type="module" src="./app.js"></script>
   <script>
-    window.openModule = function(targetId) {
-      // Hide all module tabs
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      
-      // Activate target module container
-      const targetEl = document.getElementById(targetId);
-      if (targetEl) {
-        targetEl.classList.add('active');
-        // Lazy-load connected .html file into module container iframe on first open
-        const iframe = targetEl.querySelector('iframe[data-src]');
-        if (iframe && !iframe.getAttribute('src')) {
-          iframe.setAttribute('src', iframe.getAttribute('data-src'));
-        }
-      }
+    // Unified Module Router (Handles Bottom Nav + Menu Modules without conflicting with app.js)
+    function activateModuleTab(targetId) {
+      if (!targetId) return;
 
-      // Sync bottom nav active state
-      const mainTabs = ['tab-home', 'tab-contacts', 'tab-compliance', 'tab-credentials', 'tab-menu'];
-      const activeNavTarget = mainTabs.includes(targetId) ? targetId : 'tab-menu';
+      // 1. Switch active .tab-content
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.toggle('active', tab.id === targetId);
+      });
+
+      // 2. Highlight matching bottom-nav item (or 'Menu' if a sub-module is open)
+      const bottomNavTabs = ['tab-home', 'tab-contacts', 'tab-compliance', 'tab-credentials', 'tab-menu'];
+      const navTarget = bottomNavTabs.includes(targetId) ? targetId : 'tab-menu';
       document.querySelectorAll('.bottom-nav .nav-item').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('data-target') === activeNavTarget);
+        btn.classList.toggle('active', btn.getAttribute('data-target') === navTarget);
       });
 
       if (window.lucide) lucide.createIcons();
-    };
+    }
+
+    // Listen to clicks on bottom nav items and menu module cards
+    document.addEventListener('click', (e) => {
+      const navBtn = e.target.closest('.bottom-nav .nav-item');
+      if (navBtn) {
+        activateModuleTab(navBtn.getAttribute('data-target'));
+        return;
+      }
+
+      const menuModBtn = e.target.closest('[data-open-module]');
+      if (menuModBtn) {
+        activateModuleTab(menuModBtn.getAttribute('data-open-module'));
+      }
+    });
 
     document.addEventListener('DOMContentLoaded', () => {
       if (window.lucide) lucide.createIcons();
     });
   </script>
-  <script type="module" src="./app.js"></script>
 </body>
 </html>
