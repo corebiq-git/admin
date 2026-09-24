@@ -1,1 +1,444 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#F7F9FC"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="CM Contacts"><title>CM Contacts</title><link rel="manifest" href="./manifest.json"><link rel="icon" href="./icon-192.svg"><link rel="apple-touch-icon" href="./icon-192.svg"><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"><script src="https://cdn.tailwindcss.com/3.4.17"></script><script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script><link rel="stylesheet" href="./style.css"></head><body><div class="app-container"><div id="loginView" class="view active"><div class="login-wrapper"><div class="login-icon"><i data-lucide="shield-check" class="w-8 h-8"></i></div><h1 class="login-title">CM Contacts</h1><p class="login-subtitle">Sign in to access workspace</p><form id="loginForm"><input type="email" id="emailInput" class="m3-input" placeholder="Email" required autocomplete="email"><div class="password-wrapper"><input type="password" id="passwordInput" class="m3-input" placeholder="Password" required autocomplete="current-password"><button type="button" id="togglePwdBtn" class="toggle-pwd-btn" tabindex="-1" title="Toggle Password"><i data-lucide="eye" id="pwdIcon" class="w-5 h-5"></i></button></div><button type="submit" id="loginBtn" class="m3-btn"><span id="loginBtnText">Login</span><div class="loader" id="loginLoader"></div></button></form><div id="loginError" class="error-msg"></div></div></div><div id="appView" class="view"><div id="tab-contacts" class="tab-content active"><header class="search-header"><div class="search-bar"><i data-lucide="search" class="w-5 h-5 text-[var(--m3-text-variant)]"></i><input type="text" id="searchInput" placeholder="Search clients, IDs..."><button id="importContactsBtn" class="import-btn" title="Import from Phone"><i data-lucide="book-user" class="w-[22px] h-[22px]"></i></button><button id="logoutBtn" class="border-none bg-transparent p-0 rounded-full cursor-pointer" title="Logout"><span class="w-8 h-8 rounded-full bg-[var(--m3-primary)] text-white text-xs font-semibold grid place-items-center shadow-sm">CM</span></button></div><div class="toolbar-row"><span class="text-xs text-[var(--m3-text-muted)]">Sort</span><select id="sortSelect" class="sort-select" aria-label="Sort contacts"><option value="name">Name</option><option value="id">ID</option></select></div></header><main class="scroll-area" id="contactList"></main></div><div id="tab-notes" class="tab-content bg-[var(--m3-surface)]"><header class="search-header flex items-center justify-between"><h2 class="text-xl font-semibold text-[var(--m3-text-main)]">Notes</h2></header><main class="scroll-area px-4"><form id="noteForm" class="bg-white p-4 rounded-2xl shadow-sm mb-6 border border-[var(--m3-surface-container)]"><input type="text" list="clientDatalist" id="noteClient" class="m3-input !mb-3 !p-3" placeholder="Select Client..." required><datalist id="clientDatalist"></datalist><textarea id="noteContent" class="m3-input !mb-3 !p-3" placeholder="Write a note..." rows="3" required></textarea><label class="block text-sm text-[var(--m3-text-muted)] font-medium mb-1 ml-1">Reminder Date & Time</label><input type="datetime-local" id="noteReminder" class="m3-input !mb-4 !p-3"><button type="submit" id="noteSubmitBtn" class="m3-btn !mt-0 !py-3">Save Note</button></form><div id="notesListContainer" class="flex flex-col gap-2"></div></main></div><div id="tab-links" class="tab-content bg-[var(--m3-surface)]"><header class="search-header flex items-center justify-between"><h2 class="text-xl font-semibold text-[var(--m3-text-main)]">My Links</h2></header><main class="scroll-area px-4"><form id="linkForm" class="bg-white p-4 rounded-2xl shadow-sm mb-6 border border-[var(--m3-surface-container)]"><input type="hidden" id="editLinkId" value=""><input type="text" id="linkName" class="m3-input !mb-3 !p-3" placeholder="Website Name" required><input type="url" id="linkUrl" class="m3-input !mb-4 !p-3" placeholder="https://..." required><button type="submit" id="linkSubmitBtn" class="m3-btn !mt-0 !py-3">Add Link</button><button type="button" id="linkCancelBtn" class="m3-btn !mt-2 !py-3 !bg-transparent !text-[var(--m3-text-main)] border border-[var(--m3-outline-variant)] hidden">Cancel Edit</button></form><div id="linksListContainer" class="flex flex-col gap-2"></div></main></div><div id="tab-ai" class="tab-content bg-[var(--m3-surface)] h-full flex flex-col relative"><header class="search-header flex items-center justify-between shrink-0 z-10 shadow-sm border-b border-[var(--m3-surface-container)]"><div class="flex items-center gap-2"><i data-lucide="sparkles" class="w-5 h-5 text-[#8A2BE2]"></i><h2 class="text-xl font-semibold text-[var(--m3-text-main)]">AI Assistant</h2></div></header><div id="chatHistory" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3 pb-[100px]"><div class="bg-[var(--m3-surface-container)] text-[var(--m3-text-main)] p-3 rounded-2xl rounded-tl-sm self-start max-w-[85%] text-sm">Hi! I'm your CM Contacts AI Assistant. Ask me to search clients, summarize notes, or answer questions!</div></div><div class="absolute bottom-[80px] left-0 right-0 p-3 bg-[var(--m3-surface)] border-t border-[var(--m3-surface-container)] z-10"><form id="aiChatForm" class="flex gap-2 items-center"><input type="text" id="aiInput" class="m3-input !mb-0 !p-3 flex-1 !rounded-full" placeholder="Ask about clients, notes..." required autocomplete="off"><button type="submit" id="aiSendBtn" class="w-11 h-11 rounded-full bg-[var(--m3-primary)] text-white flex items-center justify-center shrink-0 disabled:opacity-50"><i data-lucide="send" class="w-5 h-5 ml-1"></i></button></form></div></div><nav class="bottom-nav"><button class="nav-item active" data-target="tab-contacts"><div class="nav-icon-container"><i data-lucide="users" class="w-[22px] h-[22px]"></i></div><span class="nav-label">Contacts</span></button><button class="nav-item" data-target="tab-notes"><div class="nav-icon-container"><i data-lucide="file-text" class="w-[22px] h-[22px]"></i></div><span class="nav-label">Notes</span></button><button class="nav-item" data-target="tab-links"><div class="nav-icon-container"><i data-lucide="link" class="w-[22px] h-[22px]"></i></div><span class="nav-label">My Links</span></button><button class="nav-item" data-target="tab-ai"><div class="nav-icon-container"><i data-lucide="sparkles" class="w-[22px] h-[22px]"></i></div><span class="nav-label">Assistant</span></button></nav></div></div><div id="iframeModal" class="fixed inset-0 bg-black/50 z-[100] hidden flex-col items-center justify-end"><div class="bg-[var(--m3-surface)] w-full max-w-[412px] h-[85vh] rounded-t-3xl flex flex-col shadow-2xl"><div class="p-3 flex justify-between items-center border-b border-[var(--m3-surface-container)]"><div class="flex items-center gap-2 overflow-hidden px-2"><i data-lucide="globe" class="w-5 h-5 text-[var(--m3-text-muted)] shrink-0"></i><h3 id="iframeTitle" class="font-semibold text-[var(--m3-text-main)] truncate text-sm"></h3></div><button onclick="window.closeIframe()" class="p-2 bg-[var(--m3-surface-container)] rounded-full text-[var(--m3-text-main)] shrink-0 hover:bg-[var(--m3-surface-container-high)] border-none"><i data-lucide="x" class="w-5 h-5"></i></button></div><div class="flex-1 w-full bg-white relative"><div class="absolute inset-0 flex items-center justify-center z-0 bg-white"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--m3-primary)]"></div></div><iframe id="contentIframe" class="w-full h-full border-none z-10 relative bg-transparent" sandbox="allow-scripts allow-same-origin allow-forms"></iframe></div></div></div><script type="module" src="./app.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="theme-color" content="#F7F9FC">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="COREBIQ">
+  <title>COREBIQ</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./icon-192.svg">
+  <link rel="apple-touch-icon" href="./icon-192.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    /* Fix Tailwind flex overriding .tab-content display:none */
+    .view:not(.active) {
+      display: none !important;
+    }
+    .tab-content:not(.active) {
+      display: none !important;
+    }
+    .tab-content.active {
+      display: flex !important;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+    .module-frame {
+      width: 100%;
+      height: calc(100vh - 136px);
+      border: none;
+      background: #ffffff;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- LOGIN VIEW -->
+    <div id="loginView" class="view active">
+      <div class="login-wrapper">
+        <div class="login-icon">
+          <i data-lucide="shield-check" class="w-8 h-8"></i>
+        </div>
+        <h1 class="login-title">COREBIQ</h1>
+        <p class="login-subtitle">Sign in to access workspace</p>
+        <form id="loginForm">
+          <input type="email" id="emailInput" class="m3-input" placeholder="Email" required autocomplete="email">
+          <div class="password-wrapper">
+            <input type="password" id="passwordInput" class="m3-input" placeholder="Password" required autocomplete="current-password">
+            <button type="button" id="togglePwdBtn" class="toggle-pwd-btn" tabindex="-1" title="Toggle Password">
+              <i data-lucide="eye" id="pwdIcon" class="w-5 h-5"></i>
+            </button>
+          </div>
+          <button type="submit" id="loginBtn" class="m3-btn">
+            <span id="loginBtnText">Login</span>
+            <div class="loader" id="loginLoader"></div>
+          </button>
+        </form>
+        <div id="loginError" class="error-msg"></div>
+      </div>
+    </div>
+
+    <!-- APP VIEW -->
+    <div id="appView" class="view">
+
+      <!-- 1. HOME MODULE CONTAINER (home.html) -->
+      <div id="tab-home" class="tab-content bg-[var(--m3-surface)]">
+        <header class="search-header flex items-center justify-between shrink-0">
+          <div class="flex items-center gap-2">
+            <i data-lucide="home" class="w-5 h-5 text-[var(--m3-primary)]"></i>
+            <h2 class="text-xl font-semibold text-[var(--m3-text-main)]">COREBIQ Home</h2>
+          </div>
+        </header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden">
+          <iframe data-src="./home.html" class="module-frame" title="Home"></iframe>
+        </main>
+      </div>
+
+      <!-- 2. CONTACTS MODULE (Original Intact) -->
+      <div id="tab-contacts" class="tab-content active">
+        <header class="search-header">
+          <div class="search-bar">
+            <i data-lucide="search" class="w-5 h-5 text-[var(--m3-text-variant)]"></i>
+            <input type="text" id="searchInput" placeholder="Search clients, IDs...">
+            <button id="importContactsBtn" class="import-btn" title="Import from Phone">
+              <i data-lucide="book-user" class="w-[22px] h-[22px]"></i>
+            </button>
+            <button id="logoutBtn" class="border-none bg-transparent p-0 rounded-full cursor-pointer" title="Logout">
+              <span class="w-8 h-8 rounded-full bg-[var(--m3-primary)] text-white text-xs font-semibold grid place-items-center shadow-sm">CB</span>
+            </button>
+          </div>
+          <div class="toolbar-row">
+            <span class="text-xs text-[var(--m3-text-muted)]">Sort</span>
+            <select id="sortSelect" class="sort-select" aria-label="Sort contacts">
+              <option value="name">Name</option>
+              <option value="id">ID</option>
+            </select>
+          </div>
+        </header>
+        <main class="scroll-area" id="contactList"></main>
+      </div>
+
+      <!-- 3. COMPLIANCE MODULE CONTAINER (compliance.html) -->
+      <div id="tab-compliance" class="tab-content bg-[var(--m3-surface)]">
+        <header class="search-header flex items-center justify-between shrink-0">
+          <div class="flex items-center gap-2">
+            <i data-lucide="clipboard-check" class="w-5 h-5 text-[var(--m3-primary)]"></i>
+            <h2 class="text-xl font-semibold text-[var(--m3-text-main)]">Compliance</h2>
+          </div>
+        </header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden">
+          <iframe data-src="./compliance.html" class="module-frame" title="Compliance"></iframe>
+        </main>
+      </div>
+
+      <!-- 4. CREDENTIALS MODULE CONTAINER (credentials.html) -->
+      <div id="tab-credentials" class="tab-content bg-[var(--m3-surface)]">
+        <header class="search-header flex items-center justify-between shrink-0">
+          <div class="flex items-center gap-2">
+            <i data-lucide="key-round" class="w-5 h-5 text-[var(--m3-primary)]"></i>
+            <h2 class="text-xl font-semibold text-[var(--m3-text-main)]">Credentials</h2>
+          </div>
+        </header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden">
+          <iframe data-src="./credentials.html" class="module-frame" title="Credentials"></iframe>
+        </main>
+      </div>
+
+      <!-- 5. MENU HUB -->
+      <div id="tab-menu" class="tab-content bg-[var(--m3-surface)]">
+        <header class="search-header flex items-center justify-between shrink-0">
+          <div class="flex items-center gap-2">
+            <i data-lucide="layout-grid" class="w-5 h-5 text-[var(--m3-primary)]"></i>
+            <h2 class="text-xl font-semibold text-[var(--m3-text-main)]">COREBIQ Menu</h2>
+          </div>
+        </header>
+        <main class="scroll-area px-4 pb-28 pt-2">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[var(--m3-text-muted)] mb-3 ml-1">Workspace Tools</p>
+          <div class="grid grid-cols-3 gap-3 mb-6">
+            <button type="button" onclick="openModule('tab-notes')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+              <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 grid place-items-center"><i data-lucide="file-text" class="w-5 h-5"></i></div>
+              <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Notes</span>
+            </button>
+            <button type="button" onclick="openModule('tab-links')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+              <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 grid place-items-center"><i data-lucide="link" class="w-5 h-5"></i></div>
+              <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">My Links</span>
+            </button>
+            <button type="button" onclick="openModule('tab-ai')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+              <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 grid place-items-center"><i data-lucide="sparkles" class="w-5 h-5"></i></div>
+              <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Assistant</span>
+            </button>
+          </div>
+
+          <p class="text-xs font-semibold uppercase tracking-wider text-[var(--m3-text-muted)] mb-3 ml-1">All Modules</p>
+          <div class="grid grid-cols-3 gap-3">
+            <button type="button" onclick="openModule('tab-reminders')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+              <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 grid place-items-center"><i data-lucide="bell" class="w-5 h-5"></i></div>
+              <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Reminders</span>
+            </button>
+            <button type="button" onclick="openModule('tab-transactions')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+              <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 grid place-items-center"><i data-lucide="arrow-left-right" class="w-5 h-5"></i></div>
+              <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Transactions</span>
+            </button>
+            <button type="button" onclick="openModule('tab-cashbook')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+              <div class="w-10 h-10 rounded-xl bg-green-50 text-green-600 grid place-items-center"><i data-lucide="wallet" class="w-5 h-5"></i></div>
+              <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Cash Book</span>
+            </button>
+            <button type="button" onclick="openModule('tab-bankbook')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+              <div class="w-10 h-10 rounded-xl bg-cyan-50 text-cyan-600 grid place-items-center"><i data-lucide="landmark" class="w-5 h-5"></i></div>
+              <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Bank Book</span>
+            </button>
+            <button type="button" onclick="openModule('tab-chequerecord')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+              <div class="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 grid place-items-center"><i data-lucide="receipt" class="w-5 h-5"></i></div>
+              <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Cheque Record</span>
+            </button>
+            <button type="button" onclick="openModule('tab-paymentqr')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+              <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 grid place-items-center"><i data-lucide="qr-code" class="w-5 h-5"></i></div>
+              <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Payment QR</span>
+            </button>
+            <button type="button" onclick="openModule('tab-paymentgateway')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+              <div class="w-10 h-10 rounded-xl bg-violet-50 text-violet-600 grid place-items-center"><i data-lucide="credit-card" class="w-5 h-5"></i></div>
+              <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Payment Gateway</span>
+            </button>
+            <button type="button" onclick="openModule('tab-letterhead')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+              <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 grid place-items-center"><i data-lucide="file-badge" class="w-5 h-5"></i></div>
+              <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Letterhead</span>
+            </button>
+            <button type="button" onclick="openModule('tab-invoice')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+              <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 grid place-items-center"><i data-lucide="file-spreadsheet" class="w-5 h-5"></i></div>
+              <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Invoice</span>
+            </button>
+            <button type="button" onclick="openModule('tab-stampseal')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+              <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 grid place-items-center"><i data-lucide="stamp" class="w-5 h-5"></i></div>
+              <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Stamp Seal</span>
+            </button>
+            <button type="button" onclick="openModule('tab-businesscard')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+              <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 grid place-items-center"><i data-lucide="id-card" class="w-5 h-5"></i></div>
+              <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Business Card</span>
+            </button>
+            <button type="button" onclick="openModule('tab-data')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+              <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-700 grid place-items-center"><i data-lucide="database" class="w-5 h-5"></i></div>
+              <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Data</span>
+            </button>
+            <button type="button" onclick="openModule('tab-report')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+              <div class="w-10 h-10 rounded-xl bg-fuchsia-50 text-fuchsia-600 grid place-items-center"><i data-lucide="bar-chart-3" class="w-5 h-5"></i></div>
+              <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Report</span>
+            </button>
+            <button type="button" onclick="openModule('tab-privacy')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+              <div class="w-10 h-10 rounded-xl bg-zinc-100 text-zinc-700 grid place-items-center"><i data-lucide="lock" class="w-5 h-5"></i></div>
+              <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">Privacy</span>
+            </button>
+            <button type="button" onclick="openModule('tab-more')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-[var(--m3-surface-container)] flex flex-col items-center gap-2 hover:border-[var(--m3-primary)] transition">
+              <div class="w-10 h-10 rounded-xl bg-gray-100 text-gray-700 grid place-items-center"><i data-lucide="more-horizontal" class="w-5 h-5"></i></div>
+              <span class="text-xs font-medium text-[var(--m3-text-main)] text-center">More</span>
+            </button>
+          </div>
+        </main>
+      </div>
+
+      <!-- ORIGINAL 3 MODULES (Notes, My Links, Assistant - Preserved for app.js) -->
+      <div id="tab-notes" class="tab-content bg-[var(--m3-surface)]">
+        <header class="search-header flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent cursor-pointer"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+            <h2 class="text-xl font-semibold text-[var(--m3-text-main)]">Notes</h2>
+          </div>
+        </header>
+        <main class="scroll-area px-4">
+          <form id="noteForm" class="bg-white p-4 rounded-2xl shadow-sm mb-6 border border-[var(--m3-surface-container)]">
+            <input type="text" list="clientDatalist" id="noteClient" class="m3-input !mb-3 !p-3" placeholder="Select Client..." required>
+            <datalist id="clientDatalist"></datalist>
+            <textarea id="noteContent" class="m3-input !mb-3 !p-3" placeholder="Write a note..." rows="3" required></textarea>
+            <label class="block text-sm text-[var(--m3-text-muted)] font-medium mb-1 ml-1">Reminder Date & Time</label>
+            <input type="datetime-local" id="noteReminder" class="m3-input !mb-4 !p-3">
+            <button type="submit" id="noteSubmitBtn" class="m3-btn !mt-0 !py-3">Save Note</button>
+          </form>
+          <div id="notesListContainer" class="flex flex-col gap-2"></div>
+        </main>
+      </div>
+
+      <div id="tab-links" class="tab-content bg-[var(--m3-surface)]">
+        <header class="search-header flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent cursor-pointer"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+            <h2 class="text-xl font-semibold text-[var(--m3-text-main)]">My Links</h2>
+          </div>
+        </header>
+        <main class="scroll-area px-4">
+          <form id="linkForm" class="bg-white p-4 rounded-2xl shadow-sm mb-6 border border-[var(--m3-surface-container)]">
+            <input type="hidden" id="editLinkId" value="">
+            <input type="text" id="linkName" class="m3-input !mb-3 !p-3" placeholder="Website Name" required>
+            <input type="url" id="linkUrl" class="m3-input !mb-4 !p-3" placeholder="https://..." required>
+            <button type="submit" id="linkSubmitBtn" class="m3-btn !mt-0 !py-3">Add Link</button>
+            <button type="button" id="linkCancelBtn" class="m3-btn !mt-2 !py-3 !bg-transparent !text-[var(--m3-text-main)] border border-[var(--m3-outline-variant)] hidden">Cancel Edit</button>
+          </form>
+          <div id="linksListContainer" class="flex flex-col gap-2"></div>
+        </main>
+      </div>
+
+      <div id="tab-ai" class="tab-content bg-[var(--m3-surface)] h-full flex flex-col relative">
+        <header class="search-header flex items-center justify-between shrink-0 z-10 shadow-sm border-b border-[var(--m3-surface-container)]">
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent cursor-pointer"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+            <i data-lucide="sparkles" class="w-5 h-5 text-[#8A2BE2]"></i>
+            <h2 class="text-xl font-semibold text-[var(--m3-text-main)]">AI Assistant</h2>
+          </div>
+        </header>
+        <div id="chatHistory" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3 pb-[100px]">
+          <div class="bg-[var(--m3-surface-container)] text-[var(--m3-text-main)] p-3 rounded-2xl rounded-tl-sm self-start max-w-[85%] text-sm">Hi! I'm your COREBIQ AI Assistant. Ask me to search clients, summarize notes, or answer questions!</div>
+        </div>
+        <div class="absolute bottom-[80px] left-0 right-0 p-3 bg-[var(--m3-surface)] border-t border-[var(--m3-surface-container)] z-10">
+          <form id="aiChatForm" class="flex gap-2 items-center">
+            <input type="text" id="aiInput" class="m3-input !mb-0 !p-3 flex-1 !rounded-full" placeholder="Ask about clients, notes..." required autocomplete="off">
+            <button type="submit" id="aiSendBtn" class="w-11 h-11 rounded-full bg-[var(--m3-primary)] text-white flex items-center justify-center shrink-0 disabled:opacity-50">
+              <i data-lucide="send" class="w-5 h-5 ml-1"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- 15 MENU MODULE CONTAINERS (Connected to same name .html) -->
+      <div id="tab-reminders" class="tab-content bg-[var(--m3-surface)]">
+        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Reminders</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./reminders.html" class="module-frame" title="Reminders"></iframe></main>
+      </div>
+
+      <div id="tab-transactions" class="tab-content bg-[var(--m3-surface)]">
+        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Transactions</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./transactions.html" class="module-frame" title="Transactions"></iframe></main>
+      </div>
+
+      <div id="tab-cashbook" class="tab-content bg-[var(--m3-surface)]">
+        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Cash Book</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./cashbook.html" class="module-frame" title="Cash Book"></iframe></main>
+      </div>
+
+      <div id="tab-bankbook" class="tab-content bg-[var(--m3-surface)]">
+        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Bank Book</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./bankbook.html" class="module-frame" title="Bank Book"></iframe></main>
+      </div>
+
+      <div id="tab-chequerecord" class="tab-content bg-[var(--m3-surface)]">
+        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Cheque Record</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./chequerecord.html" class="module-frame" title="Cheque Record"></iframe></main>
+      </div>
+
+      <div id="tab-paymentqr" class="tab-content bg-[var(--m3-surface)]">
+        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Payment QR</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./paymentqr.html" class="module-frame" title="Payment QR"></iframe></main>
+      </div>
+
+      <div id="tab-paymentgateway" class="tab-content bg-[var(--m3-surface)]">
+        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Payment Gateway</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./paymentgateway.html" class="module-frame" title="Payment Gateway"></iframe></main>
+      </div>
+
+      <div id="tab-letterhead" class="tab-content bg-[var(--m3-surface)]">
+        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Letterhead</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./letterhead.html" class="module-frame" title="Letterhead"></iframe></main>
+      </div>
+
+      <div id="tab-invoice" class="tab-content bg-[var(--m3-surface)]">
+        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Invoice</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./invoice.html" class="module-frame" title="Invoice"></iframe></main>
+      </div>
+
+      <div id="tab-stampseal" class="tab-content bg-[var(--m3-surface)]">
+        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Stamp Seal</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./stampseal.html" class="module-frame" title="Stamp Seal"></iframe></main>
+      </div>
+
+      <div id="tab-businesscard" class="tab-content bg-[var(--m3-surface)]">
+        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Business Card</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./businesscard.html" class="module-frame" title="Business Card"></iframe></main>
+      </div>
+
+      <div id="tab-data" class="tab-content bg-[var(--m3-surface)]">
+        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Data</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./data.html" class="module-frame" title="Data"></iframe></main>
+      </div>
+
+      <div id="tab-report" class="tab-content bg-[var(--m3-surface)]">
+        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Report</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./report.html" class="module-frame" title="Report"></iframe></main>
+      </div>
+
+      <div id="tab-privacy" class="tab-content bg-[var(--m3-surface)]">
+        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">Privacy</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./privacy.html" class="module-frame" title="Privacy"></iframe></main>
+      </div>
+
+      <div id="tab-more" class="tab-content bg-[var(--m3-surface)]">
+        <header class="search-header flex items-center gap-2"><button type="button" onclick="openModule('tab-menu')" class="p-1.5 rounded-full hover:bg-black/5 border-none bg-transparent"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-xl font-semibold">More</h2></header>
+        <main class="scroll-area flex-1 p-0 overflow-hidden"><iframe data-src="./more.html" class="module-frame" title="More"></iframe></main>
+      </div>
+
+      <!-- UPDATED BOTTOM NAVIGATION -->
+      <nav class="bottom-nav">
+        <button class="nav-item" data-target="tab-home" onclick="openModule('tab-home')">
+          <div class="nav-icon-container"><i data-lucide="home" class="w-[22px] h-[22px]"></i></div>
+          <span class="nav-label">Home</span>
+        </button>
+        <button class="nav-item active" data-target="tab-contacts" onclick="openModule('tab-contacts')">
+          <div class="nav-icon-container"><i data-lucide="users" class="w-[22px] h-[22px]"></i></div>
+          <span class="nav-label">Contacts</span>
+        </button>
+        <button class="nav-item" data-target="tab-compliance" onclick="openModule('tab-compliance')">
+          <div class="nav-icon-container"><i data-lucide="clipboard-check" class="w-[22px] h-[22px]"></i></div>
+          <span class="nav-label">Compliance</span>
+        </button>
+        <button class="nav-item" data-target="tab-credentials" onclick="openModule('tab-credentials')">
+          <div class="nav-icon-container"><i data-lucide="key-round" class="w-[22px] h-[22px]"></i></div>
+          <span class="nav-label">Credentials</span>
+        </button>
+        <button class="nav-item" data-target="tab-menu" onclick="openModule('tab-menu')">
+          <div class="nav-icon-container"><i data-lucide="menu" class="w-[22px] h-[22px]"></i></div>
+          <span class="nav-label">Menu</span>
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- IFRAME MODAL (Intact for app.js) -->
+  <div id="iframeModal" class="fixed inset-0 bg-black/50 z-[100] hidden flex-col items-center justify-end">
+    <div class="bg-[var(--m3-surface)] w-full max-w-[412px] h-[85vh] rounded-t-3xl flex flex-col shadow-2xl">
+      <div class="p-3 flex justify-between items-center border-b border-[var(--m3-surface-container)]">
+        <div class="flex items-center gap-2 overflow-hidden px-2">
+          <i data-lucide="globe" class="w-5 h-5 text-[var(--m3-text-muted)] shrink-0"></i>
+          <h3 id="iframeTitle" class="font-semibold text-[var(--m3-text-main)] truncate text-sm"></h3>
+        </div>
+        <button onclick="window.closeIframe()" class="p-2 bg-[var(--m3-surface-container)] rounded-full text-[var(--m3-text-main)] shrink-0 hover:bg-[var(--m3-surface-container-high)] border-none">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="flex-1 w-full bg-white relative">
+        <div class="absolute inset-0 flex items-center justify-center z-0 bg-white">
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--m3-primary)]"></div>
+        </div>
+        <iframe id="contentIframe" class="w-full h-full border-none z-10 relative bg-transparent" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE ROUTER & LAZY LOADER -->
+  <script>
+    window.openModule = function(targetId) {
+      // Hide all module tabs
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      
+      // Activate target module container
+      const targetEl = document.getElementById(targetId);
+      if (targetEl) {
+        targetEl.classList.add('active');
+        // Lazy-load connected .html file into module container iframe on first open
+        const iframe = targetEl.querySelector('iframe[data-src]');
+        if (iframe && !iframe.getAttribute('src')) {
+          iframe.setAttribute('src', iframe.getAttribute('data-src'));
+        }
+      }
+
+      // Sync bottom nav active state
+      const mainTabs = ['tab-home', 'tab-contacts', 'tab-compliance', 'tab-credentials', 'tab-menu'];
+      const activeNavTarget = mainTabs.includes(targetId) ? targetId : 'tab-menu';
+      document.querySelectorAll('.bottom-nav .nav-item').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-target') === activeNavTarget);
+      });
+
+      if (window.lucide) lucide.createIcons();
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) lucide.createIcons();
+    });
+  </script>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
