@@ -1,0 +1,14 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CM Comply | Sign in</title><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="assets/styles.css"><script src="https://unpkg.com/lucide@latest"></script></head>
+<body class="login-page"><main class="login-card">
+<a class="brand" href="#"><img src="assets/logo.svg" alt="CM Comply"><span><span class="brand-name">CM Comply</span><span class="brand-sub">Client Compliance Portal</span></span></a>
+<h1>Sign in</h1><p style="color:var(--muted)">Use the email address or mobile number registered with CM Filings.</p>
+<div id="loginError" class="error"></div>
+<form id="loginForm" class="form">
+<div class="field"><label>Email or mobile number</label><input id="identifier" autocomplete="username" placeholder="you@example.com or +91..." required></div>
+<div id="emailPasswordField" class="field hidden"><label>Password</label><input id="password" type="password" autocomplete="current-password" placeholder="Password"></div>
+<button id="continueBtn" class="cta gradient" type="submit">Continue</button>
+</form>
+<div id="otpBox" class="hidden" style="margin-top:15px"><form id="otpForm" class="form"><div class="field"><label>OTP</label><input id="otp" inputmode="numeric" maxlength="6" placeholder="6-digit OTP"></div><button class="cta gradient">Verify OTP</button></form></div>
+<div id="recaptcha-container"></div>
+<p style="font-size:12px;color:var(--muted);margin-top:20px">Only client records approved in Firestore can access this portal.</p>
+</main><script type="module" src="assets/auth.js"></script><script>lucide.createIcons()</script></body></html>

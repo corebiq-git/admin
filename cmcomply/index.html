@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CM Comply | Client Portal</title>
+<meta name="theme-color" content="#8B1E2D"><meta name="description" content="CM Comply client compliance and document portal">
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="assets/logo.svg">
+<link rel="stylesheet" href="assets/styles.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+<header class="site-header">
+ <div class="container header-inner">
+  <a class="brand" href="index.html"><img src="assets/logo.svg" alt="CM Comply"><span><span class="brand-name">CM Comply</span><span class="brand-sub">Client Compliance Portal</span></span></a>
+  <div class="header-actions"><button id="logoutBtn" class="cta light desktop-only">Sign out</button><button id="menuBtn" class="icon-btn mobile-only" aria-label="Menu"><i data-lucide="menu"></i></button></div>
+ </div>
+</header>
+<main class="app-shell"><section class="dashboard"><div class="container">
+ <div class="welcome"><div><div class="gradient-text" style="font-weight:700">CLIENT PORTAL</div><h1>Welcome back<span id="clientName"></span>.</h1><p>Track compliance, upload documents, initiate payments and access acknowledgements.</p></div><div class="client-chip"><i data-lucide="badge-check"></i><span id="clientId">C----</span></div></div>
+ <div class="grid grid-4">
+  <div class="card metric-card"><div class="metric-label">Pending compliance</div><div class="metric-value" id="pendingCount">—</div><div class="metric-note">Requires attention</div></div>
+  <div class="card metric-card"><div class="metric-label">Due this month</div><div class="metric-value" id="dueCount">—</div><div class="metric-note">Upcoming obligations</div></div>
+  <div class="card metric-card"><div class="metric-label">Documents</div><div class="metric-value" id="docCount">—</div><div class="metric-note">Uploaded to your portal</div></div>
+  <div class="card metric-card"><div class="metric-label">Payments</div><div class="metric-value" id="paymentCount">—</div><div class="metric-note">Recent transactions</div></div>
+ </div>
+ <div class="toolbar"><h2>Quick actions</h2></div>
+ <div class="grid grid-3">
+  <a class="card quick" href="compliance.html"><div><div class="card-icon"><i data-lucide="shield-check"></i></div><h3>Compliance Tracking</h3><p>View service status, due dates and pending actions.</p></div><span class="link">Open tracker →</span></a>
+  <a class="card quick" href="payment.html"><div><div class="card-icon"><i data-lucide="credit-card"></i></div><h3>Initiate Payment</h3><p>Create a payment request against a service or invoice.</p></div><span class="link">Make payment →</span></a>
+  <a class="card quick" href="upload.html"><div><div class="card-icon"><i data-lucide="upload-cloud"></i></div><h3>Upload Documents</h3><p>Send documents securely against your client account.</p></div><span class="link">Upload →</span></a>
+  <a class="card quick" href="acknowledgements.html"><div><div class="card-icon"><i data-lucide="download"></i></div><h3>Acknowledgements</h3><p>Download filed returns, certificates and acknowledgements.</p></div><span class="link">View downloads →</span></a>
+  <a class="card quick" href="calendar.html"><div><div class="card-icon"><i data-lucide="calendar-days"></i></div><h3>Compliance Calendar</h3><p>See upcoming statutory and service deadlines.</p></div><span class="link">Open calendar →</span></a>
+  <a class="card quick" href="profile.html"><div><div class="card-icon"><i data-lucide="user-round"></i></div><h3>Client Profile</h3><p>Review your registered contact and business details.</p></div><span class="link">View profile →</span></a>
+ </div>
+ <div class="toolbar"><h2>Recent compliance</h2><a class="link" href="compliance.html">View all →</a></div>
+ <div class="card table-wrap"><table class="table"><thead><tr><th>Compliance</th><th>Period</th><th>Due date</th><th>Status</th></tr></thead><tbody id="recentCompliance"></tbody></table></div>
+</div></section></main>
+<nav class="bottom-nav"><a class="active" href="index.html"><i data-lucide="home"></i><span>Home</span></a><a href="compliance.html"><i data-lucide="shield-check"></i><span>Compliance</span></a><a href="upload.html"><i data-lucide="upload-cloud"></i><span>Upload</span></a><a href="profile.html"><i data-lucide="user-round"></i><span>Profile</span></a></nav>
+<script type="module" src="assets/app.js"></script>
+<script>lucide.createIcons()</script>
+</body></html>
