@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>COREBIQ - Compliance</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    :root {
+      --m3-primary: #0b57d0;
+      --m3-surface: #F7F9FC;
+      --m3-surface-container: #E9EEF6;
+      --m3-text-main: #1F1F1F;
+      --m3-text-muted: #5E5E5E;
+    }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--m3-surface);
+      color: var(--m3-text-main);
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="pb-24">
+
+  <!-- TOP SUMMARY BAR -->
+  <div class="px-4 pt-3 pb-2 grid grid-cols-3 gap-2">
+    <div class="bg-white p-3 rounded-2xl border border-[var(--m3-surface-container)] shadow-sm">
+      <span class="text-[11px] text-[var(--m3-text-muted)] font-medium block">Pending Tasks</span>
+      <span id="statPending" class="text-lg font-bold text-amber-600">0</span>
+    </div>
+    <div class="bg-white p-3 rounded-2xl border border-[var(--m3-surface-container)] shadow-sm">
+      <span class="text-[11px] text-[var(--m3-text-muted)] font-medium block">Completed</span>
+      <span id="statCompleted" class="text-lg font-bold text-emerald-600">0</span>
+    </div>
+    <div class="bg-white p-3 rounded-2xl border border-[var(--m3-surface-container)] shadow-sm">
+      <span class="text-[11px] text-[var(--m3-text-muted)] font-medium block">Unpaid Amt</span>
+      <span id="statUnpaid" class="text-lg font-bold text-[var(--m3-primary)]">₹0</span>
+    </div>
+  </div>
+
+  <!-- SEARCH & FILTER TOOLBAR -->
+  <div class="px-4 py-2 sticky top-0 bg-[var(--m3-surface)] z-20">
+    <div class="flex gap-2 items-center mb-2">
+      <div class="flex-1 bg-white rounded-full px-3.5 py-2.5 flex items-center gap-2 border border-[var(--m3-surface-container)] shadow-sm">
+        <i data-lucide="search" class="w-4 h-4 text-[var(--m3-text-muted)]"></i>
+        <input type="text" id="searchInput" placeholder="Search client, ID, task (ITR, GST)..." class="w-full bg-transparent border-none outline-none text-sm">
+      </div>
+      <button id="openModalBtn" class="h-10 px-4 rounded-full bg-[var(--m3-primary)] text-white text-sm font-medium flex items-center gap-1.5 shadow-sm shrink-0">
+        <i data-lucide="plus" class="w-4 h-4"></i> New
+      </button>
+    </div>
+
+    <!-- Filter Pills -->
+    <div class="flex gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+      <button data-filter="All" class="filter-pill active px-3 py-1 rounded-full text-xs font-medium bg-[var(--m3-primary)] text-white shrink-0">All</button>
+      <button data-filter="Pending" class="filter-pill px-3 py-1 rounded-full text-xs font-medium bg-white text-[var(--m3-text-muted)] border border-[var(--m3-surface-container)] shrink-0">Pending</button>
+      <button data-filter="In Progress" class="filter-pill px-3 py-1 rounded-full text-xs font-medium bg-white text-[var(--m3-text-muted)] border border-[var(--m3-surface-container)] shrink-0">In Progress</button>
+      <button data-filter="Completed" class="filter-pill px-3 py-1 rounded-full text-xs font-medium bg-white text-[var(--m3-text-muted)] border border-[var(--m3-surface-container)] shrink-0">Completed</button>
+      <button data-filter="Unpaid" class="filter-pill px-3 py-1 rounded-full text-xs font-medium bg-white text-[var(--m3-text-muted)] border border-[var(--m3-surface-container)] shrink-0">Payment Pending</button>
+    </div>
+  </div>
+
+  <!-- COMPLIANCE LIST -->
+  <div id="complianceList" class="px-4 mt-2 flex flex-col gap-2.5">
+    <div class="text-center py-12 text-sm text-[var(--m3-text-muted)]">Loading compliances...</div>
+  </div>
+
+  <!-- ADD / EDIT COMPLIANCE MODAL -->
+  <div id="complianceModal" class="fixed inset-0 bg-black/50 z-50 hidden items-end justify-center">
+    <div class="bg-white w-full max-w-[412px] rounded-t-3xl p-5 max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div class="flex justify-between items-center mb-4">
+        <h3 id="modalTitle" class="text-lg font-semibold">Add Compliance</h3>
+        <button type="button" id="closeModalBtn" class="p-1.5 rounded-full bg-gray-100 hover:bg-gray-200">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="complianceForm" class="flex flex-col gap-3">
+        <input type="hidden" id="isEditMode" value="false">
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-xs font-medium text-gray-500 ml-1">Compliance ID</label>
+            <input type="text" id="complianceID" class="w-full mt-1 p-2.5 rounded-xl bg-gray-100 border border-gray-200 text-sm font-medium" required readonly>
+          </div>
+          <div>
+            <label class="text-xs font-medium text-gray-500 ml-1">Client ID</label>
+            <input type="text" id="clientId" placeholder="e.g. C40037" class="w-full mt-1 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm" required>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs font-medium text-gray-500 ml-1">Client Name</label>
+          <input type="text" id="clientName" list="clientsDatalist" placeholder="Search or type client name..." class="w-full mt-1 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm" required>
+          <datalist id="clientsDatalist"></datalist>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-xs font-medium text-gray-500 ml-1">Task Title</label>
+            <input type="text" id="taskTitle" list="taskSuggestions" placeholder="e.g. ITR, GST" class="w-full mt-1 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm" required>
+            <datalist id="taskSuggestions">
+              <option value="ITR">
+              <option value="GST Filing">
+              <option value="TDS Return">
+              <option value="ROC Compliance">
+              <option value="Tax Audit">
+            </datalist>
+          </div>
+          <div>
+            <label class="text-xs font-medium text-gray-500 ml-1">Amount (₹)</label>
+            <input type="number" id="amount" placeholder="3500" class="w-full mt-1 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm" required>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-xs font-medium text-gray-500 ml-1">Due Date</label>
+            <input type="date" id="dueDate" class="w-full mt-1 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm" required>
+          </div>
+          <div>
+            <label class="text-xs font-medium text-gray-500 ml-1">Created By</label>
+            <input type="text" id="createdBy" value="Admin" class="w-full mt-1 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm" required>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-xs font-medium text-gray-500 ml-1">Task Status</label>
+            <select id="status" class="w-full mt-1 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm">
+              <option value="Pending">Pending</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+              <option value="Hold">Hold</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs font-medium text-gray-500 ml-1">Payment Status</label>
+            <select id="paymentStatus" class="w-full mt-1 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm">
+              <option value="Pending">Pending</option>
+              <option value="Paid">Paid</option>
+              <option value="Partial">Partial</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs font-medium text-gray-500 ml-1">Narration / Remarks</label>
+          <textarea id="narration" rows="2" placeholder="Optional notes..." class="w-full mt-1 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm"></textarea>
+        </div>
+
+        <button type="submit" id="saveComplianceBtn" class="w-full py-3 mt-2 rounded-xl bg-[var(--m3-primary)] text-white font-semibold text-sm shadow-md">
+          Save Compliance
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import {
+      getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDocs
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // Automatically extracts Firebase config from your existing ./app.js
+    async function initFirebaseFromAppJs() {
+      if (getApps().length > 0) return getFirestore(getApps()[0]);
+      const res = await fetch('./app.js');
+      const code = await res.text();
+      const apiKey = code.match(/apiKey\s*:\s*["']([^"']+)["']/)?.[1];
+      const authDomain = code.match(/authDomain\s*:\s*["']([^"']+)["']/)?.[1];
+      const projectId = code.match(/projectId\s*:\s*["']([^"']+)["']/)?.[1];
+      const storageBucket = code.match(/storageBucket\s*:\s*["']([^"']+)["']/)?.[1];
+      const messagingSenderId = code.match(/messagingSenderId\s*:\s*["']([^"']+)["']/)?.[1];
+      const appId = code.match(/appId\s*:\s*["']([^"']+)["']/)?.[1];
+
+      const app = initializeApp({ apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId });
+      return getFirestore(app);
+    }
+
+    let db;
+    let allCompliances = [];
+    let clientsMap = new Map();
+    let activeFilter = "All";
+
+    const listEl = document.getElementById('complianceList');
+    const searchInput = document.getElementById('searchInput');
+    const modal = document.getElementById('complianceModal');
+    const form = document.getElementById('complianceForm');
+
+    // Generate next Compliance ID matching S26080005 pattern (S + YYMM + 4-digit seq)
+    function generateNextComplianceId() {
+      const now = new Date();
+      const yy = String(now.getFullYear()).slice(-2);
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const prefix = `S${yy}${mm}`;
+
+      let maxSeq = 0;
+      allCompliances.forEach(item => {
+        const id = item.complianceID || item.id || "";
+        if (id.startsWith(prefix)) {
+          const seq = parseInt(id.slice(prefix.length), 10);
+          if (!isNaN(seq) && seq > maxSeq) maxSeq = seq;
+        }
+      });
+      return `${prefix}${String(maxSeq + 1).padStart(4, '0')}`;
+    }
+
+    // Load Clients from 'clients' collection for auto-complete
+    async function loadClients() {
+      try {
+        const snap = await getDocs(collection(db, "clients"));
+        const datalist = document.getElementById('clientsDatalist');
+        datalist.innerHTML = '';
+        snap.forEach(d => {
+          const data = d.data();
+          const name = data.name || data.clientName || "";
+          const cId = data.clientId || data.id || d.id;
+          if (name) {
+            clientsMap.set(name.toLowerCase(), cId);
+            const opt = document.createElement('option');
+            opt.value = name;
+            opt.label = cId;
+            datalist.appendChild(opt);
+          }
+        });
+      } catch (e) {
+        console.warn("Clients list optional:", e);
+      }
+    }
+
+    // Auto-fill clientId when clientName is chosen
+    document.getElementById('clientName').addEventListener('input', (e) => {
+      const val = e.target.value.trim().toLowerCase();
+      if (clientsMap.has(val)) {
+        document.getElementById('clientId').value = clientsMap.get(val);
+      }
+    });
+
+    function updateSummary() {
+      let pending = 0, completed = 0, unpaidAmt = 0;
+      allCompliances.forEach(c => {
+        if (c.status === 'Completed') completed++;
+        else pending++;
+        if (c.paymentStatus !== 'Paid') unpaidAmt += Number(c.amount || 0);
+      });
+      document.getElementById('statPending').textContent = pending;
+      document.getElementById('statCompleted').textContent = completed;
+      document.getElementById('statUnpaid').textContent = `₹${unpaidAmt.toLocaleString('en-IN')}`;
+    }
+
+    function renderList() {
+      const q = searchInput.value.trim().toLowerCase();
+      const filtered = allCompliances.filter(item => {
+        const matchesSearch = !q ||
+          (item.clientName || "").toLowerCase().includes(q) ||
+          (item.clientId || "").toLowerCase().includes(q) ||
+          (item.complianceID || "").toLowerCase().includes(q) ||
+          (item.taskTitle || "").toLowerCase().includes(q);
+
+        const matchesFilter =
+          activeFilter === "All" ||
+          (activeFilter === "Unpaid" ? item.paymentStatus !== "Paid" : item.status === activeFilter);
+
+        return matchesSearch && matchesFilter;
+      });
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = `<div class="text-center py-12 text-sm text-[var(--m3-text-muted)]">No compliance records found.</div>`;
+        return;
+      }
+
+      listEl.innerHTML = filtered.map(item => {
+        const statusColors = {
+          'Completed': 'bg-emerald-50 text-emerald-700 border-emerald-200',
+          'In Progress': 'bg-blue-50 text-blue-700 border-blue-200',
+          'Hold': 'bg-gray-100 text-gray-700 border-gray-300',
+          'Pending': 'bg-amber-50 text-amber-700 border-amber-200'
+        }[item.status] || 'bg-amber-50 text-amber-700 border-amber-200';
+
+        const payColors = item.paymentStatus === 'Paid'
+          ? 'bg-emerald-50 text-emerald-700'
+          : 'bg-rose-50 text-rose-700';
+
+        return `
+          <div class="bg-white p-4 rounded-2xl border border-[var(--m3-surface-container)] shadow-sm flex flex-col gap-2">
+            <div class="flex justify-between items-start gap-2">
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5 mb-0.5">
+                  <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-blue-50 text-[var(--m3-primary)]">${item.complianceID || item.id}</span>
+                  <span class="text-[11px] text-gray-500 font-medium">${item.clientId || ''}</span>
+                </div>
+                <h4 class="font-semibold text-sm text-[var(--m3-text-main)] truncate">${item.clientName || 'Unnamed Client'}</h4>
+              </div>
+              <span class="text-xs font-semibold px-2.5 py-1 rounded-full border ${statusColors} shrink-0">${item.status || 'Pending'}</span>
+            </div>
+
+            <div class="flex items-center justify-between pt-1 border-t border-gray-100 text-xs">
+              <div class="flex items-center gap-3">
+                <span class="font-semibold text-gray-800">${item.taskTitle || '-'}</span>
+                <span class="text-gray-500">Due: ${item.dueDate || '-'}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-sm">₹${Number(item.amount || 0).toLocaleString('en-IN')}</span>
+                <span class="px-2 py-0.5 rounded-md text-[11px] font-medium ${payColors}">${item.paymentStatus || 'Pending'}</span>
+              </div>
+            </div>
+
+            ${item.narration ? `<p class="text-xs text-gray-500 bg-gray-50 p-2 rounded-lg">${item.narration}</p>` : ''}
+
+            <div class="flex justify-end gap-2 pt-1">
+              <button onclick="window.editCompliance('${item.complianceID || item.id}')" class="text-xs font-medium text-blue-600 px-2.5 py-1 rounded-lg hover:bg-blue-50">Edit</button>
+              <button onclick="window.deleteCompliance('${item.complianceID || item.id}')" class="text-xs font-medium text-rose-600 px-2.5 py-1 rounded-lg hover:bg-rose-50">Delete</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Modal controls
+    document.getElementById('openModalBtn').addEventListener('click', () => {
+      form.reset();
+      document.getElementById('isEditMode').value = "false";
+      document.getElementById('modalTitle').textContent = "Add Compliance";
+      document.getElementById('complianceID').value = generateNextComplianceId();
+      document.getElementById('dueDate').value = new Date().toISOString().split('T')[0];
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    });
+
+    document.getElementById('closeModalBtn').addEventListener('click', () => {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    });
+
+    // Edit Compliance
+    window.editCompliance = (id) => {
+      const item = allCompliances.find(c => (c.complianceID || c.id) === id);
+      if (!item) return;
+      document.getElementById('isEditMode').value = "true";
+      document.getElementById('modalTitle').textContent = "Edit Compliance";
+      document.getElementById('complianceID').value = item.complianceID || item.id;
+      document.getElementById('clientId').value = item.clientId || "";
+      document.getElementById('clientName').value = item.clientName || "";
+      document.getElementById('taskTitle').value = item.taskTitle || "";
+      document.getElementById('amount').value = item.amount ?? 0;
+      document.getElementById('dueDate').value = item.dueDate || "";
+      document.getElementById('createdBy').value = item.createdBy || "Admin";
+      document.getElementById('status').value = item.status || "Pending";
+      document.getElementById('paymentStatus').value = item.paymentStatus || "Pending";
+      document.getElementById('narration').value = item.narration || "";
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    };
+
+    // Delete Compliance
+    window.deleteCompliance = async (id) => {
+      if (!confirm(`Delete compliance ${id}?`)) return;
+      await deleteDoc(doc(db, "compliances", id));
+    };
+
+    // Save Compliance matching exact Firestore schema
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('saveComplianceBtn');
+      btn.disabled = true;
+      btn.textContent = "Saving...";
+
+      try {
+        const compId = document.getElementById('complianceID').value.trim();
+        const isEdit = document.getElementById('isEditMode').value === "true";
+        const existing = allCompliances.find(c => (c.complianceID || c.id) === compId);
+        const nowIso = new Date().toISOString();
+
+        const payload = {
+          amount: parseInt(document.getElementById('amount').value, 10) || 0,
+          clientId: document.getElementById('clientId').value.trim(),
+          clientName: document.getElementById('clientName').value.trim(),
+          complianceID: compId,
+          createdAt: isEdit && existing?.createdAt ? existing.createdAt : nowIso,
+          createdBy: document.getElementById('createdBy').value.trim() || "Admin",
+          dueDate: document.getElementById('dueDate').value,
+          narration: document.getElementById('narration').value.trim(),
+          paymentStatus: document.getElementById('paymentStatus').value,
+          status: document.getElementById('status').value,
+          taskTitle: document.getElementById('taskTitle').value.trim(),
+          updatedAt: nowIso
+        };
+
+        await setDoc(doc(db, "compliances", compId), payload, { merge: true });
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      } catch (err) {
+        alert("Failed to save: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Save Compliance";
+      }
+    });
+
+    // Search & Filter listeners
+    searchInput.addEventListener('input', renderList);
+    document.querySelectorAll('.filter-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-pill').forEach(b => {
+          b.className = "filter-pill px-3 py-1 rounded-full text-xs font-medium bg-white text-[var(--m3-text-muted)] border border-[var(--m3-surface-container)] shrink-0";
+        });
+        btn.className = "filter-pill active px-3 py-1 rounded-full text-xs font-medium bg-[var(--m3-primary)] text-white shrink-0";
+        activeFilter = btn.getAttribute('data-filter');
+        renderList();
+      });
+    });
+
+    // Boot module
+    (async () => {
+      if (window.lucide) lucide.createIcons();
+      try {
+        db = await initFirebaseFromAppJs();
+        loadClients();
+        onSnapshot(collection(db, "compliances"), (snapshot) => {
+          allCompliances = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+          allCompliances.sort((a, b) => (b.complianceID || b.id).localeCompare(a.complianceID || a.id));
+          updateSummary();
+          renderList();
+        });
+      } catch (err) {
+        listEl.innerHTML = `<div class="p-4 bg-rose-50 text-rose-700 rounded-xl text-xs">Error connecting to Firestore: ${err.message}</div>`;
+      }
+    })();
+  </script>
+</body>
+</html>
