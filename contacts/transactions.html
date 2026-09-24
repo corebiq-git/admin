@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>COREBIQ - Transactions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    :root {
+      --m3-primary: #0b57d0;
+      --m3-surface: #F7F9FC;
+      --m3-surface-container: #E9EEF6;
+      --m3-text-main: #1F1F1F;
+      --m3-text-muted: #5E5E5E;
+    }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--m3-surface);
+      color: var(--m3-text-main);
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="pb-24">
+
+  <!-- TOP SUMMARY BAR -->
+  <div class="px-4 pt-3 pb-2 grid grid-cols-3 gap-2">
+    <div class="bg-white p-3 rounded-2xl border border-[var(--m3-surface-container)] shadow-sm">
+      <span class="text-[11px] text-[var(--m3-text-muted)] font-medium block">Receipts</span>
+      <span id="statReceipts" class="text-lg font-bold text-emerald-600">₹0</span>
+    </div>
+    <div class="bg-white p-3 rounded-2xl border border-[var(--m3-surface-container)] shadow-sm">
+      <span class="text-[11px] text-[var(--m3-text-muted)] font-medium block">Payments</span>
+      <span id="statPayments" class="text-lg font-bold text-rose-600">₹0</span>
+    </div>
+    <div class="bg-white p-3 rounded-2xl border border-[var(--m3-surface-container)] shadow-sm">
+      <span class="text-[11px] text-[var(--m3-text-muted)] font-medium block">Total Entries</span>
+      <span id="statTotalCount" class="text-lg font-bold text-[var(--m3-primary)]">0</span>
+    </div>
+  </div>
+
+  <!-- SEARCH & FILTER TOOLBAR -->
+  <div class="px-4 py-2 sticky top-0 bg-[var(--m3-surface)] z-20">
+    <div class="flex gap-2 items-center mb-2">
+      <div class="flex-1 bg-white rounded-full px-3.5 py-2.5 flex items-center gap-2 border border-[var(--m3-surface-container)] shadow-sm">
+        <i data-lucide="search" class="w-4 h-4 text-[var(--m3-text-muted)]"></i>
+        <input type="text" id="searchInput" placeholder="Search TRN No, party, ledger, narration..." class="w-full bg-transparent border-none outline-none text-sm">
+      </div>
+      <button id="openModalBtn" class="h-10 px-4 rounded-full bg-[var(--m3-primary)] text-white text-sm font-medium flex items-center gap-1.5 shadow-sm shrink-0">
+        <i data-lucide="plus" class="w-4 h-4"></i> New
+      </button>
+    </div>
+
+    <!-- Voucher Type Filter Pills -->
+    <div class="flex gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+      <button data-filter="All" class="filter-pill active px-3 py-1 rounded-full text-xs font-medium bg-[var(--m3-primary)] text-white shrink-0">All</button>
+      <button data-filter="Payment" class="filter-pill px-3 py-1 rounded-full text-xs font-medium bg-white text-[var(--m3-text-muted)] border border-[var(--m3-surface-container)] shrink-0">Payment</button>
+      <button data-filter="Receipt" class="filter-pill px-3 py-1 rounded-full text-xs font-medium bg-white text-[var(--m3-text-muted)] border border-[var(--m3-surface-container)] shrink-0">Receipt</button>
+      <button data-filter="Contra" class="filter-pill px-3 py-1 rounded-full text-xs font-medium bg-white text-[var(--m3-text-muted)] border border-[var(--m3-surface-container)] shrink-0">Contra</button>
+      <button data-filter="Journal" class="filter-pill px-3 py-1 rounded-full text-xs font-medium bg-white text-[var(--m3-text-muted)] border border-[var(--m3-surface-container)] shrink-0">Journal</button>
+    </div>
+  </div>
+
+  <!-- TRANSACTIONS LIST -->
+  <div id="transactionsList" class="px-4 mt-2 flex flex-col gap-2.5">
+    <div class="text-center py-12 text-sm text-[var(--m3-text-muted)]">Loading transactions...</div>
+  </div>
+
+  <!-- ADD / EDIT TRANSACTION MODAL -->
+  <div id="transactionModal" class="fixed inset-0 bg-black/50 z-50 hidden items-end justify-center">
+    <div class="bg-white w-full max-w-[412px] rounded-t-3xl p-5 max-h-[92vh] overflow-y-auto shadow-2xl">
+      <div class="flex justify-between items-center mb-4">
+        <h3 id="modalTitle" class="text-lg font-semibold">Add Transaction</h3>
+        <button type="button" id="closeModalBtn" class="p-1.5 rounded-full bg-gray-100 hover:bg-gray-200">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="transactionForm" class="flex flex-col gap-3">
+        <input type="hidden" id="isEditMode" value="false">
+
+        <!-- Row 1: Doc No & Date -->
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-xs font-medium text-gray-500 ml-1">TRN Doc No</label>
+            <input type="text" id="trnDocNo" class="w-full mt-1 p-2.5 rounded-xl bg-gray-100 border border-gray-200 text-sm font-medium" required readonly>
+          </div>
+          <div>
+            <label class="text-xs font-medium text-gray-500 ml-1">Transaction Date</label>
+            <input type="date" id="trnDate" class="w-full mt-1 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm" required>
+          </div>
+        </div>
+
+        <!-- Row 2: Voucher Type & Amount -->
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-xs font-medium text-gray-500 ml-1">Voucher Type</label>
+            <select id="voucherType" class="w-full mt-1 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm" required>
+              <option value="Payment">Payment</option>
+              <option value="Receipt">Receipt</option>
+              <option value="Contra">Contra</option>
+              <option value="Journal">Journal</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs font-medium text-gray-500 ml-1">Amount (₹)</label>
+            <input type="number" id="amount" placeholder="2300" class="w-full mt-1 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm font-semibold" required>
+          </div>
+        </div>
+
+        <!-- Row 3: Debit & Credit Ledgers -->
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-xs font-medium text-gray-500 ml-1">Debit Ledger (Dr)</label>
+            <input type="text" id="debitLedger" list="ledgersDatalist" placeholder="e.g. Cash" class="w-full mt-1 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm" required>
+          </div>
+          <div>
+            <label class="text-xs font-medium text-gray-500 ml-1">Credit Ledger (Cr)</label>
+            <input type="text" id="creditLedger" list="ledgersDatalist" placeholder="e.g. Bank" class="w-full mt-1 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm" required>
+          </div>
+        </div>
+        <datalist id="ledgersDatalist">
+          <option value="Cash">
+          <option value="Bank">
+          <option value="Professional Fees">
+          <option value="Office Expenses">
+        </datalist>
+
+        <!-- Row 4: Party Name & Bank/Cash Ledger -->
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-xs font-medium text-gray-500 ml-1">Party Name</label>
+            <input type="text" id="partyName" list="clientsDatalist" placeholder="Client / Party (optional)" class="w-full mt-1 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm">
+            <datalist id="clientsDatalist"></datalist>
+          </div>
+          <div>
+            <label class="text-xs font-medium text-gray-500 ml-1">Bank / Cash Ledger</label>
+            <input type="text" id="bankCashLedger" list="ledgersDatalist" placeholder="Optional ledger" class="w-full mt-1 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm">
+          </div>
+        </div>
+
+        <!-- Row 5: Payment Mode & Reference No -->
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-xs font-medium text-gray-500 ml-1">Payment Mode</label>
+            <select id="paymentMode" class="w-full mt-1 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm">
+              <option value="Bank Transfer">Bank Transfer</option>
+              <option value="Cash">Cash</option>
+              <option value="UPI">UPI</option>
+              <option value="Cheque">Cheque</option>
+              <option value="Card">Card</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs font-medium text-gray-500 ml-1">Reference No</label>
+            <input type="text" id="referenceNo" placeholder="UTR / Cheque No" class="w-full mt-1 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm">
+          </div>
+        </div>
+
+        <!-- Row 6: Created By & Narration -->
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="text-xs font-medium text-gray-500 ml-1">Created By</label>
+            <input type="text" id="createdBy" value="Admin" class="w-full mt-1 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm" required>
+          </div>
+          <div class="col-span-2">
+            <label class="text-xs font-medium text-gray-500 ml-1">Narration</label>
+            <input type="text" id="narration" placeholder="Transaction remarks..." class="w-full mt-1 p-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm">
+          </div>
+        </div>
+
+        <button type="submit" id="saveTransactionBtn" class="w-full py-3 mt-2 rounded-xl bg-[var(--m3-primary)] text-white font-semibold text-sm shadow-md">
+          Save Transaction
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import {
+      getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDocs
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // Automatically extracts Firebase config from ./app.js
+    async function initFirebaseFromAppJs() {
+      if (getApps().length > 0) return getFirestore(getApps()[0]);
+      const res = await fetch('./app.js');
+      const code = await res.text();
+      const apiKey = code.match(/apiKey\s*:\s*["']([^"']+)["']/)?.[1];
+      const authDomain = code.match(/authDomain\s*:\s*["']([^"']+)["']/)?.[1];
+      const projectId = code.match(/projectId\s*:\s*["']([^"']+)["']/)?.[1];
+      const storageBucket = code.match(/storageBucket\s*:\s*["']([^"']+)["']/)?.[1];
+      const messagingSenderId = code.match(/messagingSenderId\s*:\s*["']([^"']+)["']/)?.[1];
+      const appId = code.match(/appId\s*:\s*["']([^"']+)["']/)?.[1];
+
+      const app = initializeApp({ apiKey, authDomain, projectId, storageBucket, messagingSenderId, appId });
+      return getFirestore(app);
+    }
+
+    let db;
+    let allTransactions = [];
+    let activeFilter = "All";
+
+    const listEl = document.getElementById('transactionsList');
+    const searchInput = document.getElementById('searchInput');
+    const modal = document.getElementById('transactionModal');
+    const form = document.getElementById('transactionForm');
+
+    // Generate next TRN Doc No matching TRN-26-0001 pattern (TRN-YY-XXXX)
+    function generateNextTrnDocNo() {
+      const yy = String(new Date().getFullYear()).slice(-2);
+      const prefix = `TRN-${yy}-`;
+      let maxSeq = 0;
+
+      allTransactions.forEach(item => {
+        const id = item.trnDocNo || item.id || "";
+        if (id.startsWith(prefix)) {
+          const seq = parseInt(id.slice(prefix.length), 10);
+          if (!isNaN(seq) && seq > maxSeq) maxSeq = seq;
+        }
+      });
+      return `${prefix}${String(maxSeq + 1).padStart(4, '0')}`;
+    }
+
+    // Load Clients & Ledgers for autocomplete suggestions
+    async function loadSupportingCollections() {
+      try {
+        const clientSnap = await getDocs(collection(db, "clients"));
+        const clientList = document.getElementById('clientsDatalist');
+        clientList.innerHTML = '';
+        clientSnap.forEach(d => {
+          const data = d.data();
+          const name = data.name || data.clientName || "";
+          if (name) {
+            const opt = document.createElement('option');
+            opt.value = name;
+            clientList.appendChild(opt);
+          }
+        });
+      } catch (e) {}
+
+      try {
+        const ledgerSnap = await getDocs(collection(db, "ledgers"));
+        const ledgerList = document.getElementById('ledgersDatalist');
+        const existing = new Set(['Cash', 'Bank', 'Professional Fees', 'Office Expenses']);
+        ledgerSnap.forEach(d => {
+          const data = d.data();
+          const lName = data.ledgerName || data.name || d.id;
+          if (lName && !existing.has(lName)) {
+            existing.add(lName);
+            const opt = document.createElement('option');
+            opt.value = lName;
+            ledgerList.appendChild(opt);
+          }
+        });
+      } catch (e) {}
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function updateSummary() {
+      let receipts = 0, payments = 0;
+      allTransactions.forEach(t => {
+        const amt = Number(t.amount || 0);
+        const vType = (t.voucherType || "").toLowerCase();
+        if (vType === 'receipt') receipts += amt;
+        else if (vType === 'payment') payments += amt;
+      });
+      document.getElementById('statReceipts').textContent = `₹${receipts.toLocaleString('en-IN')}`;
+      document.getElementById('statPayments').textContent = `₹${payments.toLocaleString('en-IN')}`;
+      document.getElementById('statTotalCount').textContent = allTransactions.length;
+    }
+
+    function renderList() {
+      const q = searchInput.value.trim().toLowerCase();
+      const filtered = allTransactions.filter(item => {
+        const matchesSearch = !q ||
+          (item.trnDocNo || "").toLowerCase().includes(q) ||
+          (item.partyName || "").toLowerCase().includes(q) ||
+          (item.debitLedger || "").toLowerCase().includes(q) ||
+          (item.creditLedger || "").toLowerCase().includes(q) ||
+          (item.bankCashLedger || "").toLowerCase().includes(q) ||
+          (item.narration || "").toLowerCase().includes(q) ||
+          (item.referenceNo || "").toLowerCase().includes(q);
+
+        const matchesFilter =
+          activeFilter === "All" ||
+          (item.voucherType || "").toLowerCase() === activeFilter.toLowerCase();
+
+        return matchesSearch && matchesFilter;
+      });
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = `<div class="text-center py-12 text-sm text-[var(--m3-text-muted)]">No transactions found.</div>`;
+        return;
+      }
+
+      listEl.innerHTML = filtered.map(item => {
+        const docId = item.trnDocNo || item.id;
+        const vType = item.voucherType || 'Payment';
+        const badgeStyle = {
+          'Receipt': 'bg-emerald-50 text-emerald-700 border-emerald-200',
+          'Payment': 'bg-rose-50 text-rose-700 border-rose-200',
+          'Contra': 'bg-blue-50 text-blue-700 border-blue-200',
+          'Journal': 'bg-amber-50 text-amber-700 border-amber-200'
+        }[vType] || 'bg-gray-100 text-gray-700 border-gray-200';
+
+        const amtColor = vType === 'Receipt' ? 'text-emerald-600' : (vType === 'Payment' ? 'text-rose-600' : 'text-[var(--m3-primary)]');
+
+        return `
+          <div class="bg-white p-4 rounded-2xl border border-[var(--m3-surface-container)] shadow-sm flex flex-col gap-2">
+            <div class="flex justify-between items-start gap-2">
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5 mb-0.5">
+                  <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-blue-50 text-[var(--m3-primary)]">${escapeHtml(docId)}</span>
+                  <span class="text-[11px] text-gray-500 font-medium">${escapeHtml(item.trnDate || '')}</span>
+                </div>
+                <h4 class="font-semibold text-sm text-[var(--m3-text-main)] truncate">
+                  ${escapeHtml(item.partyName || `${item.debitLedger \vert{}\vert{} '-'} →${item.creditLedger || '-'}`)}
+                </h4>
+              </div>
+              <div class="text-right shrink-0">
+                <div class="font-bold text-sm ${amtColor}">₹${Number(item.amount || 0).toLocaleString('en-IN')}</div>
+                <span class="inline-block mt-0.5 text-[10px] font-semibold px-2 py-0.5 rounded-full border ${badgeStyle}">${escapeHtml(vType)}</span>
+              </div>
+            </div>
+
+            <!-- Dr / Cr & Mode Info -->
+            <div class="bg-[var(--m3-surface)] px-3 py-2 rounded-xl border border-[var(--m3-surface-container)] grid grid-cols-2 gap-2 text-xs">
+              <div class="truncate">
+                <span class="text-gray-400 font-medium">Dr:</span>
+                <span class="font-semibold text-gray-800 ml-1">${escapeHtml(item.debitLedger || '-')}</span>
+              </div>
+              <div class="truncate">
+                <span class="text-gray-400 font-medium">Cr:</span>
+                <span class="font-semibold text-gray-800 ml-1">${escapeHtml(item.creditLedger || '-')}</span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between text-xs text-gray-500 pt-0.5">
+              <div class="flex items-center gap-2 truncate">
+                <span class="px-2 py-0.5 bg-gray-100 rounded text-gray-700 font-medium">${escapeHtml(item.paymentMode || 'Cash')}</span>
+                ${item.referenceNo ? `<span class="truncate">Ref: ${escapeHtml(item.referenceNo)}</span>` : ''}
+              </div>
+              <span class="text-[11px] text-gray-400 shrink-0">By: ${escapeHtml(item.createdBy || 'Admin')}</span>
+            </div>
+
+            ${item.narration ? `<p class="text-xs text-gray-500 bg-gray-50 px-2.5 py-1.5 rounded-lg">${escapeHtml(item.narration)}</p>` : ''}
+
+            <div class="flex justify-end gap-2 pt-1 border-t border-gray-100">
+              <button type="button" onclick="window.editTransaction('${escapeHtml(docId)}')" class="text-xs font-medium text-blue-600 px-2.5 py-1 rounded-lg hover:bg-blue-50">Edit</button>
+              <button type="button" onclick="window.deleteTransaction('${escapeHtml(docId)}')" class="text-xs font-medium text-rose-600 px-2.5 py-1 rounded-lg hover:bg-rose-50">Delete</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Modal Controls
+    document.getElementById('openModalBtn').addEventListener('click', () => {
+      form.reset();
+      document.getElementById('isEditMode').value = "false";
+      document.getElementById('modalTitle').textContent = "Add Transaction";
+      document.getElementById('trnDocNo').value = generateNextTrnDocNo();
+      document.getElementById('trnDate').value = new Date().toISOString().split('T')[0];
+      document.getElementById('createdBy').value = "Admin";
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    });
+
+    document.getElementById('closeModalBtn').addEventListener('click', () => {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    });
+
+    // Edit Transaction
+    window.editTransaction = (id) => {
+      const item = allTransactions.find(t => (t.trnDocNo || t.id) === id);
+      if (!item) return;
+      document.getElementById('isEditMode').value = "true";
+      document.getElementById('modalTitle').textContent = "Edit Transaction";
+      document.getElementById('trnDocNo').value = item.trnDocNo || item.id;
+      document.getElementById('trnDate').value = item.trnDate || "";
+      document.getElementById('voucherType').value = item.voucherType || "Payment";
+      document.getElementById('amount').value = item.amount ?? 0;
+      document.getElementById('debitLedger').value = item.debitLedger || "";
+      document.getElementById('creditLedger').value = item.creditLedger || "";
+      document.getElementById('partyName').value = item.partyName || "";
+      document.getElementById('bankCashLedger').value = item.bankCashLedger || "";
+      document.getElementById('paymentMode').value = item.paymentMode || "Bank Transfer";
+      document.getElementById('referenceNo').value = item.referenceNo || "";
+      document.getElementById('createdBy').value = item.createdBy || "Admin";
+      document.getElementById('narration').value = item.narration || "";
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    };
+
+    // Delete Transaction
+    window.deleteTransaction = async (id) => {
+      if (!confirm(`Delete transaction ${id}?`)) return;
+      await deleteDoc(doc(db, "transactions", id));
+    };
+
+    // Save Transaction matching exact Firestore schema
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('saveTransactionBtn');
+      btn.disabled = true;
+      btn.textContent = "Saving...";
+
+      try {
+        const docNo = document.getElementById('trnDocNo').value.trim();
+        const isEdit = document.getElementById('isEditMode').value === "true";
+        const existing = allTransactions.find(t => (t.trnDocNo || t.id) === docNo);
+        const nowIso = new Date().toISOString();
+
+        const payload = {
+          amount: parseInt(document.getElementById('amount').value, 10) || 0,
+          bankCashLedger: document.getElementById('bankCashLedger').value.trim(),
+          createdAt: isEdit && existing?.createdAt ? existing.createdAt : nowIso,
+          createdBy: document.getElementById('createdBy').value.trim() || "Admin",
+          creditLedger: document.getElementById('creditLedger').value.trim(),
+          debitLedger: document.getElementById('debitLedger').value.trim(),
+          narration: document.getElementById('narration').value.trim(),
+          partyName: document.getElementById('partyName').value.trim(),
+          paymentMode: document.getElementById('paymentMode').value,
+          referenceNo: document.getElementById('referenceNo').value.trim(),
+          trnDate: document.getElementById('trnDate').value,
+          trnDocNo: docNo,
+          updatedAt: nowIso,
+          voucherType: document.getElementById('voucherType').value
+        };
+
+        await setDoc(doc(db, "transactions", docNo), payload, { merge: true });
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      } catch (err) {
+        alert("Failed to save: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Save Transaction";
+      }
+    });
+
+    // Search & Filter Listeners
+    searchInput.addEventListener('input', renderList);
+    document.querySelectorAll('.filter-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-pill').forEach(b => {
+          b.className = "filter-pill px-3 py-1 rounded-full text-xs font-medium bg-white text-[var(--m3-text-muted)] border border-[var(--m3-surface-container)] shrink-0";
+        });
+        btn.className = "filter-pill active px-3 py-1 rounded-full text-xs font-medium bg-[var(--m3-primary)] text-white shrink-0";
+        activeFilter = btn.getAttribute('data-filter');
+        renderList();
+      });
+    });
+
+    // Boot Module
+    (async () => {
+      if (window.lucide) lucide.createIcons();
+      try {
+        db = await initFirebaseFromAppJs();
+        loadSupportingCollections();
+        onSnapshot(collection(db, "transactions"), (snapshot) => {
+          allTransactions = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+          allTransactions.sort((a, b) => (b.trnDocNo || b.id).localeCompare(a.trnDocNo || a.id));
+          updateSummary();
+          renderList();
+        });
+      } catch (err) {
+        listEl.innerHTML = `<div class="p-4 bg-rose-50 text-rose-700 rounded-xl text-xs">Error connecting to Firestore: ${err.message}</div>`;
+      }
+    })();
+  </script>
+</body>
+</html>
