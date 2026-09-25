@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>CM Contacts</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+  
+  <!-- Google Fonts: Outfit -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --m3-bg: #F0F4F9;
+      --m3-surface: #F7F9FC;
+      --m3-surface-container: #E9EEF6;
+      --m3-surface-container-high: #DDE3EA;
+      
+      --m3-primary: #0A56D0;
+      --m3-on-primary: #FFFFFF;
+      --m3-primary-container: #D3E3FD;
+      --m3-on-primary-container: #041E49;
+      
+      --m3-text-main: #1F1F1F;
+      --m3-text-variant: #5f6368;
+      --m3-text-muted: #80868b;
+      
+      --m3-whatsapp: #25D366;
+      --m3-error: #B3261E;
+      --m3-sky: #0284c7;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      font-family: 'Outfit', system-ui, sans-serif;
+      background-color: #1a1c1e;
+      color: var(--m3-text-main);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+    }
+
+    /* Shared Mobile Frame */
+    .app-container {
+      width: 100%;
+      max-width: 440px;
+      height: 100dvh;
+      background-color: var(--m3-surface);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Views */
+    .view {
+      display: none;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+      min-height: 0;
+    }
+    .view.active {
+      display: flex;
+    }
+
+    /* Top App Header with Back & Module Name */
+    .app-top-bar {
+      flex-shrink: 0;
+      padding: max(10px, env(safe-area-inset-top, 0px)) 12px 6px;
+      background: var(--m3-surface);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Integrated Search & Filter Row */
+    .search-filter-row {
+      flex-shrink: 0;
+      padding: 4px 12px 10px;
+      background: var(--m3-surface);
+      border-bottom: 1px solid var(--m3-surface-container);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 40;
+    }
+
+    .search-bar-inline {
+      flex: 1;
+      height: 42px;
+      background-color: var(--m3-surface-container);
+      border-radius: 9999px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s, box-shadow 0.2s;
+    }
+    .search-bar-inline:focus-within {
+      background-color: #FFFFFF;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .search-bar-inline input {
+      flex: 1;
+      min-width: 0;
+      height: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      font-size: 0.9rem;
+      color: var(--m3-text-main);
+    }
+
+    /* Header & Filter Action Buttons */
+    .header-icon-btn {
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: transparent;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--m3-text-variant);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background-color 0.15s, color 0.15s;
+    }
+    .header-icon-btn:active {
+      background-color: var(--m3-surface-container);
+      color: var(--m3-text-main);
+    }
+
+    .view-toggle {
+      display: flex;
+      gap: 2px;
+      padding: 2px;
+      border-radius: 8px;
+      background: var(--m3-surface-container);
+      flex-shrink: 0;
+    }
+    .view-toggle button {
+      width: 28px;
+      height: 26px;
+      border: 0;
+      border-radius: 6px;
+      display: grid;
+      place-items: center;
+      background: transparent;
+      color: var(--m3-text-variant);
+      cursor: pointer;
+    }
+    .view-toggle button.active {
+      background: #fff;
+      color: var(--m3-primary);
+      box-shadow: 0 1px 2px rgba(0,0,0,.1);
+    }
+
+    /* Scrollable Workspace */
+    .content-scroll {
+      flex: 1 1 0%;
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: contain;
+    }
+    .content-scroll::-webkit-scrollbar { display: none; }
+    .content-scroll { scrollbar-width: none; }
+
+    /* Contacts List & Cards */
+    #contactList { width: 100%; }
+    .contact-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 14px;
+      gap: 12px;
+      border-bottom: 1px solid var(--m3-surface-container);
+      background: #FFFFFF;
+      transition: background 0.15s ease;
+    }
+    .contact-item:active { background: var(--m3-surface-container); }
+    
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background-color: var(--m3-primary-container);
+      color: var(--m3-on-primary-container);
+      display: grid;
+      place-items: center;
+      font-size: 1.05rem;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .contact-main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .contact-name {
+      color: var(--m3-text-main);
+      font-size: 0.95rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Sky Blue Client ID */
+    .contact-id {
+      color: var(--m3-sky);
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    /* Transparent Icon Buttons */
+    .contact-actions {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+    .action-btn {
+      width: 34px;
+      height: 34px;
+      border: none;
+      background: transparent;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      color: #64748b; /* Medium grey */
+      text-decoration: none;
+      border-radius: 50%;
+      transition: transform 0.1s, opacity 0.2s;
+    }
+    .action-btn:active {
+      transform: scale(0.88);
+      color: var(--m3-text-main);
+    }
+    .action-btn.muted {
+      opacity: 0.32;
+      filter: grayscale(1);
+    }
+
+    /* Increased Bottom Navigation Bar Height */
+    .bottom-nav {
+      flex-shrink: 0;
+      width: 100%;
+      height: calc(68px + env(safe-area-inset-bottom, 0px));
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      background: rgba(247, 249, 252, 0.98);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid var(--m3-surface-container);
+      z-index: 50;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--m3-text-variant);
+      padding: 4px 0;
+    }
+    .nav-icon-container {
+      width: 52px;
+      height: 30px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      transition: background-color 0.2s, transform 0.15s;
+    }
+    .nav-item.active .nav-icon-container {
+      background-color: var(--m3-primary-container);
+      color: var(--m3-on-primary-container);
+    }
+    .nav-item.active {
+      color: var(--m3-primary);
+      font-weight: 600;
+    }
+    .nav-label {
+      font-size: 11px;
+      line-height: 13px;
+    }
+
+    /* Forms, Modals & Menus */
+    .m3-input {
+      width: 100%;
+      background-color: var(--m3-surface-container);
+      border: 1.5px solid transparent;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--m3-text-main);
+      margin-bottom: 12px;
+      outline: none;
+    }
+    .m3-input:focus {
+      background-color: #FFFFFF;
+      border-color: var(--m3-primary);
+    }
+    .m3-btn {
+      width: 100%;
+      background-color: var(--m3-primary);
+      color: #fff;
+      border: none;
+      border-radius: 9999px;
+      padding: 13px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+    .m3-btn-secondary {
+      background-color: var(--m3-surface-container-high);
+      color: var(--m3-text-main);
+    }
+    .form-section {
+      padding: 14px;
+      background: #FFFFFF;
+      border-bottom: 4px solid var(--m3-surface-container);
+    }
+    .form-section-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--m3-primary);
+      margin-bottom: 10px;
+    }
+
+    /* Grid Layout variant */
+    .module-grid {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      padding: 10px;
+    }
+    .module-grid .contact-item,
+    .module-grid .list-item {
+      flex-direction: column;
+      align-items: flex-start;
+      border-radius: 14px;
+      border: 1px solid var(--m3-surface-container);
+      padding: 12px;
+      gap: 8px;
+    }
+    .module-grid .contact-actions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+
+    /* Sort Modal Sheet */
+    .sheet-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 100;
+      display: none;
+      align-items: flex-end;
+    }
+    .sheet-backdrop.active { display: flex; }
+    .sheet-content {
+      width: 100%;
+      background: #FFFFFF;
+      border-radius: 24px 24px 0 0;
+      padding: 20px 16px max(16px, env(safe-area-inset-bottom, 0px));
+      box-shadow: 0 -4px 16px rgba(0,0,0,0.1);
+      animation: slideUp 0.2s ease-out;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+    .sort-option {
+      width: 100%;
+      padding: 14px 16px;
+      text-align: left;
+      border: none;
+      background: transparent;
+      font-size: 0.95rem;
+      font-family: inherit;
+      color: var(--m3-text-main);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    .sort-option:active { background: var(--m3-surface-container); }
+    .sort-option.selected { color: var(--m3-primary); font-weight: 600; }
+
+    /* Auth Screen */
+    .login-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 28px;
+    }
+    .login-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: var(--m3-primary-container);
+      color: var(--m3-primary);
+      display: grid;
+      place-items: center;
+      margin-bottom: 20px;
+    }
+
+    .loader {
+      border: 2px solid transparent;
+      border-top: 2px solid currentColor;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- LOGIN VIEW -->
+    <div id="loginView" class="view active">
+      <div class="login-wrapper">
+        <div class="login-icon">
+          <i data-lucide="shield-check" class="w-8 h-8"></i>
+        </div>
+        <h1 class="text-2xl font-bold mb-1">Sign in</h1>
+        <p class="text-sm text-[var(--m3-text-variant)] mb-6">Authenticate to access CM Contacts</p>
+        
+        <form id="loginForm">
+          <input type="email" id="emailInput" class="m3-input" placeholder="Email" required autocomplete="email">
+          <input type="password" id="passwordInput" class="m3-input" placeholder="Password" required autocomplete="current-password">
+          <button type="submit" id="loginBtn" class="m3-btn">
+            <span id="loginBtnText">Login</span>
+            <div class="loader" id="loginLoader"></div>
+          </button>
+        </form>
+        <div id="loginError" class="text-xs text-[var(--m3-error)] mt-3 text-center min-h-[16px]"></div>
+      </div>
+    </div>
+
+    <!-- MAIN APP WRAPPER -->
+    <div id="mainAppWrapper" class="view">
+      
+      <!-- Top App Header: Back, Module Name, Logout -->
+      <header class="app-top-bar">
+        <div class="flex items-center gap-2">
+          <button id="headerBackBtn" class="header-icon-btn" title="Back">
+            <i data-lucide="chevron-left" class="w-6 h-6"></i>
+          </button>
+          <span id="headerModuleName" class="text-lg font-bold tracking-tight">Contacts</span>
+        </div>
+        <button id="logoutBtn" class="border-none bg-transparent p-0 rounded-full flex-shrink-0" title="Logout">
+          <span class="w-7 h-7 rounded-full bg-[var(--m3-primary)] text-white text-xs font-semibold grid place-items-center">CM</span>
+        </button>
+      </header>
+
+      <!-- Integrated Search & Filter Row -->
+      <div class="search-filter-row">
+        <div class="search-bar-inline">
+          <i data-lucide="search" class="w-4 h-4 text-[var(--m3-text-muted)] flex-shrink-0"></i>
+          <input type="text" id="searchInput" placeholder="Search clients, IDs...">
+        </div>
+
+        <button type="button" class="header-icon-btn" id="filterBtn" title="Filter Contacts">
+          <i data-lucide="filter" class="w-4 h-4"></i>
+        </button>
+        <button type="button" class="header-icon-btn" id="sortBtn" title="Sort Contacts">
+          <i data-lucide="arrow-up-down" class="w-4 h-4"></i>
+        </button>
+        <label class="header-icon-btn cursor-pointer" title="Import Contacts">
+          <i data-lucide="file-down" class="w-4 h-4"></i>
+          <input type="file" id="importInput" accept=".csv,.json" class="hidden">
+        </label>
+        <button type="button" class="header-icon-btn" id="exportBtn" title="Export Contacts">
+          <i data-lucide="file-up" class="w-4 h-4"></i>
+        </button>
+
+        <div class="view-toggle" data-view-toggle="viewContacts">
+          <button type="button" class="active" data-layout="list" title="List view">
+            <i data-lucide="list" class="w-3.5 h-3.5"></i>
+          </button>
+          <button type="button" data-layout="grid" title="Grid view">
+            <i data-lucide="grid-2x2" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      </div>
+      
+      <!-- CONTACTS VIEW -->
+      <div class="sub-view flex-1 flex flex-col min-h-0" id="viewContacts" style="display: flex;">
+        <main class="content-scroll">
+          <div id="contactList"></div>
+        </main>
+      </div>
+
+      <!-- NOTES VIEW -->
+      <div class="sub-view flex-1 flex flex-col min-h-0" id="viewNotes" style="display: none;">
+        <main class="content-scroll">
+          <div class="form-section">
+            <h2 class="form-section-title">Add Note</h2>
+            <form id="noteForm">
+              <input type="text" id="noteClient" class="m3-input" placeholder="Search & Select Client" list="clientsDatalist" required autocomplete="off">
+              <datalist id="clientsDatalist"></datalist>
+              <textarea id="noteText" class="m3-input" placeholder="Note details..." rows="2" required></textarea>
+              <input type="datetime-local" id="noteReminder" class="m3-input" required>
+              <button type="submit" id="saveNoteBtn" class="m3-btn">
+                <span id="noteBtnText">Save Note</span>
+                <div class="loader" id="noteLoader"></div>
+              </button>
+            </form>
+          </div>
+          <div id="notesList" class="p-2"></div>
+        </main>
+      </div>
+
+      <!-- MY LINKS VIEW -->
+      <div class="sub-view flex-1 flex flex-col min-h-0" id="viewLinks" style="display: none;">
+        <main class="content-scroll">
+          <div class="form-section">
+            <h2 class="form-section-title" id="linkFormTitle">Add Link</h2>
+            <form id="linkForm">
+              <input type="hidden" id="linkId">
+              <input type="text" id="linkName" class="m3-input" placeholder="Link Name" required>
+              <input type="url" id="linkUrl" class="m3-input" placeholder="https://..." required>
+              <div class="flex gap-2">
+                <button type="button" id="cancelLinkEditBtn" class="m3-btn m3-btn-secondary hidden flex-1">Cancel</button>
+                <button type="submit" id="saveLinkBtn" class="m3-btn flex-1">
+                  <span id="linkBtnText">Save Link</span>
+                  <div class="loader" id="linkLoader"></div>
+                </button>
+              </div>
+            </form>
+          </div>
+          <div id="linksList" class="p-2"></div>
+        </main>
+      </div>
+
+      <!-- DATABASE VIEW -->
+      <div class="sub-view flex-1 flex flex-col min-h-0" id="viewDatabase" style="display: none;">
+        <div class="p-2 bg-[var(--m3-surface)] border-b flex gap-2">
+          <input id="databaseCollectionSelect" class="m3-input !mb-0 flex-1 text-sm" list="collectionNames" placeholder="Collection name...">
+          <datalist id="collectionNames">
+            <option value="clients"></option>
+            <option value="notes"></option>
+            <option value="links"></option>
+            <option value="users"></option>
+          </datalist>
+          <button id="refreshDatabaseBtn" class="w-10 h-10 rounded-xl bg-[var(--m3-primary-container)] text-[var(--m3-on-primary-container)] grid place-items-center">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+          </button>
+        </div>
+        <div id="databaseInfo" class="px-3 py-1.5 text-xs text-[var(--m3-text-muted)]"></div>
+        <main class="content-scroll p-2">
+          <div id="databaseList"></div>
+        </main>
+      </div>
+
+      <!-- USERS VIEW -->
+      <div class="sub-view flex-1 flex flex-col min-h-0" id="viewUsers" style="display: none;">
+        <div class="p-3 bg-[var(--m3-surface)] border-b flex justify-between items-center">
+          <div>
+            <div class="font-semibold text-sm">Users</div>
+            <div class="text-xs text-[var(--m3-text-muted)]">Firestore <code>users</code></div>
+          </div>
+          <button id="refreshUsersBtn" class="w-10 h-10 rounded-xl bg-[var(--m3-primary-container)] text-[var(--m3-on-primary-container)] grid place-items-center">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+          </button>
+        </div>
+        <div id="usersInfo" class="px-3 py-1.5 text-xs text-[var(--m3-text-muted)]"></div>
+        <main class="content-scroll p-2">
+          <div id="usersList"></div>
+        </main>
+      </div>
+
+      <!-- SORT BOTTOM SHEET DIALOG -->
+      <div id="sortSheet" class="sheet-backdrop">
+        <div class="sheet-content">
+          <div class="flex justify-between items-center mb-3">
+            <span class="font-bold text-base">Sort Contacts</span>
+            <button id="closeSortSheetBtn" class="header-icon-btn"><i data-lucide="x" class="w-5 h-5"></i></button>
+          </div>
+          <div class="flex flex-col gap-1">
+            <button class="sort-option selected" data-sort="name-asc">Name: A to Z</button>
+            <button class="sort-option" data-sort="name-desc">Name: Z to A</button>
+            <button class="sort-option" data-sort="id-asc">Client ID: A to Z</button>
+            <button class="sort-option" data-sort="id-desc">Client ID: Z to A</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ENLARGED BOTTOM NAV BAR (68px) -->
+      <nav class="bottom-nav">
+        <button class="nav-item active" data-target="viewContacts" data-name="Contacts">
+          <div class="nav-icon-container"><i data-lucide="users" class="w-5 h-5"></i></div>
+          <span class="nav-label">Contacts</span>
+        </button>
+        <button class="nav-item" data-target="viewNotes" data-name="Notes">
+          <div class="nav-icon-container"><i data-lucide="file-text" class="w-5 h-5"></i></div>
+          <span class="nav-label">Notes</span>
+        </button>
+        <button class="nav-item" data-target="viewLinks" data-name="My Links">
+          <div class="nav-icon-container"><i data-lucide="link" class="w-5 h-5"></i></div>
+          <span class="nav-label">Links</span>
+        </button>
+        <button class="nav-item" data-target="viewDatabase" data-name="Database">
+          <div class="nav-icon-container"><i data-lucide="database" class="w-5 h-5"></i></div>
+          <span class="nav-label">Database</span>
+        </button>
+        <button class="nav-item" data-target="viewUsers" data-name="Users">
+          <div class="nav-icon-container"><i data-lucide="user-cog" class="w-5 h-5"></i></div>
+          <span class="nav-label">Users</span>
+        </button>
+      </nav>
+
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, getDocs, getDoc, addDoc, deleteDoc, updateDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCXyKSTlmlzkYnH2LW408cVVWV1CPvlfBo",
+      authDomain: "cmfilings-6a37c.firebaseapp.com",
+      projectId: "cmfilings-6a37c",
+      storageBucket: "cmfilings-6a37c.firebasestorage.app",
+      messagingSenderId: "138705123778",
+      appId: "1:138705123778:web:9561bff9f0f5d89bb6fe5b",
+      measurementId: "G-09DM4NZF8D"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let clients = [];
+    let notes = [];
+    let links = [];
+    let currentView = 'viewContacts';
+    let currentSortMode = 'name-asc';
+
+    lucide.createIcons();
+
+    const loginView = document.getElementById("loginView");
+    const mainAppWrapper = document.getElementById("mainAppWrapper");
+    const loginForm = document.getElementById("loginForm");
+    const searchInput = document.getElementById("searchInput");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const headerModuleName = document.getElementById("headerModuleName");
+    const headerBackBtn = document.getElementById("headerBackBtn");
+    const noteForm = document.getElementById("noteForm");
+    const clientsDatalist = document.getElementById("clientsDatalist");
+    const linkForm = document.getElementById("linkForm");
+    const linkIdInput = document.getElementById("linkId");
+    const linkNameInput = document.getElementById("linkName");
+    const linkUrlInput = document.getElementById("linkUrl");
+    const linkFormTitle = document.getElementById("linkFormTitle");
+    const cancelLinkEditBtn = document.getElementById("cancelLinkEditBtn");
+    const databaseCollectionSelect = document.getElementById("databaseCollectionSelect");
+    const refreshDatabaseBtn = document.getElementById("refreshDatabaseBtn");
+    const databaseInfo = document.getElementById("databaseInfo");
+    const databaseList = document.getElementById("databaseList");
+    const refreshUsersBtn = document.getElementById("refreshUsersBtn");
+    const usersInfo = document.getElementById("usersInfo");
+    const usersList = document.getElementById("usersList");
+
+    const sortSheet = document.getElementById("sortSheet");
+    const sortBtn = document.getElementById("sortBtn");
+    const closeSortSheetBtn = document.getElementById("closeSortSheetBtn");
+
+    const moduleLayouts = {
+      viewContacts: 'list',
+      viewNotes: 'list',
+      viewLinks: 'list',
+      viewDatabase: 'list',
+      viewUsers: 'list'
+    };
+
+    function applyModuleLayout(viewId) {
+      const targetMap = {
+        viewContacts: 'contactList',
+        viewNotes: 'notesList',
+        viewLinks: 'linksList',
+        viewDatabase: 'databaseList',
+        viewUsers: 'usersList'
+      };
+      const target = document.getElementById(targetMap[viewId]);
+      if (target) target.classList.toggle('module-grid', moduleLayouts[viewId] === 'grid');
+
+      document.querySelectorAll(`[data-view-toggle="${viewId}"] button`).forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.layout === moduleLayouts[viewId]);
+      });
+    }
+
+    document.querySelectorAll('[data-view-toggle] button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const viewId = btn.closest('[data-view-toggle]').dataset.viewToggle;
+        moduleLayouts[viewId] = btn.dataset.layout;
+        applyModuleLayout(viewId);
+      });
+    });
+
+    // Back button defaults to home Contacts view
+    headerBackBtn.addEventListener('click', () => {
+      if (currentView !== 'viewContacts') {
+        switchSubView('viewContacts', 'Contacts');
+      }
+    });
+
+    // Sort Sheet Open/Close
+    sortBtn.addEventListener("click", () => sortSheet.classList.add("active"));
+    closeSortSheetBtn.addEventListener("click", () => sortSheet.classList.remove("active"));
+    sortSheet.addEventListener("click", (e) => {
+      if (e.target === sortSheet) sortSheet.classList.remove("active");
+    });
+
+    // Sort Options Handler (Name/ID, A-Z / Z-A)
+    document.querySelectorAll(".sort-option").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".sort-option").forEach(o => o.classList.remove("selected"));
+        btn.classList.add("selected");
+        currentSortMode = btn.dataset.sort;
+        sortSheet.classList.remove("active");
+        applySorting();
+        renderContacts(searchInput.value);
+      });
+    });
+
+    function applySorting() {
+      if (currentSortMode === 'name-asc') {
+        clients.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+      } else if (currentSortMode === 'name-desc') {
+        clients.sort((a, b) => (b.name || '').localeCompare(a.name || ''));
+      } else if (currentSortMode === 'id-asc') {
+        clients.sort((a, b) => (a.id || '').localeCompare(b.id || '', undefined, { numeric: true }));
+      } else if (currentSortMode === 'id-desc') {
+        clients.sort((a, b) => (b.id || '').localeCompare(a.id || '', undefined, { numeric: true }));
+      }
+    }
+
+    // Filter Handler
+    document.getElementById("filterBtn").addEventListener("click", () => {
+      const choice = prompt("Filter by:\n1. Has Mobile\n2. Has Email\n3. Missing Contact Info\n4. Show All", "4");
+      if (choice === "1") renderContacts("", c => Boolean(c.mobile));
+      else if (choice === "2") renderContacts("", c => Boolean(c.email));
+      else if (choice === "3") renderContacts("", c => !c.mobile || !c.email);
+      else renderContacts(searchInput.value);
+    });
+
+    // CSV Export
+    document.getElementById("exportBtn").addEventListener("click", () => {
+      if (!clients.length) return alert("No contacts available to export.");
+      let csv = "data:text/csv;charset=utf-8,ID,Name,Mobile,Email\n";
+      clients.forEach(c => {
+        csv += `"${c.id}","${c.name}","${c.mobile}","${c.email || ''}"\n`;
+      });
+      const link = document.createElement("a");
+      link.href = encodeURI(csv);
+      link.download = `cm_contacts_${Date.now()}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    });
+
+    // CSV Import
+    document.getElementById("importInput").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        const lines = evt.target.result.split("\n").filter(l => l.trim() !== "");
+        alert(`Import ready: Found ${lines.length - 1} records in CSV.`);
+      };
+      reader.readAsText(file);
+    });
+
+    function showMainView(viewId) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById(viewId).classList.add('active');
+    }
+
+    function switchSubView(targetId, moduleTitle = "") {
+      currentView = targetId;
+      document.querySelectorAll('.sub-view').forEach(v => v.style.display = 'none');
+      document.getElementById(targetId).style.display = 'flex';
+      
+      document.querySelectorAll('.nav-item').forEach(btn => {
+        const isActive = btn.dataset.target === targetId;
+        btn.classList.toggle('active', isActive);
+        if (isActive && !moduleTitle) {
+          moduleTitle = btn.dataset.name || "CM Contacts";
+        }
+      });
+
+      headerModuleName.textContent = moduleTitle;
+      
+      searchInput.value = "";
+      if (targetId === 'viewContacts') searchInput.placeholder = "Search clients, IDs...";
+      else if (targetId === 'viewNotes') searchInput.placeholder = "Search notes, clients...";
+      else if (targetId === 'viewLinks') searchInput.placeholder = "Search links...";
+      else searchInput.placeholder = "Search...";
+      
+      renderCurrentView();
+    }
+
+    document.querySelectorAll(".nav-item").forEach(btn => {
+      btn.addEventListener("click", () => switchSubView(btn.dataset.target, btn.dataset.name));
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        showMainView("mainAppWrapper");
+        fetchAllData();
+      } else {
+        showMainView("loginView");
+        clients = []; notes = []; links = [];
+      }
+    });
+
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("emailInput").value;
+      const password = document.getElementById("passwordInput").value;
+      const loginBtn = document.getElementById("loginBtn");
+      const loginBtnText = document.getElementById("loginBtnText");
+      const loginLoader = document.getElementById("loginLoader");
+      const loginError = document.getElementById("loginError");
+      
+      loginError.textContent = "";
+      loginBtn.disabled = true;
+      loginBtnText.style.display = 'none';
+      loginLoader.style.display = 'block';
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+      } catch (error) {
+        loginError.textContent = "Authentication failed. Check your credentials.";
+      } finally {
+        loginBtn.disabled = false;
+        loginBtnText.style.display = 'block';
+        loginLoader.style.display = 'none';
+      }
+    });
+
+    logoutBtn.addEventListener("click", () => signOut(auth));
+
+    async function fetchAllData() {
+      const loaderHtml = `<div class="flex justify-center items-center h-36 text-[var(--m3-primary)]"><div class="animate-spin rounded-full h-7 w-7 border-b-2 border-current"></div></div>`;
+      document.getElementById("contactList").innerHTML = loaderHtml;
+      document.getElementById("notesList").innerHTML = loaderHtml;
+      document.getElementById("linksList").innerHTML = loaderHtml;
+
+      try {
+        const clientsSnap = await getDocs(collection(db, "clients"));
+        clients = [];
+        clientsSnap.forEach(d => {
+          const val = d.data();
+          clients.push({
+            docId: d.id,
+            id: val.clientId || d.id,
+            name: val.clientName || 'Unknown Name',
+            mobile: val.mobile || '',
+            email: val.email || ''
+          });
+        });
+        applySorting();
+        populateClientsDatalist();
+
+        const notesSnap = await getDocs(collection(db, "notes"));
+        notes = [];
+        notesSnap.forEach(d => notes.push({ docId: d.id, ...d.data() }));
+        notes.sort((a, b) => new Date(a.reminderDate) - new Date(b.reminderDate));
+
+        const linksSnap = await getDocs(collection(db, "links"));
+        links = [];
+        linksSnap.forEach(d => links.push({ docId: d.id, ...d.data() }));
+        links.sort((a, b) => a.name.localeCompare(b.name));
+
+        renderCurrentView();
+      } catch (error) {
+        document.getElementById("contactList").innerHTML = `<div class="text-center p-4 text-[var(--m3-error)]">Failed to load data.</div>`;
+      }
+    }
+
+    function populateClientsDatalist() {
+      clientsDatalist.innerHTML = "";
+      clients.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = `${c.name} (${c.id})`;
+        clientsDatalist.appendChild(opt);
+      });
+    }
+
+    searchInput.addEventListener("input", (e) => renderCurrentView(e.target.value));
+
+    function renderCurrentView(query = searchInput.value) {
+      if (currentView === 'viewContacts') renderContacts(query);
+      else if (currentView === 'viewNotes') renderNotes(query);
+      else if (currentView === 'viewLinks') renderLinks(query);
+    }
+
+    function getInitials(name) { return name ? name.substring(0, 1).toUpperCase() : "?"; }
+    function formatWhatsApp(mobile) {
+      if (!mobile) return "";
+      let num = mobile.replace(/\D/g, '');
+      if (num.length === 10) num = "91" + num; 
+      return `https://wa.me/${num}`;
+    }
+
+    function escapeHtml(str) {
+      return String(str || "").replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+      }[tag] || tag));
+    }
+
+    // Direct Attach / Pick Phone Number for client
+    window.attachMobile = async (docId, clientName) => {
+      let chosenMobile = "";
+      // Try device Contact Picker API if available on mobile browser
+      if ('contacts' in navigator && 'ContactsManager' in window) {
+        try {
+          const picked = await navigator.contacts.select(['tel'], { multiple: false });
+          if (picked && picked[0]?.tel?.length) {
+            chosenMobile = picked[0].tel[0];
+          }
+        } catch (err) {}
+      }
+
+      if (!chosenMobile) {
+        chosenMobile = prompt(`Add / update mobile number for ${clientName}:`, "");
+      }
+
+      if (chosenMobile) {
+        try {
+          await updateDoc(doc(db, "clients", docId), { mobile: chosenMobile.trim() });
+          const target = clients.find(c => c.docId === docId);
+          if (target) target.mobile = chosenMobile.trim();
+          renderContacts(searchInput.value);
+        } catch (e) {
+          alert("Could not update mobile number.");
+        }
+      }
+    };
+
+    // Direct Attach / Pick Email for client
+    window.attachEmail = async (docId, clientName) => {
+      const email = prompt(`Add / update email address for ${clientName}:`, "");
+      if (email && email.includes("@")) {
+        try {
+          await updateDoc(doc(db, "clients", docId), { email: email.trim() });
+          const target = clients.find(c => c.docId === docId);
+          if (target) target.email = email.trim();
+          renderContacts(searchInput.value);
+        } catch (e) {
+          alert("Could not update email.");
+        }
+      }
+    };
+
+    function renderContacts(query = "", customPredicate = null) {
+      const listContainer = document.getElementById("contactList");
+      listContainer.innerHTML = "";
+
+      let filtered = clients.filter(c =>
+        (c.name && c.name.toLowerCase().includes(query.toLowerCase())) ||
+        (c.id && c.id.toLowerCase().includes(query.toLowerCase())) ||
+        (c.mobile && c.mobile.includes(query)) ||
+        (c.email && c.email.toLowerCase().includes(query.toLowerCase()))
+      );
+
+      if (customPredicate) filtered = filtered.filter(customPredicate);
+
+      if (!filtered.length) {
+        listContainer.innerHTML = `<div class="flex flex-col items-center justify-center h-40 text-[var(--m3-text-muted)]"><i data-lucide="search-x" class="w-8 h-8 mb-2"></i><p class="text-sm">No clients found.</p></div>`;
+        lucide.createIcons();
+        return;
+      }
+
+      filtered.forEach(client => {
+        const mobile = client.mobile ? client.mobile.trim() : "";
+        const email = client.email ? client.email.trim() : "";
+        const escapedName = escapeHtml(client.name);
+
+        // Action 1: Email (Active or Muted with Add Prompt)
+        const emailBtn = email 
+          ? `<a href="mailto:${encodeURIComponent(email)}" class="action-btn" title="Send Email"><i data-lucide="mail" class="w-[18px] h-[18px]"></i></a>`
+          : `<button type="button" class="action-btn muted" title="No Email - Tap to Add" onclick="attachEmail('${client.docId}', '${escapedName}')"><i data-lucide="mail" class="w-[18px] h-[18px]"></i></button>`;
+
+        // Action 2: WhatsApp (Active or Muted with Add Prompt)
+        const waBtn = mobile
+          ? `<a href="${formatWhatsApp(mobile)}" target="_blank" rel="noopener noreferrer" class="action-btn" title="WhatsApp"><i data-lucide="message-circle" class="w-[18px] h-[18px]"></i></a>`
+          : `<button type="button" class="action-btn muted" title="No Number - Tap to Add" onclick="attachMobile('${client.docId}', '${escapedName}')"><i data-lucide="message-circle" class="w-[18px] h-[18px]"></i></button>`;
+
+        // Action 3: Phone (Active or Muted with Add Prompt)
+        const phoneBtn = mobile
+          ? `<a href="tel:${encodeURIComponent(mobile)}" class="action-btn" title="Call"><i data-lucide="phone" class="w-[18px] h-[18px]"></i></a>`
+          : `<button type="button" class="action-btn muted" title="No Number - Tap to Add" onclick="attachMobile('${client.docId}', '${escapedName}')"><i data-lucide="phone" class="w-[18px] h-[18px]"></i></button>`;
+
+        const html = `
+          <div class="contact-item">
+            <div class="avatar">${getInitials(client.name)}</div>
+            <div class="contact-main">
+              <div class="contact-name">${escapedName}</div>
+              <!-- Sky Blue Client ID -->
+              <div class="contact-id">ID: ${escapeHtml(client.id)}</div>
+            </div>
+            <div class="contact-actions">
+              ${emailBtn}
+              ${waBtn}
+              ${phoneBtn}
+            </div>
+          </div>
+        `;
+        listContainer.insertAdjacentHTML('beforeend', html);
+      });
+
+      lucide.createIcons();
+      applyModuleLayout('viewContacts');
+    }
+
+    function renderNotes(query = "") {
+      const listContainer = document.getElementById("notesList");
+      listContainer.innerHTML = "";
+      
+      const filtered = notes.filter(n => 
+        (n.clientRef && n.clientRef.toLowerCase().includes(query.toLowerCase())) || 
+        (n.text && n.text.toLowerCase().includes(query.toLowerCase()))
+      );
+
+      if (!filtered.length) {
+        listContainer.innerHTML = `<div class="text-center p-6 text-sm text-[var(--m3-text-muted)]">No notes recorded.</div>`;
+        return;
+      }
+
+      filtered.forEach(note => {
+        const d = new Date(note.reminderDate);
+        const html = `
+          <div class="contact-item !flex-col !items-start gap-1 rounded-xl mb-2">
+            <div class="flex justify-between w-full">
+              <span class="font-semibold text-sm text-[var(--m3-primary)]">${escapeHtml(note.clientRef)}</span>
+              <span class="text-[11px] text-[var(--m3-text-muted)]">${d.toLocaleString()}</span>
+            </div>
+            <p class="text-xs text-[var(--m3-text-main)]">${escapeHtml(note.text)}</p>
+          </div>
+        `;
+        listContainer.insertAdjacentHTML('beforeend', html);
+      });
+      lucide.createIcons();
+      applyModuleLayout('viewNotes');
+    }
+
+    noteForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("saveNoteBtn");
+      const loader = document.getElementById("noteLoader");
+      const txt = document.getElementById("noteBtnText");
+      btn.disabled = true; txt.style.display = 'none'; loader.style.display = 'block';
+
+      try {
+        const newNote = {
+          clientRef: document.getElementById("noteClient").value,
+          text: document.getElementById("noteText").value,
+          reminderDate: document.getElementById("noteReminder").value,
+          createdAt: new Date().toISOString()
+        };
+        const docRef = await addDoc(collection(db, "notes"), newNote);
+        notes.push({ docId: docRef.id, ...newNote });
+        noteForm.reset();
+        renderNotes();
+      } catch (err) {
+        alert("Failed to save note.");
+      } finally {
+        btn.disabled = false; txt.style.display = 'block'; loader.style.display = 'none';
+      }
+    });
+
+    function renderLinks(query = "") {
+      const listContainer = document.getElementById("linksList");
+      listContainer.innerHTML = "";
+      
+      const filtered = links.filter(l => 
+        (l.name && l.name.toLowerCase().includes(query.toLowerCase())) || 
+        (l.url && l.url.toLowerCase().includes(query.toLowerCase()))
+      );
+
+      if (!filtered.length) {
+        listContainer.innerHTML = `<div class="text-center p-6 text-sm text-[var(--m3-text-muted)]">No links available.</div>`;
+        return;
+      }
+
+      filtered.forEach(link => {
+        const html = `
+          <div class="contact-item rounded-xl mb-2">
+            <div class="avatar"><i data-lucide="link" class="w-4 h-4"></i></div>
+            <div class="contact-main">
+              <div class="contact-name">${escapeHtml(link.name)}</div>
+              <div class="contact-id truncate"><a href="${link.url}" target="_blank" class="text-[var(--m3-primary)]">${link.url}</a></div>
+            </div>
+            <div class="contact-actions">
+              <a href="${link.url}" target="_blank" class="action-btn"><i data-lucide="external-link" class="w-4 h-4"></i></a>
+              <button class="action-btn" onclick="deleteLink('${link.docId}')"><i data-lucide="trash-2" class="w-4 h-4 text-red-600"></i></button>
+            </div>
+          </div>
+        `;
+        listContainer.insertAdjacentHTML('beforeend', html);
+      });
+      lucide.createIcons();
+      applyModuleLayout('viewLinks');
+    }
+
+    linkForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("saveLinkBtn");
+      const loader = document.getElementById("linkLoader");
+      const txt = document.getElementById("linkBtnText");
+      btn.disabled = true; txt.style.display = 'none'; loader.style.display = 'block';
+
+      try {
+        const data = {
+          name: linkNameInput.value,
+          url: linkUrlInput.value,
+          createdAt: new Date().toISOString()
+        };
+        const docRef = await addDoc(collection(db, "links"), data);
+        links.push({ docId: docRef.id, ...data });
+        linkForm.reset();
+        renderLinks();
+      } catch (err) {
+        alert("Failed to save link.");
+      } finally {
+        btn.disabled = false; txt.style.display = 'block'; loader.style.display = 'none';
+      }
+    });
+
+    window.deleteLink = async (docId) => {
+      if (confirm("Delete this link?")) {
+        await deleteDoc(doc(db, "links", docId));
+        links = links.filter(l => l.docId !== docId);
+        renderLinks();
+      }
+    };
+
+    async function loadDatabaseCollection(colName) {
+      if (!colName) return;
+      databaseList.innerHTML = `<div class="text-center p-4 text-xs text-[var(--m3-text-muted)]">Loading...</div>`;
+      try {
+        const snap = await getDocs(collection(db, colName));
+        databaseInfo.textContent = `${snap.size} documents found`;
+        if (snap.empty) {
+          databaseList.innerHTML = `<div class="text-center p-4 text-xs text-[var(--m3-text-muted)]">No documents in this collection.</div>`;
+          return;
+        }
+        let cards = "";
+        snap.forEach(d => {
+          cards += `
+            <div class="bg-white p-3 rounded-xl border border-[var(--m3-surface-container)] mb-2 text-xs">
+              <div class="font-bold text-[var(--m3-primary)] mb-1">${escapeHtml(d.id)}</div>
+              <pre class="overflow-x-auto whitespace-pre-wrap font-mono text-[11px] text-[var(--m3-text-variant)]">${escapeHtml(JSON.stringify(d.data(), null, 2))}</pre>
+            </div>
+          `;
+        });
+        databaseList.innerHTML = cards;
+      } catch (e) {
+        databaseList.innerHTML = `<div class="text-center p-4 text-xs text-[var(--m3-error)]">Failed to load collection.</div>`;
+      }
+    }
+
+    refreshDatabaseBtn.addEventListener("click", () => {
+      loadDatabaseCollection(databaseCollectionSelect.value.trim());
+    });
+
+    async function loadUsers() {
+      usersList.innerHTML = `<div class="text-center p-4 text-xs text-[var(--m3-text-muted)]">Loading users...</div>`;
+      try {
+        const snap = await getDocs(collection(db, "users"));
+        usersInfo.textContent = `${snap.size} users found`;
+        if (snap.empty) {
+          usersList.innerHTML = `<div class="text-center p-4 text-xs text-[var(--m3-text-muted)]">No documents in "users" collection.</div>`;
+          return;
+        }
+        let cards = "";
+        snap.forEach(d => {
+          cards += `
+            <div class="bg-white p-3 rounded-xl border border-[var(--m3-surface-container)] mb-2 text-xs">
+              <div class="font-bold text-[var(--m3-primary)] mb-1">${escapeHtml(d.id)}</div>
+              <pre class="overflow-x-auto whitespace-pre-wrap font-mono text-[11px] text-[var(--m3-text-variant)]">${escapeHtml(JSON.stringify(d.data(), null, 2))}</pre>
+            </div>
+          `;
+        });
+        usersList.innerHTML = cards;
+      } catch (e) {
+        usersList.innerHTML = `<div class="text-center p-4 text-xs text-[var(--m3-error)]">Failed to load users.</div>`;
+      }
+    }
+
+    refreshUsersBtn.addEventListener("click", loadUsers);
+  </script>
+</body>
+</html>
