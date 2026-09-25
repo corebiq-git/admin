@@ -291,47 +291,135 @@
     /* Bottom Navigation */
     .bottom-nav {
       position: absolute;
-      bottom: 0;
       left: 0;
       right: 0;
-      height: 80px;
-      background-color: var(--m3-bg);
+      bottom: 0;
+      min-height: 68px;
+      height: auto;
+      box-sizing: border-box;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      align-items: stretch;
+      padding: 5px 3px max(5px, env(safe-area-inset-bottom, 0px));
+      background: rgba(247,249,252,.98);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       border-top: 1px solid var(--m3-surface-container);
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      padding-bottom: env(safe-area-inset-bottom, 0); 
+      z-index: 100;
     }
+
     .nav-item {
+      min-width: 0;
+      padding: 2px 0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
+      justify-content: center;
+      gap: 2px;
       color: var(--m3-text-variant);
       border: none;
       background: transparent;
       cursor: pointer;
-      width: 72px;
+      font-family: inherit;
     }
+
     .nav-icon-container {
-      width: 64px;
-      height: 32px;
-      border-radius: 16px;
+      width: 50px;
+      height: 30px;
+      border-radius: 15px;
       display: grid;
       place-items: center;
-      transition: background-color 0.2s;
+      transition: background-color .2s, transform .15s;
     }
+
     .nav-item.active .nav-icon-container {
       background-color: var(--m3-primary-container);
       color: var(--m3-on-primary-container);
     }
+
     .nav-item.active {
       color: var(--m3-text-main);
       font-weight: 600;
     }
+
+    .nav-item:active .nav-icon-container {
+      transform: scale(.94);
+    }
+
     .nav-label {
-      font-size: 0.75rem;
+      font-size: 10px;
+      line-height: 13px;
       font-weight: 500;
+      max-width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    /* Grid / List switch */
+    .view-toolbar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 7px 12px;
+      background: var(--m3-surface);
+      border-bottom: 1px solid var(--m3-surface-container);
+      position: sticky;
+      top: 0;
+      z-index: 6;
+    }
+
+    .view-toggle {
+      display: flex;
+      gap: 2px;
+      padding: 3px;
+      border-radius: 12px;
+      background: var(--m3-surface-container);
+    }
+
+    .view-toggle button {
+      width: 38px;
+      height: 32px;
+      border: 0;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      background: transparent;
+      color: var(--m3-text-variant);
+      cursor: pointer;
+    }
+
+    .view-toggle button.active {
+      background: #fff;
+      color: var(--m3-primary);
+      box-shadow: 0 1px 3px rgba(0,0,0,.12);
+    }
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      padding: 10px 12px 12px;
+    }
+
+    .module-grid .list-item {
+      margin: 0;
+      border: 1px solid var(--m3-surface-container);
+      border-radius: 16px;
+      background: #fff;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 14px;
+      gap: 10px;
+    }
+
+    .module-grid .item-info { width: 100%; }
+    .module-grid .item-actions { width: 100%; justify-content: flex-end; }
+
+    @media (max-width: 360px) {
+      .module-grid { grid-template-columns: 1fr; }
+      .nav-label { font-size: 9px; }
+      .nav-icon-container { width: 44px; }
     }
 
     /* Floating Action Button (FAB) */
@@ -524,6 +612,16 @@
       
       <!-- CONTACTS SUB-VIEW -->
       <main class="content-scroll sub-view" id="viewContacts" style="display: block;">
+        <div class="view-toolbar">
+          <div class="view-toggle" data-view-toggle="viewContacts">
+            <button type="button" class="active" data-layout="list" title="List view">
+              <i data-lucide="list" class="w-5 h-5"></i>
+            </button>
+            <button type="button" data-layout="grid" title="Grid view">
+              <i data-lucide="grid-2x2" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </div>
         <div id="contactList">
           <!-- Generated via JS -->
         </div>
@@ -531,6 +629,16 @@
 
       <!-- NOTES SUB-VIEW -->
       <main class="content-scroll sub-view" id="viewNotes" style="display: none;">
+        <div class="view-toolbar">
+          <div class="view-toggle" data-view-toggle="viewNotes">
+            <button type="button" class="active" data-layout="list" title="List view">
+              <i data-lucide="list" class="w-5 h-5"></i>
+            </button>
+            <button type="button" data-layout="grid" title="Grid view">
+              <i data-lucide="grid-2x2" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </div>
         <div class="form-section">
           <h2 class="form-section-title">Add Note</h2>
           <form id="noteForm">
@@ -555,6 +663,16 @@
 
       <!-- MY LINKS SUB-VIEW -->
       <main class="content-scroll sub-view" id="viewLinks" style="display: none;">
+        <div class="view-toolbar">
+          <div class="view-toggle" data-view-toggle="viewLinks">
+            <button type="button" class="active" data-layout="list" title="List view">
+              <i data-lucide="list" class="w-5 h-5"></i>
+            </button>
+            <button type="button" data-layout="grid" title="Grid view">
+              <i data-lucide="grid-2x2" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </div>
         <div class="form-section">
           <h2 class="form-section-title" id="linkFormTitle">Add Link</h2>
           <form id="linkForm">
@@ -578,14 +696,26 @@
 
       <!-- FIREBASE DATABASE SUB-VIEW -->
       <main class="content-scroll sub-view" id="viewDatabase" style="display: none;">
+        <div class="view-toolbar">
+          <div class="view-toggle" data-view-toggle="viewDatabase">
+            <button type="button" class="active" data-layout="list" title="List view">
+              <i data-lucide="list" class="w-5 h-5"></i>
+            </button>
+            <button type="button" data-layout="grid" title="Grid view">
+              <i data-lucide="grid-2x2" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </div>
         <div class="admin-toolbar">
-          <select id="databaseCollectionSelect" class="m3-select" aria-label="Firestore collection">
-            <option value="clients">clients</option>
-            <option value="notes">notes</option>
-            <option value="links">links</option>
-            <option value="users">users</option>
-          </select>
-          <button id="refreshDatabaseBtn" class="admin-refresh" title="Refresh Firebase data">
+          <input id="databaseCollectionSelect" class="m3-select" list="collectionNames"
+                 placeholder="Enter Firestore collection name..." aria-label="Firestore collection">
+          <datalist id="collectionNames">
+            <option value="clients"></option>
+            <option value="notes"></option>
+            <option value="links"></option>
+            <option value="users"></option>
+          </datalist>
+          <button id="refreshDatabaseBtn" class="admin-refresh" title="Load / refresh collection">
             <i data-lucide="refresh-cw" class="w-5 h-5"></i>
           </button>
         </div>
@@ -597,6 +727,16 @@
 
       <!-- FIREBASE USERS SUB-VIEW -->
       <main class="content-scroll sub-view" id="viewUsers" style="display: none;">
+        <div class="view-toolbar">
+          <div class="view-toggle" data-view-toggle="viewUsers">
+            <button type="button" class="active" data-layout="list" title="List view">
+              <i data-lucide="list" class="w-5 h-5"></i>
+            </button>
+            <button type="button" data-layout="grid" title="Grid view">
+              <i data-lucide="grid-2x2" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </div>
         <div class="admin-toolbar">
           <div class="flex-1">
             <div class="font-semibold text-sm">Users</div>
@@ -653,7 +793,7 @@
     // Import Firebase SDKs from CDN
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, getDocs, addDoc, deleteDoc, updateDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, getDoc, addDoc, deleteDoc, updateDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // Firebase configuration provided by user
     const firebaseConfig = {
@@ -710,6 +850,38 @@
     const refreshUsersBtn = document.getElementById("refreshUsersBtn");
     const usersInfo = document.getElementById("usersInfo");
     const usersList = document.getElementById("usersList");
+
+    const moduleLayouts = {
+      viewContacts: 'list',
+      viewNotes: 'list',
+      viewLinks: 'list',
+      viewDatabase: 'list',
+      viewUsers: 'list'
+    };
+
+    function applyModuleLayout(viewId) {
+      const targetMap = {
+        viewContacts: 'contactList',
+        viewNotes: 'notesList',
+        viewLinks: 'linksList',
+        viewDatabase: 'databaseList',
+        viewUsers: 'usersList'
+      };
+      const target = document.getElementById(targetMap[viewId]);
+      if (target) target.classList.toggle('module-grid', moduleLayouts[viewId] === 'grid');
+
+      document.querySelectorAll(`[data-view-toggle="${viewId}"] button`).forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.layout === moduleLayouts[viewId]);
+      });
+    }
+
+    document.querySelectorAll('[data-view-toggle] button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const viewId = btn.closest('[data-view-toggle]').dataset.viewToggle;
+        moduleLayouts[viewId] = btn.dataset.layout;
+        applyModuleLayout(viewId);
+      });
+    });
 
     // Helper: Toggle Main Views (Login vs App)
     function showMainView(viewId) {
@@ -905,6 +1077,7 @@
         listContainer.insertAdjacentHTML('beforeend', html);
       });
       lucide.createIcons();
+       applyModuleLayout('viewContacts');
     }
 
     // 2. Render Notes
@@ -938,6 +1111,7 @@
         listContainer.insertAdjacentHTML('beforeend', html);
       });
       lucide.createIcons();
+       applyModuleLayout('viewNotes');
     }
 
     // Handle Note Submit
@@ -1002,6 +1176,7 @@
         listContainer.insertAdjacentHTML('beforeend', html);
       });
       lucide.createIcons();
+       applyModuleLayout('viewLinks');
     }
 
     // Handle Link Submit (Add/Edit)
@@ -1084,6 +1259,149 @@
     cancelLinkEditBtn.addEventListener("click", resetLinkForm);
 
 
+
+    /* =========================================================
+       GENERIC FIRESTORE COLLECTION + EDITOR
+    ========================================================= */
+
+    let currentDatabaseCollection = "";
+
+    function loadAnyCollection() {
+      const name = databaseCollectionSelect.value.trim();
+      if (!name) {
+        databaseInfo.textContent = "Enter a Firestore collection name.";
+        databaseList.innerHTML = `<div class="empty-admin">Enter a collection name above, then tap refresh.</div>`;
+        return;
+      }
+      currentDatabaseCollection = name;
+      loadDatabaseCollection(name);
+    }
+
+    databaseCollectionSelect.addEventListener("change", loadAnyCollection);
+    databaseCollectionSelect.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        loadAnyCollection();
+      }
+    });
+
+    /* Edit dialog */
+    const editor = document.createElement("div");
+    editor.id = "dbEditor";
+    editor.className = "fixed inset-0 hidden items-end sm:items-center justify-center z-[500] bg-black/40 p-3";
+    editor.innerHTML = `
+      <div class="w-full max-w-lg max-h-[90vh] overflow-hidden bg-white rounded-[24px] shadow-2xl flex flex-col">
+        <div class="px-5 py-4 border-b flex items-center justify-between">
+          <div>
+            <div id="dbEditorTitle" class="font-semibold text-lg">Edit document</div>
+            <div id="dbEditorSub" class="text-xs text-[var(--m3-text-muted)]"></div>
+          </div>
+          <button id="dbEditorClose" class="action-btn"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+        <form id="dbEditorForm" class="p-4 overflow-y-auto">
+          <div id="dbEditorFields"></div>
+          <div class="flex gap-2 mt-2">
+            <button type="button" id="dbEditorCancel" class="m3-btn m3-btn-secondary flex-1">Cancel</button>
+            <button type="submit" class="m3-btn flex-1">Save Changes</button>
+          </div>
+        </form>
+      </div>`;
+    document.body.appendChild(editor);
+    lucide.createIcons();
+
+    let editingCollection = "";
+    let editingDocId = "";
+
+    function closeDbEditor() {
+      editor.classList.add("hidden");
+      editor.classList.remove("flex");
+    }
+
+    function openDbEditor() {
+      editor.classList.remove("hidden");
+      editor.classList.add("flex");
+      lucide.createIcons();
+    }
+
+    document.getElementById("dbEditorClose").addEventListener("click", closeDbEditor);
+    document.getElementById("dbEditorCancel").addEventListener("click", closeDbEditor);
+
+    window.editDatabaseDocument = async (collectionName, docId) => {
+      try {
+        const snap = await getDoc(doc(db, collectionName, docId));
+        if (!snap.exists()) {
+          alert("Document not found.");
+          return;
+        }
+
+        editingCollection = collectionName;
+        editingDocId = docId;
+
+        document.getElementById("dbEditorTitle").textContent = "Edit document";
+        document.getElementById("dbEditorSub").textContent = `${collectionName} / ${docId}`;
+
+        const fields = document.getElementById("dbEditorFields");
+        const data = snap.data();
+
+        fields.innerHTML = Object.keys(data).sort().map(key => {
+          let value = data[key];
+          if (value && typeof value === "object") {
+            try { value = JSON.stringify(value, null, 2); } catch (_) {}
+          }
+          return `
+            <label class="block mb-3">
+              <span class="block text-xs font-semibold text-[var(--m3-text-variant)] mb-1">${escapeHtml(key)}</span>
+              <textarea class="m3-input !mb-0 db-edit-field" data-field="${escapeHtml(key)}" rows="2">${escapeHtml(value ?? "")}</textarea>
+            </label>`;
+        }).join("") || `<div class="empty-admin">No fields in this document.</div>`;
+
+        openDbEditor();
+      } catch (err) {
+        console.error(err);
+        alert("Could not open document.");
+      }
+    };
+
+    window.deleteDatabaseDocument = async (collectionName, docId) => {
+      if (!confirm(`Delete ${collectionName}/${docId}?`)) return;
+
+      try {
+        await deleteDoc(doc(db, collectionName, docId));
+        await loadDatabaseCollection(collectionName);
+      } catch (err) {
+        console.error(err);
+        alert("Delete failed. Check Firestore rules.");
+      }
+    };
+
+    document.getElementById("dbEditorForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const updates = {};
+      document.querySelectorAll(".db-edit-field").forEach(field => {
+        const raw = field.value.trim();
+        let value = raw;
+
+        if (raw === "true") value = true;
+        else if (raw === "false") value = false;
+        else if (raw !== "" && !Number.isNaN(Number(raw))) value = Number(raw);
+        else {
+          try { value = JSON.parse(raw); } catch (_) {}
+        }
+
+        updates[field.dataset.field] = value;
+      });
+
+      try {
+        await updateDoc(doc(db, editingCollection, editingDocId), updates);
+        closeDbEditor();
+        await loadDatabaseCollection(editingCollection);
+      } catch (err) {
+        console.error(err);
+        alert("Update failed. Check Firestore rules.");
+      }
+    });
+
     /* =========================================================
        FIREBASE DATABASE VIEW
        Shows complete documents from selected Firestore collection.
@@ -1120,7 +1438,7 @@
     }
 
     async function loadDatabaseCollection(collectionName) {
-      if (!ADMIN_COLLECTIONS.includes(collectionName)) return;
+      if (!collectionName) return;
 
       databaseList.innerHTML =
         `<div class="empty-admin">Loading <b>${escapeHtml(collectionName)}</b>...</div>`;
@@ -1182,8 +1500,18 @@
         return `
           <section class="data-card">
             <div class="data-card-header">
-              <span class="font-semibold text-sm">Document</span>
-              <span class="data-card-id">${escapeHtml(row.docId)}</span>
+              <div class="min-w-0">
+                <div class="font-semibold text-sm">Document</div>
+                <div class="data-card-id">${escapeHtml(row.docId)}</div>
+              </div>
+              <div class="flex gap-1">
+                <button class="action-btn" onclick="editDatabaseDocument('${escapeHtml(collectionName)}','${escapeHtml(row.docId)}')" title="Edit">
+                  <i data-lucide="pencil" class="w-4 h-4"></i>
+                </button>
+                <button class="action-btn action-danger" onclick="deleteDatabaseDocument('${escapeHtml(collectionName)}','${escapeHtml(row.docId)}')" title="Delete">
+                  <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+              </div>
             </div>
             <div class="data-table-wrap">
               <table class="data-table">
@@ -1206,10 +1534,7 @@
       renderDatabaseRows(query);
     }
 
-    databaseCollectionSelect.addEventListener("change", () => {
-      searchInput.value = "";
-      loadDatabaseCollection(databaseCollectionSelect.value);
-    });
+    /* Collection name is now free-form; use the generic loader above. */
 
     refreshDatabaseBtn.addEventListener("click", () => {
       loadDatabaseCollection(databaseCollectionSelect.value);
