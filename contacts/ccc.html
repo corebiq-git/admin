@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>COREBIQ</title>
+  
+  <link rel="icon" type="image/png" href="assets/fav.png">
+  <link rel="apple-touch-icon" href="assets/app-icon.png">
+  
+  <!-- Inline Web App Manifest -->
+  <link rel="manifest" href="data:application/manifest+json;utf-8,%7B%22name%22%3A%22COREBIQ%22%2C%22short_name%22%3A%22COREBIQ%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23F7F9FC%22%2C%22theme_color%22%3A%22%230A56D0%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22assets%2Fapp-icon.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%7D">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+  
+  <!-- Outfit Typography -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --m3-bg: #F0F4F9;
+      --m3-surface: #F7F9FC;
+      --m3-surface-container: #E9EEF6;
+      --m3-surface-container-high: #DDE3EA;
+      
+      --m3-primary: #0A56D0;
+      --m3-on-primary: #FFFFFF;
+      --m3-primary-container: #D3E3FD;
+      --m3-on-primary-container: #041E49;
+      
+      --m3-text-main: #1F1F1F;
+      --m3-text-variant: #5F6368;
+      --m3-text-muted: #80868B;
+      --m3-whatsapp: #25D366;
+      --m3-sky: #0284c7;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      font-family: 'Outfit', system-ui, sans-serif;
+      background-color: #121316;
+      color: var(--m3-text-main);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+    }
+
+    /* Fixed App Viewport */
+    .app-viewport {
+      width: 100%;
+      max-width: 440px;
+      height: 100dvh;
+      background-color: var(--m3-surface);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Splash Screen */
+    #splashScreen {
+      position: absolute;
+      inset: 0;
+      background-color: #FFFFFF;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.4s ease, visibility 0.4s;
+    }
+    #splashScreen.fade-out {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* Persistent Header */
+    .app-header {
+      flex-shrink: 0;
+      width: 100%;
+      padding: max(10px, env(safe-area-inset-top, 0px)) 14px 10px;
+      background: var(--m3-surface);
+      border-bottom: 1px solid var(--m3-surface-container);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 50;
+    }
+
+    /* Scrollable Inner Modules Viewport */
+    .app-body {
+      flex: 1 1 0%;
+      min-height: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .module-pane {
+      width: 100%;
+      height: 100%;
+      display: none;
+      flex-direction: column;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .module-pane.active {
+      display: flex;
+    }
+
+    .module-pane::-webkit-scrollbar { display: none; }
+    .module-pane { scrollbar-width: none; }
+
+    /* Contacts List & Cards */
+    .contact-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 14px;
+      gap: 12px;
+      border-bottom: 1px solid var(--m3-surface-container);
+      background: #FFFFFF;
+      transition: background 0.15s ease;
+    }
+    .contact-item:active { background: var(--m3-surface-container); }
+    
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background-color: var(--m3-primary-container);
+      color: var(--m3-on-primary-container);
+      display: grid;
+      place-items: center;
+      font-size: 1.05rem;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .action-btn {
+      width: 34px;
+      height: 34px;
+      border: none;
+      background: transparent;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      color: #64748b;
+      border-radius: 50%;
+      transition: transform 0.1s, opacity 0.2s;
+    }
+    .action-btn:active {
+      transform: scale(0.88);
+      color: var(--m3-text-main);
+    }
+    .action-btn.muted {
+      opacity: 0.32;
+      filter: grayscale(1);
+    }
+
+    /* Fixed Bottom Navigation (68px + safe area) */
+    .bottom-nav {
+      flex-shrink: 0;
+      width: 100%;
+      height: calc(68px + env(safe-area-inset-bottom, 0px));
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      background: rgba(247, 249, 252, 0.98);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid var(--m3-surface-container);
+      z-index: 50;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--m3-text-variant);
+      padding: 4px 0;
+    }
+    .nav-icon-container {
+      width: 52px;
+      height: 30px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      transition: background-color 0.2s, transform 0.15s;
+    }
+    .nav-item.active .nav-icon-container {
+      background-color: var(--m3-primary-container);
+      color: var(--m3-on-primary-container);
+    }
+    .nav-item.active {
+      color: var(--m3-primary);
+      font-weight: 600;
+    }
+    .nav-label {
+      font-size: 11px;
+      line-height: 13px;
+    }
+
+    /* Standalone Sidebar Sheet */
+    .drawer-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 100;
+      display: none;
+      justify-content: flex-end;
+    }
+    .drawer-backdrop.active { display: flex; }
+    .drawer-panel {
+      width: 82%;
+      max-width: 320px;
+      height: 100%;
+      background: #FFFFFF;
+      box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+      display: flex;
+      flex-direction: column;
+      animation: slideLeft 0.25s ease-out;
+    }
+    @keyframes slideLeft {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+
+    /* Standalone Module Frame */
+    #standaloneFrameWrapper {
+      position: absolute;
+      inset: 0;
+      background: #FFFFFF;
+      z-index: 80;
+      display: none;
+      flex-direction: column;
+    }
+    #standaloneFrameWrapper.active { display: flex; }
+  </style>
+</head>
+<body>
+
+  <div class="app-viewport">
+    
+    <!-- 1. SPLASH SCREEN -->
+    <div id="splashScreen">
+      <img src="assets-splash.png" alt="COREBIQ" class="max-w-[180px] w-3/5 h-auto object-contain animate-pulse" onerror="this.outerHTML='<div class=\'text-3xl font-bold tracking-widest text-[#0A56D0]\'>COREBIQ</div>'">
+      <div class="mt-6 flex items-center gap-2 text-xs font-semibold tracking-wider text-gray-400">
+        <span>INITIALIZING SECURE SYSTEM</span>
+      </div>
+    </div>
+
+    <!-- 2. FIXED HEADER (All Modules) -->
+    <header class="app-header">
+      <!-- Logo + Name -->
+      <div class="flex items-center gap-2 cursor-pointer" onclick="switchNavModule('moduleHome')">
+        <img src="assets/logo-name.png" alt="COREBIQ" class="h-7 w-auto object-contain" onerror="this.outerHTML='<span class=\'font-bold text-lg tracking-tight text-[#0A56D0]\'>COREBIQ</span>'">
+      </div>
+
+      <!-- Header Action Controls -->
+      <div class="flex items-center gap-1.5">
+        <!-- Updates / Notification -->
+        <button id="updatesBtn" class="action-btn !text-gray-600 relative" title="Updates">
+          <i data-lucide="bell" class="w-5 h-5"></i>
+          <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-600 rounded-full"></span>
+        </button>
+
+        <!-- Profile Logined Person -->
+        <button id="profileBtn" class="w-8 h-8 rounded-full bg-[var(--m3-primary)] text-white text-xs font-bold grid place-items-center ml-1" title="User Profile">
+          AS
+        </button>
+      </div>
+    </header>
+
+    <!-- 3. INNER MODULE CONTAINER WORKSPACE -->
+    <div class="app-body">
+      
+      <!-- [A] HOME DASHBOARD MODULE -->
+      <div class="module-pane active" id="moduleHome">
+        <div class="p-4 space-y-4">
+          <!-- Welcome Card -->
+          <div class="p-5 rounded-2xl bg-gradient-to-br from-[#0A56D0] to-[#0842A0] text-white shadow-md">
+            <span class="text-xs uppercase tracking-wider font-semibold opacity-80">Workspace Portal</span>
+            <h1 class="text-2xl font-bold mt-1">Welcome back, Admin</h1>
+            <p class="text-xs text-blue-100 mt-1">Here is a quick snapshot of your active operations today.</p>
+            <div class="mt-4 flex gap-2">
+              <span class="px-2.5 py-1 rounded-lg bg-white/10 text-[11px] font-medium backdrop-blur">System Healthy</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white/10 text-[11px] font-medium backdrop-blur">26 Syncs Complete</span>
+            </div>
+          </div>
+
+          <!-- Summary Metric Cards -->
+          <div class="grid grid-cols-2 gap-3">
+            <div class="p-4 rounded-xl bg-white border border-[var(--m3-surface-container)]">
+              <div class="flex items-center justify-between text-gray-500 mb-1">
+                <span class="text-xs font-medium">Active Clients</span>
+                <i data-lucide="users" class="w-4 h-4 text-sky-600"></i>
+              </div>
+              <div class="text-xl font-bold text-gray-900">1,248</div>
+              <span class="text-[10px] text-green-600 font-medium">↑ 12% this month</span>
+            </div>
+
+            <div class="p-4 rounded-xl bg-white border border-[var(--m3-surface-container)]">
+              <div class="flex items-center justify-between text-gray-500 mb-1">
+                <span class="text-xs font-medium">Open Tasks</span>
+                <i data-lucide="check-square" class="w-4 h-4 text-indigo-600"></i>
+              </div>
+              <div class="text-xl font-bold text-gray-900">42</div>
+              <span class="text-[10px] text-amber-600 font-medium">6 due today</span>
+            </div>
+          </div>
+
+          <!-- Quick Charts / Activity Status -->
+          <div class="p-4 rounded-xl bg-white border border-[var(--m3-surface-container)] space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-bold text-gray-700 uppercase">Cash & Bank Flow</span>
+              <span class="text-[11px] text-[var(--m3-sky)] font-medium">September 2026</span>
+            </div>
+            <!-- Mock Visual Bar Gauge -->
+            <div class="space-y-1.5">
+              <div class="flex justify-between text-[11px] text-gray-600">
+                <span>Inflow (₹4.2L)</span>
+                <span>Outflow (₹2.1L)</span>
+              </div>
+              <div class="w-full h-2.5 bg-gray-100 rounded-full flex overflow-hidden">
+                <div class="h-full bg-emerald-500" style="width: 66%;"></div>
+                <div class="h-full bg-rose-500" style="width: 34%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fast Links Quick Tray -->
+          <div class="p-4 rounded-xl bg-white border border-[var(--m3-surface-container)]">
+            <span class="text-xs font-bold text-gray-700 uppercase mb-3 block">Primary Links</span>
+            <div class="grid grid-cols-4 gap-2 text-center text-[10px] font-medium text-gray-600">
+              <button onclick="loadExternalModule('cashbook.html')" class="p-2 rounded-lg hover:bg-gray-50 flex flex-col items-center gap-1">
+                <i data-lucide="wallet" class="w-5 h-5 text-emerald-600"></i>
+                <span>Cashbook</span>
+              </button>
+              <button onclick="loadExternalModule('transactions.html')" class="p-2 rounded-lg hover:bg-gray-50 flex flex-col items-center gap-1">
+                <i data-lucide="arrow-left-right" class="w-5 h-5 text-blue-600"></i>
+                <span>Transactions</span>
+              </button>
+              <button onclick="loadExternalModule('employees.html')" class="p-2 rounded-lg hover:bg-gray-50 flex flex-col items-center gap-1">
+                <i data-lucide="user-check" class="w-5 h-5 text-indigo-600"></i>
+                <span>Staff</span>
+              </button>
+              <button onclick="loadExternalModule('report.html')" class="p-2 rounded-lg hover:bg-gray-50 flex flex-col items-center gap-1">
+                <i data-lucide="pie-chart" class="w-5 h-5 text-amber-600"></i>
+                <span>Report</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- [B] CONTACTS MODULE -->
+      <div class="module-pane" id="moduleContacts">
+        <!-- Integrated Search/Filter Row -->
+        <div class="p-2.5 bg-[var(--m3-surface)] border-b border-[var(--m3-surface-container)] flex items-center gap-2">
+          <div class="flex-1 h-10 bg-[var(--m3-surface-container)] rounded-full px-3 flex items-center gap-2">
+            <i data-lucide="search" class="w-4 h-4 text-gray-500"></i>
+            <input type="text" id="contactSearchInput" placeholder="Search contacts..." class="bg-transparent border-0 outline-none w-full text-xs">
+          </div>
+          <button id="pickContactAddBtn" class="action-btn" title="Pick from Phone Contacts">
+            <i data-lucide="user-plus" class="w-4 h-4 text-blue-600"></i>
+          </button>
+        </div>
+
+        <div id="contactsDirectory" class="divide-y divide-[var(--m3-surface-container)]">
+          <!-- Sample Rows with Sky Blue IDs and Direct Action Callouts -->
+          <div class="contact-item">
+            <div class="avatar">AS</div>
+            <div class="flex-1 min-w-0">
+              <div class="font-semibold text-sm truncate">Aaron Sofas</div>
+              <div class="text-xs text-[var(--m3-sky)] font-medium">ID: C40075</div>
+            </div>
+            <div class="flex items-center gap-1">
+              <a href="mailto:aaron@example.com" class="action-btn" title="Email"><i data-lucide="mail" class="w-4 h-4"></i></a>
+              <a href="https://wa.me/919876543210" target="_blank" class="action-btn" title="WhatsApp"><i data-lucide="message-circle" class="w-4 h-4"></i></a>
+              <a href="tel:9876543210" class="action-btn" title="Call"><i data-lucide="phone" class="w-4 h-4"></i></a>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <div class="avatar">AK</div>
+            <div class="flex-1 min-w-0">
+              <div class="font-semibold text-sm truncate">Abdul Kareem</div>
+              <div class="text-xs text-[var(--m3-sky)] font-medium">ID: C40339</div>
+            </div>
+            <div class="flex items-center gap-1">
+              <button class="action-btn muted" title="Add Email"><i data-lucide="mail" class="w-4 h-4"></i></button>
+              <a href="https://wa.me/919988776655" target="_blank" class="action-btn" title="WhatsApp"><i data-lucide="message-circle" class="w-4 h-4"></i></a>
+              <a href="tel:9988776655" class="action-btn" title="Call"><i data-lucide="phone" class="w-4 h-4"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- [C] TASK MODULE -->
+      <div class="module-pane" id="moduleTask">
+        <div class="p-4 space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold text-gray-500 uppercase">My Daily Tasks</span>
+            <button class="text-xs text-[var(--m3-primary)] font-semibold flex items-center gap-1">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i> New Task
+            </button>
+          </div>
+
+          <div class="p-3 bg-white rounded-xl border border-[var(--m3-surface-container)] flex items-start gap-3">
+            <input type="checkbox" class="mt-1 rounded text-blue-600 focus:ring-0">
+            <div class="flex-1">
+              <span class="text-xs font-bold block text-gray-800">Finalize GST Return Form #1</span>
+              <p class="text-[11px] text-gray-500 mt-0.5">Assigned to: Abdul Shanid | Due today 5:00 PM</p>
+            </div>
+          </div>
+
+          <div class="p-3 bg-white rounded-xl border border-[var(--m3-surface-container)] flex items-start gap-3">
+            <input type="checkbox" checked class="mt-1 rounded text-blue-600 focus:ring-0">
+            <div class="flex-1">
+              <span class="text-xs font-bold line-through text-gray-400 block">Bank statement sync</span>
+              <p class="text-[11px] text-gray-400 mt-0.5">Completed at 11:30 AM</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- [D] NOTES MODULE -->
+      <div class="module-pane" id="moduleNotes">
+        <div class="p-4 space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold text-gray-500 uppercase">Sticky Work Notes</span>
+            <button class="text-xs text-[var(--m3-primary)] font-semibold flex items-center gap-1">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Note
+            </button>
+          </div>
+
+          <div class="p-3.5 bg-amber-50 rounded-xl border border-amber-200">
+            <div class="flex justify-between text-xs font-bold text-amber-900 mb-1">
+              <span>Auditing Note</span>
+              <span class="text-[10px] text-amber-700 font-normal">Yesterday</span>
+            </div>
+            <p class="text-xs text-amber-800">Ensure all party ledger balances for Hexa Supermarket match before the 30th closing.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- [E] STANDALONE MODULE CONTAINER (Loads `modulename.html`) -->
+      <div id="standaloneFrameWrapper">
+        <div class="p-2.5 bg-white border-b flex items-center justify-between">
+          <button onclick="closeExternalModule()" class="action-btn" title="Back to App">
+            <i data-lucide="arrow-left" class="w-5 h-5 text-gray-700"></i>
+          </button>
+          <span id="standaloneTitle" class="text-xs font-bold uppercase tracking-wider text-gray-700">Module View</span>
+          <button onclick="reloadExternalModule()" class="action-btn" title="Reload Frame">
+            <i data-lucide="rotate-cw" class="w-4 h-4 text-gray-700"></i>
+          </button>
+        </div>
+        <iframe id="standaloneModuleFrame" class="flex-1 w-full border-0" src=""></iframe>
+      </div>
+
+    </div>
+
+    <!-- 4. SIDEBAR DRAWER MENU -->
+    <div id="menuDrawer" class="drawer-backdrop" onclick="closeSidebar(event)">
+      <div class="drawer-panel" onclick="event.stopPropagation()">
+        <!-- Drawer Header -->
+        <div class="p-4 border-b flex justify-between items-center bg-[var(--m3-surface)]">
+          <div class="flex items-center gap-2">
+            <span class="w-8 h-8 rounded-lg bg-[var(--m3-primary)] text-white font-bold grid place-items-center text-xs">CQ</span>
+            <div>
+              <div class="text-sm font-bold leading-tight">COREBIQ</div>
+              <div class="text-[10px] text-gray-500">Standalone Modules</div>
+            </div>
+          </div>
+          <button onclick="closeSidebar()" class="action-btn">
+            <i data-lucide="x" class="w-5 h-5 text-gray-600"></i>
+          </button>
+        </div>
+
+        <!-- Scrollable Standalone Links List -->
+        <div class="flex-1 overflow-y-auto p-2 space-y-0.5 text-xs text-gray-700 font-medium">
+          <button onclick="loadExternalModule('company.html')" class="w-full text-left p-2.5 rounded-lg hover:bg-gray-100 flex items-center gap-3">
+            <i data-lucide="building-2" class="w-4 h-4 text-gray-500"></i> Company
+          </button>
+          <button onclick="loadExternalModule('branches.html')" class="w-full text-left p-2.5 rounded-lg hover:bg-gray-100 flex items-center gap-3">
+            <i data-lucide="git-branch" class="w-4 h-4 text-gray-500"></i> Branches
+          </button>
+          <button onclick="loadExternalModule('users.html')" class="w-full text-left p-2.5 rounded-lg hover:bg-gray-100 flex items-center gap-3">
+            <i data-lucide="user-cog" class="w-4 h-4 text-gray-500"></i> Users
+          </button>
+          <button onclick="loadExternalModule('clients.html')" class="w-full text-left p-2.5 rounded-lg hover:bg-gray-100 flex items-center gap-3">
+            <i data-lucide="briefcase" class="w-4 h-4 text-gray-500"></i> Clients
+          </button>
+          <button onclick="loadExternalModule('contacts.html')" class="w-full text-left p-2.5 rounded-lg hover:bg-gray-100 flex items-center gap-3">
+            <i data-lucide="contact" class="w-4 h-4 text-gray-500"></i> Contacts
+          </button>
+          
+          <div class="pt-2 pb-1 px-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Accounting</div>
+          <button onclick="loadExternalModule('cashbook.html')" class="w-full text-left p-2.5 rounded-lg hover:bg-gray-100 flex items-center gap-3">
+            <i data-lucide="wallet" class="w-4 h-4 text-emerald-600"></i> Cashbook
+          </button>
+          <button onclick="loadExternalModule('bank-book.html')" class="w-full text-left p-2.5 rounded-lg hover:bg-gray-100 flex items-center gap-3">
+            <i data-lucide="landmark" class="w-4 h-4 text-blue-600"></i> Bank Book
+          </button>
+          <button onclick="loadExternalModule('ledgers.html')" class="w-full text-left p-2.5 rounded-lg hover:bg-gray-100 flex items-center gap-3">
+            <i data-lucide="book-open" class="w-4 h-4 text-purple-600"></i> Ledgers
+          </button>
+          <button onclick="loadExternalModule('transactions.html')" class="w-full text-left p-2.5 rounded-lg hover:bg-gray-100 flex items-center gap-3">
+            <i data-lucide="repeat" class="w-4 h-4 text-indigo-600"></i> Transactions
+          </button>
+
+          <div class="pt-2 pb-1 px-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">HR & Staff</div>
+          <button onclick="loadExternalModule('employees.html')" class="w-full text-left p-2.5 rounded-lg hover:bg-gray-100 flex items-center gap-3">
+            <i data-lucide="users" class="w-4 h-4 text-gray-500"></i> Employees
+          </button>
+          <button onclick="loadExternalModule('attendance.html')" class="w-full text-left p-2.5 rounded-lg hover:bg-gray-100 flex items-center gap-3">
+            <i data-lucide="calendar-check" class="w-4 h-4 text-gray-500"></i> Attendance
+          </button>
+          <button onclick="loadExternalModule('leave-request.html')" class="w-full text-left p-2.5 rounded-lg hover:bg-gray-100 flex items-center gap-3">
+            <i data-lucide="plane-takeoff" class="w-4 h-4 text-gray-500"></i> Leave Request
+          </button>
+
+          <div class="pt-2 pb-1 px-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">System</div>
+          <button onclick="loadExternalModule('data.html')" class="w-full text-left p-2.5 rounded-lg hover:bg-gray-100 flex items-center gap-3">
+            <i data-lucide="database" class="w-4 h-4 text-gray-500"></i> Data
+          </button>
+          <button onclick="loadExternalModule('report.html')" class="w-full text-left p-2.5 rounded-lg hover:bg-gray-100 flex items-center gap-3">
+            <i data-lucide="bar-chart-3" class="w-4 h-4 text-gray-500"></i> Report
+          </button>
+          <button onclick="loadExternalModule('templates.html')" class="w-full text-left p-2.5 rounded-lg hover:bg-gray-100 flex items-center gap-3">
+            <i data-lucide="layout-template" class="w-4 h-4 text-gray-500"></i> Templates
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. FIXED BOTTOM NAVIGATION (Home, Contacts, Task, Notes, Menu) -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" onclick="switchNavModule('moduleHome', this)">
+        <div class="nav-icon-container"><i data-lucide="home" class="w-5 h-5"></i></div>
+        <span class="nav-label">Home</span>
+      </button>
+
+      <button class="nav-item" onclick="switchNavModule('moduleContacts', this)">
+        <div class="nav-icon-container"><i data-lucide="users" class="w-5 h-5"></i></div>
+        <span class="nav-label">Contacts</span>
+      </button>
+
+      <button class="nav-item" onclick="switchNavModule('moduleTask', this)">
+        <div class="nav-icon-container"><i data-lucide="check-square" class="w-5 h-5"></i></div>
+        <span class="nav-label">Task</span>
+      </button>
+
+      <button class="nav-item" onclick="switchNavModule('moduleNotes', this)">
+        <div class="nav-icon-container"><i data-lucide="file-text" class="w-5 h-5"></i></div>
+        <span class="nav-label">Notes</span>
+      </button>
+
+      <button class="nav-item" onclick="openSidebar()">
+        <div class="nav-icon-container"><i data-lucide="menu" class="w-5 h-5"></i></div>
+        <span class="nav-label">Menu</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // 1. Splash Screen Timeout
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const splash = document.getElementById('splashScreen');
+        splash.classList.add('fade-out');
+      }, 700);
+    });
+
+    // 2. Tab Navigation Routing
+    function switchNavModule(targetModuleId, btnElement) {
+      closeExternalModule();
+      
+      document.querySelectorAll('.module-pane').forEach(el => el.classList.remove('active'));
+      const targetPane = document.getElementById(targetModuleId);
+      if (targetPane) targetPane.classList.add('active');
+
+      if (btnElement) {
+        document.querySelectorAll('.bottom-nav .nav-item').forEach(b => b.classList.remove('active'));
+        btnElement.classList.add('active');
+      }
+    }
+
+    // 3. Sidebar Open / Close
+    const menuDrawer = document.getElementById('menuDrawer');
+    function openSidebar() {
+      menuDrawer.classList.add('active');
+    }
+    function closeSidebar(e) {
+      menuDrawer.classList.remove('active');
+    }
+
+    // 4. Standalone Module Loader (Opens `modulename.html` inside the frame)
+    const standaloneWrapper = document.getElementById('standaloneFrameWrapper');
+    const standaloneFrame = document.getElementById('standaloneModuleFrame');
+    const standaloneTitle = document.getElementById('standaloneTitle');
+
+    function loadExternalModule(fileName) {
+      closeSidebar();
+      standaloneTitle.textContent = fileName.replace('.html', '').replace('-', ' ');
+      standaloneFrame.src = fileName;
+      standaloneWrapper.classList.add('active');
+    }
+
+    function closeExternalModule() {
+      standaloneWrapper.classList.remove('active');
+      standaloneFrame.src = '';
+    }
+
+    function reloadExternalModule() {
+      if (standaloneFrame.src) {
+        standaloneFrame.src = standaloneFrame.src;
+      }
+    }
+
+    // 5. Contacts Device API Fallback
+    document.getElementById('pickContactAddBtn')?.addEventListener('click', async () => {
+      if ('contacts' in navigator && 'ContactsManager' in window) {
+        try {
+          const picked = await navigator.contacts.select(['name', 'tel'], { multiple: false });
+          if (picked?.length) {
+            alert(`Selected contact: ${picked[0].name?.[0]} (${picked[0].tel?.[0]})`);
+          }
+        } catch (e) {}
+      } else {
+        alert("Mobile Contact Picker not supported on this browser.");
+      }
+    });
+  </script>
+</body>
+</html>
