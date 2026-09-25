@@ -9,7 +9,7 @@
   <link rel="apple-touch-icon" href="assets/app-icon.png">
   
   <!-- Inline Web App Manifest -->
-  <link rel="manifest" href="data:application/manifest+json;utf-8,%7B%22name%22%3A%22COREBIQ%22%2C%22short_name%22%3A%22COREBIQ%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23F7F9FC%22%2C%22theme_color%22%3A%22%230A56D0%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22assets%2Fapp-icon.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%7D">
+  <link rel="manifest" href="data:application/manifest+json;utf-8,%7B%22name%22%3A%22COREBIQ%22%2C%22short_name%22%3A%22COREBIQ%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23F7F9FC%22%2C%22theme_color%22%3A%22%230A56D0%22%7D">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
@@ -73,19 +73,19 @@
       overflow: hidden;
     }
 
-    /* Splash Screen */
+    /* Splash Screen with absolute cleanup guarantee */
     #splashScreen {
       position: absolute;
       inset: 0;
       background-color: #FFFFFF;
-      z-index: 1000;
+      z-index: 999;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      transition: opacity 0.4s ease, visibility 0.4s;
+      transition: opacity 0.3s ease, visibility 0.3s;
     }
-    #splashScreen.fade-out {
+    #splashScreen.hide-splash {
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
@@ -95,8 +95,11 @@
     .app-header {
       flex-shrink: 0;
       width: 100%;
-      padding: max(10px, env(safe-area-inset-top, 0px)) 14px 10px;
-      background: var(--m3-surface);
+      height: calc(52px + env(safe-area-inset-top, 0px));
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-left: 14px;
+      padding-right: 14px;
+      background: #FFFFFF;
       border-bottom: 1px solid var(--m3-surface-container);
       display: flex;
       align-items: center;
@@ -110,6 +113,7 @@
       min-height: 0;
       position: relative;
       overflow: hidden;
+      background-color: var(--m3-surface);
     }
 
     .module-pane {
@@ -153,8 +157,8 @@
     }
 
     .action-btn {
-      width: 34px;
-      height: 34px;
+      width: 36px;
+      height: 36px;
       border: none;
       background: transparent;
       display: grid;
@@ -165,11 +169,11 @@
       transition: transform 0.1s, opacity 0.2s;
     }
     .action-btn:active {
-      transform: scale(0.88);
+      transform: scale(0.9);
       color: var(--m3-text-main);
     }
     .action-btn.muted {
-      opacity: 0.32;
+      opacity: 0.35;
       filter: grayscale(1);
     }
 
@@ -181,7 +185,7 @@
       padding-bottom: env(safe-area-inset-bottom, 0px);
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      background: rgba(247, 249, 252, 0.98);
+      background: rgba(255, 255, 255, 0.98);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-top: 1px solid var(--m3-surface-container);
@@ -238,14 +242,14 @@
       box-shadow: -4px 0 20px rgba(0,0,0,0.15);
       display: flex;
       flex-direction: column;
-      animation: slideLeft 0.25s ease-out;
+      animation: slideLeft 0.2s ease-out;
     }
     @keyframes slideLeft {
       from { transform: translateX(100%); }
       to { transform: translateX(0); }
     }
 
-    /* Standalone Module Frame */
+    /* Standalone Module Frame Wrapper */
     #standaloneFrameWrapper {
       position: absolute;
       inset: 0;
@@ -261,31 +265,38 @@
 
   <div class="app-viewport">
     
-    <!-- 1. SPLASH SCREEN -->
+    <!-- 1. FAIL-SAFE SPLASH SCREEN -->
     <div id="splashScreen">
-      <img src="assets-splash.png" alt="COREBIQ" class="max-w-[180px] w-3/5 h-auto object-contain animate-pulse" onerror="this.outerHTML='<div class=\'text-3xl font-bold tracking-widest text-[#0A56D0]\'>COREBIQ</div>'">
-      <div class="mt-6 flex items-center gap-2 text-xs font-semibold tracking-wider text-gray-400">
-        <span>INITIALIZING SECURE SYSTEM</span>
+      <div class="flex flex-col items-center">
+        <!-- Attempts image, falls back cleanly to stylized text if not found -->
+        <img src="assets-splash.png" alt="COREBIQ" class="max-w-[180px] w-48 h-auto object-contain mb-2" onerror="this.style.display='none'; document.getElementById('splashFallback').style.display='block';">
+        <div id="splashFallback" style="display: none;" class="text-3xl font-extrabold tracking-widest text-[#0A56D0]">COREBIQ</div>
+        <div class="mt-4 flex items-center gap-2 text-[11px] font-semibold tracking-wider text-gray-400 uppercase">
+          <div class="w-3 h-3 border-2 border-[#0A56D0] border-t-transparent rounded-full animate-spin"></div>
+          <span>Loading System</span>
+        </div>
       </div>
     </div>
 
-    <!-- 2. FIXED HEADER (All Modules) -->
+    <!-- 2. PERSISTENT APP HEADER -->
     <header class="app-header">
-      <!-- Logo + Name -->
+      <!-- Logo + Name (with fail-safe fallback) -->
       <div class="flex items-center gap-2 cursor-pointer" onclick="switchNavModule('moduleHome')">
-        <img src="assets/logo-name.png" alt="COREBIQ" class="h-7 w-auto object-contain" onerror="this.outerHTML='<span class=\'font-bold text-lg tracking-tight text-[#0A56D0]\'>COREBIQ</span>'">
+        <img src="assets/logo-name.png" alt="COREBIQ" class="h-6 w-auto object-contain" onerror="this.style.display='none'; document.getElementById('logoTextFallback').style.display='flex';">
+        <div id="logoTextFallback" style="display: none;" class="flex items-center gap-1.5">
+          <span class="w-6 h-6 rounded-md bg-[var(--m3-primary)] text-white text-[11px] font-bold grid place-items-center">C</span>
+          <span class="font-bold text-base tracking-tight text-[#0A56D0]">COREBIQ</span>
+        </div>
       </div>
 
-      <!-- Header Action Controls -->
-      <div class="flex items-center gap-1.5">
-        <!-- Updates / Notification -->
-        <button id="updatesBtn" class="action-btn !text-gray-600 relative" title="Updates">
-          <i data-lucide="bell" class="w-5 h-5"></i>
-          <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-600 rounded-full"></span>
+      <!-- Action Icons (Updates & Logined Person Profile) -->
+      <div class="flex items-center gap-1">
+        <button id="updatesBtn" class="action-btn relative" title="Updates" onclick="alert('System up to date.')">
+          <i data-lucide="bell" class="w-5 h-5 text-gray-600"></i>
+          <span class="absolute top-2 right-2 w-2 h-2 bg-red-600 rounded-full"></span>
         </button>
 
-        <!-- Profile Logined Person -->
-        <button id="profileBtn" class="w-8 h-8 rounded-full bg-[var(--m3-primary)] text-white text-xs font-bold grid place-items-center ml-1" title="User Profile">
+        <button id="profileBtn" class="w-8 h-8 rounded-full bg-[var(--m3-primary)] text-white text-xs font-bold grid place-items-center ml-1" title="Profile: Admin">
           AS
         </button>
       </div>
@@ -298,30 +309,30 @@
       <div class="module-pane active" id="moduleHome">
         <div class="p-4 space-y-4">
           <!-- Welcome Card -->
-          <div class="p-5 rounded-2xl bg-gradient-to-br from-[#0A56D0] to-[#0842A0] text-white shadow-md">
-            <span class="text-xs uppercase tracking-wider font-semibold opacity-80">Workspace Portal</span>
-            <h1 class="text-2xl font-bold mt-1">Welcome back, Admin</h1>
+          <div class="p-5 rounded-2xl bg-gradient-to-br from-[#0A56D0] to-[#0842A0] text-white shadow-sm">
+            <span class="text-[10px] uppercase tracking-wider font-semibold opacity-80">Workspace Portal</span>
+            <h1 class="text-xl font-bold mt-1">Welcome back, Shanid</h1>
             <p class="text-xs text-blue-100 mt-1">Here is a quick snapshot of your active operations today.</p>
-            <div class="mt-4 flex gap-2">
-              <span class="px-2.5 py-1 rounded-lg bg-white/10 text-[11px] font-medium backdrop-blur">System Healthy</span>
-              <span class="px-2.5 py-1 rounded-lg bg-white/10 text-[11px] font-medium backdrop-blur">26 Syncs Complete</span>
+            <div class="mt-3 flex gap-2">
+              <span class="px-2.5 py-1 rounded-lg bg-white/15 text-[10px] font-medium backdrop-blur">System Live</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white/15 text-[10px] font-medium backdrop-blur">Cloud Sync OK</span>
             </div>
           </div>
 
           <!-- Summary Metric Cards -->
           <div class="grid grid-cols-2 gap-3">
-            <div class="p-4 rounded-xl bg-white border border-[var(--m3-surface-container)]">
+            <div class="p-3.5 rounded-xl bg-white border border-[var(--m3-surface-container)]">
               <div class="flex items-center justify-between text-gray-500 mb-1">
-                <span class="text-xs font-medium">Active Clients</span>
+                <span class="text-xs font-medium">Clients</span>
                 <i data-lucide="users" class="w-4 h-4 text-sky-600"></i>
               </div>
               <div class="text-xl font-bold text-gray-900">1,248</div>
-              <span class="text-[10px] text-green-600 font-medium">↑ 12% this month</span>
+              <span class="text-[10px] text-green-600 font-medium">↑ Active Directory</span>
             </div>
 
-            <div class="p-4 rounded-xl bg-white border border-[var(--m3-surface-container)]">
+            <div class="p-3.5 rounded-xl bg-white border border-[var(--m3-surface-container)]">
               <div class="flex items-center justify-between text-gray-500 mb-1">
-                <span class="text-xs font-medium">Open Tasks</span>
+                <span class="text-xs font-medium">Tasks</span>
                 <i data-lucide="check-square" class="w-4 h-4 text-indigo-600"></i>
               </div>
               <div class="text-xl font-bold text-gray-900">42</div>
@@ -335,7 +346,6 @@
               <span class="text-xs font-bold text-gray-700 uppercase">Cash & Bank Flow</span>
               <span class="text-[11px] text-[var(--m3-sky)] font-medium">September 2026</span>
             </div>
-            <!-- Mock Visual Bar Gauge -->
             <div class="space-y-1.5">
               <div class="flex justify-between text-[11px] text-gray-600">
                 <span>Inflow (₹4.2L)</span>
@@ -350,7 +360,7 @@
 
           <!-- Fast Links Quick Tray -->
           <div class="p-4 rounded-xl bg-white border border-[var(--m3-surface-container)]">
-            <span class="text-xs font-bold text-gray-700 uppercase mb-3 block">Primary Links</span>
+            <span class="text-xs font-bold text-gray-700 uppercase mb-3 block">Quick Actions</span>
             <div class="grid grid-cols-4 gap-2 text-center text-[10px] font-medium text-gray-600">
               <button onclick="loadExternalModule('cashbook.html')" class="p-2 rounded-lg hover:bg-gray-50 flex flex-col items-center gap-1">
                 <i data-lucide="wallet" class="w-5 h-5 text-emerald-600"></i>
@@ -358,7 +368,7 @@
               </button>
               <button onclick="loadExternalModule('transactions.html')" class="p-2 rounded-lg hover:bg-gray-50 flex flex-col items-center gap-1">
                 <i data-lucide="arrow-left-right" class="w-5 h-5 text-blue-600"></i>
-                <span>Transactions</span>
+                <span>Ledgers</span>
               </button>
               <button onclick="loadExternalModule('employees.html')" class="p-2 rounded-lg hover:bg-gray-50 flex flex-col items-center gap-1">
                 <i data-lucide="user-check" class="w-5 h-5 text-indigo-600"></i>
@@ -375,19 +385,17 @@
 
       <!-- [B] CONTACTS MODULE -->
       <div class="module-pane" id="moduleContacts">
-        <!-- Integrated Search/Filter Row -->
-        <div class="p-2.5 bg-[var(--m3-surface)] border-b border-[var(--m3-surface-container)] flex items-center gap-2">
-          <div class="flex-1 h-10 bg-[var(--m3-surface-container)] rounded-full px-3 flex items-center gap-2">
+        <div class="p-2.5 bg-white border-b border-[var(--m3-surface-container)] flex items-center gap-2">
+          <div class="flex-1 h-9 bg-[var(--m3-surface-container)] rounded-full px-3 flex items-center gap-2">
             <i data-lucide="search" class="w-4 h-4 text-gray-500"></i>
-            <input type="text" id="contactSearchInput" placeholder="Search contacts..." class="bg-transparent border-0 outline-none w-full text-xs">
+            <input type="text" id="contactSearchInput" placeholder="Search clients, IDs..." class="bg-transparent border-0 outline-none w-full text-xs">
           </div>
-          <button id="pickContactAddBtn" class="action-btn" title="Pick from Phone Contacts">
+          <button id="pickContactAddBtn" class="action-btn" title="Add Contact">
             <i data-lucide="user-plus" class="w-4 h-4 text-blue-600"></i>
           </button>
         </div>
 
         <div id="contactsDirectory" class="divide-y divide-[var(--m3-surface-container)]">
-          <!-- Sample Rows with Sky Blue IDs and Direct Action Callouts -->
           <div class="contact-item">
             <div class="avatar">AS</div>
             <div class="flex-1 min-w-0">
@@ -430,7 +438,7 @@
             <input type="checkbox" class="mt-1 rounded text-blue-600 focus:ring-0">
             <div class="flex-1">
               <span class="text-xs font-bold block text-gray-800">Finalize GST Return Form #1</span>
-              <p class="text-[11px] text-gray-500 mt-0.5">Assigned to: Abdul Shanid | Due today 5:00 PM</p>
+              <p class="text-[11px] text-gray-500 mt-0.5">Assigned to: Shanid | Due today 5:00 PM</p>
             </div>
           </div>
 
@@ -448,7 +456,7 @@
       <div class="module-pane" id="moduleNotes">
         <div class="p-4 space-y-3">
           <div class="flex justify-between items-center">
-            <span class="text-xs font-bold text-gray-500 uppercase">Sticky Work Notes</span>
+            <span class="text-xs font-bold text-gray-500 uppercase">Work Notes</span>
             <button class="text-xs text-[var(--m3-primary)] font-semibold flex items-center gap-1">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Note
             </button>
@@ -459,19 +467,19 @@
               <span>Auditing Note</span>
               <span class="text-[10px] text-amber-700 font-normal">Yesterday</span>
             </div>
-            <p class="text-xs text-amber-800">Ensure all party ledger balances for Hexa Supermarket match before the 30th closing.</p>
+            <p class="text-xs text-amber-800">Ensure all party ledger balances for Hexa Supermarket match before the closing.</p>
           </div>
         </div>
       </div>
 
-      <!-- [E] STANDALONE MODULE CONTAINER (Loads `modulename.html`) -->
+      <!-- [E] STANDALONE MODULE CONTAINER -->
       <div id="standaloneFrameWrapper">
         <div class="p-2.5 bg-white border-b flex items-center justify-between">
-          <button onclick="closeExternalModule()" class="action-btn" title="Back to App">
+          <button onclick="closeExternalModule()" class="action-btn" title="Back">
             <i data-lucide="arrow-left" class="w-5 h-5 text-gray-700"></i>
           </button>
-          <span id="standaloneTitle" class="text-xs font-bold uppercase tracking-wider text-gray-700">Module View</span>
-          <button onclick="reloadExternalModule()" class="action-btn" title="Reload Frame">
+          <span id="standaloneTitle" class="text-xs font-bold uppercase tracking-wider text-gray-700">Module</span>
+          <button onclick="reloadExternalModule()" class="action-btn" title="Reload">
             <i data-lucide="rotate-cw" class="w-4 h-4 text-gray-700"></i>
           </button>
         </div>
@@ -483,13 +491,12 @@
     <!-- 4. SIDEBAR DRAWER MENU -->
     <div id="menuDrawer" class="drawer-backdrop" onclick="closeSidebar(event)">
       <div class="drawer-panel" onclick="event.stopPropagation()">
-        <!-- Drawer Header -->
         <div class="p-4 border-b flex justify-between items-center bg-[var(--m3-surface)]">
           <div class="flex items-center gap-2">
-            <span class="w-8 h-8 rounded-lg bg-[var(--m3-primary)] text-white font-bold grid place-items-center text-xs">CQ</span>
+            <span class="w-7 h-7 rounded-lg bg-[var(--m3-primary)] text-white font-bold grid place-items-center text-xs">CQ</span>
             <div>
               <div class="text-sm font-bold leading-tight">COREBIQ</div>
-              <div class="text-[10px] text-gray-500">Standalone Modules</div>
+              <div class="text-[10px] text-gray-500">Navigation Menu</div>
             </div>
           </div>
           <button onclick="closeSidebar()" class="action-btn">
@@ -497,7 +504,7 @@
           </button>
         </div>
 
-        <!-- Scrollable Standalone Links List -->
+        <!-- Standalone Links (modulename.html) -->
         <div class="flex-1 overflow-y-auto p-2 space-y-0.5 text-xs text-gray-700 font-medium">
           <button onclick="loadExternalModule('company.html')" class="w-full text-left p-2.5 rounded-lg hover:bg-gray-100 flex items-center gap-3">
             <i data-lucide="building-2" class="w-4 h-4 text-gray-500"></i> Company
@@ -554,7 +561,7 @@
       </div>
     </div>
 
-    <!-- 5. FIXED BOTTOM NAVIGATION (Home, Contacts, Task, Notes, Menu) -->
+    <!-- 5. FIXED BOTTOM NAVIGATION -->
     <nav class="bottom-nav">
       <button class="nav-item active" onclick="switchNavModule('moduleHome', this)">
         <div class="nav-icon-container"><i data-lucide="home" class="w-5 h-5"></i></div>
@@ -585,18 +592,28 @@
   </div>
 
   <script>
-    // Initialize Lucide Icons
-    lucide.createIcons();
+    // Initialize Lucide Icons immediately
+    function renderIcons() {
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+    renderIcons();
 
-    // 1. Splash Screen Timeout
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        const splash = document.getElementById('splashScreen');
-        splash.classList.add('fade-out');
-      }, 700);
-    });
+    // Guaranteed Splash Screen Dismissal (Will NEVER stay stuck)
+    function dismissSplash() {
+      const splash = document.getElementById('splashScreen');
+      if (splash) {
+        splash.classList.add('hide-splash');
+        setTimeout(() => splash.remove(), 400);
+      }
+    }
 
-    // 2. Tab Navigation Routing
+    // Dismiss after 400ms automatically or upon window load
+    window.addEventListener('load', () => setTimeout(dismissSplash, 400));
+    setTimeout(dismissSplash, 800); // Safety fallback
+
+    // Tab Navigation Routing
     function switchNavModule(targetModuleId, btnElement) {
       closeExternalModule();
       
@@ -608,9 +625,10 @@
         document.querySelectorAll('.bottom-nav .nav-item').forEach(b => b.classList.remove('active'));
         btnElement.classList.add('active');
       }
+      renderIcons();
     }
 
-    // 3. Sidebar Open / Close
+    // Sidebar Drawer Handlers
     const menuDrawer = document.getElementById('menuDrawer');
     function openSidebar() {
       menuDrawer.classList.add('active');
@@ -619,7 +637,7 @@
       menuDrawer.classList.remove('active');
     }
 
-    // 4. Standalone Module Loader (Opens `modulename.html` inside the frame)
+    // Standalone Module Loader
     const standaloneWrapper = document.getElementById('standaloneFrameWrapper');
     const standaloneFrame = document.getElementById('standaloneModuleFrame');
     const standaloneTitle = document.getElementById('standaloneTitle');
@@ -629,6 +647,7 @@
       standaloneTitle.textContent = fileName.replace('.html', '').replace('-', ' ');
       standaloneFrame.src = fileName;
       standaloneWrapper.classList.add('active');
+      renderIcons();
     }
 
     function closeExternalModule() {
@@ -641,20 +660,6 @@
         standaloneFrame.src = standaloneFrame.src;
       }
     }
-
-    // 5. Contacts Device API Fallback
-    document.getElementById('pickContactAddBtn')?.addEventListener('click', async () => {
-      if ('contacts' in navigator && 'ContactsManager' in window) {
-        try {
-          const picked = await navigator.contacts.select(['name', 'tel'], { multiple: false });
-          if (picked?.length) {
-            alert(`Selected contact: ${picked[0].name?.[0]} (${picked[0].tel?.[0]})`);
-          }
-        } catch (e) {}
-      } else {
-        alert("Mobile Contact Picker not supported on this browser.");
-      }
-    });
   </script>
 </body>
 </html>
