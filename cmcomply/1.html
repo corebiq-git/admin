@@ -288,6 +288,117 @@
       color: var(--m3-primary);
     }
 
+    /* Header fix */
+    .search-header {
+      flex: 0 0 auto;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px 14px;
+      background: var(--m3-surface);
+      position: relative;
+      z-index: 30;
+    }
+    .search-bar {
+      width: 100%;
+      min-height: 56px;
+      box-sizing: border-box;
+      padding: 10px 14px;
+    }
+    .content-scroll {
+      min-height: 0;
+      flex: 1 1 auto;
+    }
+
+    /* Full-width 1-row contact cards */
+    #contactList {
+      width: 100%;
+    }
+    #contactList .contact-item {
+      width: 100%;
+      box-sizing: border-box;
+      min-height: 92px;
+      padding: 14px 16px;
+      margin: 0;
+      border-bottom: 1px solid var(--m3-surface-container);
+      background: transparent;
+      display: grid;
+      grid-template-columns: 46px minmax(0,1fr);
+      column-gap: 13px;
+      align-items: center;
+    }
+    #contactList .contact-item .avatar {
+      grid-row: 1;
+      width: 46px;
+      height: 46px;
+      font-size: 1.05rem;
+      align-self: start;
+    }
+    #contactList .contact-main {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    #contactList .contact-name {
+      color: #202124;
+      font-size: 1rem;
+      line-height: 1.25;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #contactList .contact-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      min-width: 0;
+    }
+    #contactList .contact-id {
+      color: #70757a;
+      font-size: .82rem;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #contactList .contact-actions {
+      display: flex;
+      align-items: center;
+      gap: 1px;
+      flex-shrink: 0;
+    }
+    #contactList .contact-actions .action-btn {
+      width: 34px;
+      height: 34px;
+      color: #174ea6;
+    }
+    #contactList .contact-actions .action-whatsapp {
+      color: #174ea6;
+    }
+    #contactList .contact-actions .action-save {
+      color: #174ea6;
+    }
+    #contactList .contact-actions svg {
+      width: 19px;
+      height: 19px;
+      stroke-width: 2;
+    }
+
+    /* Keep contacts full-width even when global grid mode is selected. */
+    #contactList.module-grid {
+      display: block;
+      padding: 0;
+    }
+    #contactList.module-grid .contact-item {
+      margin: 0;
+      border-radius: 0;
+      border-left: 0;
+      border-right: 0;
+      padding: 14px 16px;
+    }
+
     /* Bottom Navigation */
     .bottom-nav {
       position: absolute;
@@ -364,8 +475,7 @@
       padding: 7px 12px;
       background: var(--m3-surface);
       border-bottom: 1px solid var(--m3-surface-container);
-      position: sticky;
-      top: 0;
+      position: relative;
       z-index: 6;
     }
 
@@ -1043,9 +1153,10 @@
     function renderContacts(query = "") {
       const listContainer = document.getElementById("contactList");
       listContainer.innerHTML = "";
-      
-      const filtered = clients.filter(c => 
-        (c.name && c.name.toLowerCase().includes(query.toLowerCase())) || 
+      listContainer.classList.remove("module-grid");
+
+      const filtered = clients.filter(c =>
+        (c.name && c.name.toLowerCase().includes(query.toLowerCase())) ||
         (c.id && c.id.toLowerCase().includes(query.toLowerCase())) ||
         (c.mobile && c.mobile.includes(query))
       );
@@ -1057,27 +1168,80 @@
       }
 
       filtered.forEach(client => {
-        const addContactBtn = !client.isSavedInPhone 
-          ? `<a href="tel:${client.mobile || ''}" class="action-btn action-save" title="Save to Phone Contacts"><i data-lucide="user-plus" class="w-5 h-5"></i></a>` : '';
+        const mobile = client.mobile || "";
+        const contactBtn = `<button type="button" class="action-btn action-save"
+          title="Add / choose phone contact"
+          onclick='openPhoneContact(${JSON.stringify(client).replace(/'/g, "&#39;")})'>
+          <i data-lucide="contact-round" class="w-5 h-5"></i>
+        </button>`;
 
         const html = `
           <div class="list-item contact-item">
             <div class="avatar">${getInitials(client.name)}</div>
-            <div class="item-info">
-              <div class="item-title">${client.name}</div>
-              <div class="item-subtitle">ID: ${client.id}</div>
-            </div>
-            <div class="item-actions">
-              ${addContactBtn}
-              <a href="${formatWhatsApp(client.mobile)}" target="_blank" rel="noopener noreferrer" class="action-btn action-whatsapp" title="WhatsApp"><i data-lucide="message-circle" class="w-5 h-5"></i></a>
-              <a href="tel:${client.mobile || ''}" class="action-btn action-call" title="Call"><i data-lucide="phone" class="w-5 h-5"></i></a>
+            <div class="contact-main">
+              <div class="contact-name">${escapeHtml(client.name || "Unnamed")}</div>
+              <div class="contact-meta">
+                <span class="contact-id">ID: ${escapeHtml(client.id || "-")}</span>
+                <div class="contact-actions">
+                  <a href="tel:${encodeURIComponent(mobile)}" class="action-btn action-call" title="Call">
+                    <i data-lucide="phone" class="w-5 h-5"></i>
+                  </a>
+                  <a href="${formatWhatsApp(mobile)}" target="_blank" rel="noopener noreferrer" class="action-btn action-whatsapp" title="WhatsApp">
+                    <i data-lucide="message-circle" class="w-5 h-5"></i>
+                  </a>
+                  ${contactBtn}
+                </div>
+              </div>
             </div>
           </div>
         `;
         listContainer.insertAdjacentHTML('beforeend', html);
       });
+
       lucide.createIcons();
-       applyModuleLayout('viewContacts');
+      applyModuleLayout('viewContacts');
+    }
+
+    // Android/browser-friendly contact action.
+    // If the browser supports sharing a vCard, Android can offer Contacts
+    // as a share target. Otherwise the user gets a vCard file fallback.
+    async function openPhoneContact(client) {
+      const name = client?.name || "CM Client";
+      const mobile = client?.mobile || "";
+      const vcard = `BEGIN:VCARD\\nVERSION:3.0\\nFN:${name.replace(/[,;\\]/g, " ")}\\nTEL;TYPE=CELL:${mobile}\\nNOTE:CM Client ID ${client?.id || ""}\\nEND:VCARD\\n`;
+
+      try {
+        const file = new File([vcard], `${name.replace(/[^a-z0-9]/gi, "_")}.vcf`, {type: "text/vcard"});
+        if (navigator.share && navigator.canShare && navigator.canShare({files: [file]})) {
+          await navigator.share({files: [file], title: name});
+          return;
+        }
+      } catch (err) {
+        if (err?.name === "AbortError") return;
+        console.info("vCard share unavailable", err);
+      }
+
+      try {
+        if (navigator.contacts?.select) {
+          const picked = await navigator.contacts.select(["name", "tel"], {multiple: false});
+          if (picked?.length) {
+            alert(`Selected phone contact: ${(picked[0].name || []).join(", ")}`);
+            return;
+          }
+        }
+      } catch (err) {
+        console.info("Contact Picker unavailable", err);
+      }
+
+      const blob = new Blob([vcard], {type: "text/vcard"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${name.replace(/[^a-z0-9]/gi, "_")}.vcf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
     // 2. Render Notes
