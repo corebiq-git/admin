@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0B57D0">
+<meta name="mobile-web-app-capable" content="yes">
+<title>CM Filings Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="splash"><div class="splash-logo">CM</div><div class="splash-title">CM Filings</div><div class="splash-sub">Admin</div></div>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><div class="brand-mark">CM</div><div><b>CM Filings</b><small>Admin</small></div></div>
+    <nav id="sideNav">
+      <button data-view="dashboard" class="active"><span>⌂</span> Dashboard</button>
+      <button data-view="company"><span>▣</span> Company</button>
+      <button data-view="clients"><span>♙</span> Clients</button>
+      <button data-view="filings"><span>✓</span> Filings</button>
+      <button data-view="payments"><span>₹</span> Payments</button>
+      <button data-view="compliance"><span>◷</span> Compliance</button>
+      <button data-view="ack"><span>↗</span> Acknowledgements</button>
+      <button data-view="invoices"><span>▤</span> Invoices</button>
+      <button data-view="documents"><span>▧</span> Documents</button>
+      <button data-view="tools"><span>⚙</span> Tools</button>
+      <button data-view="reports"><span>▥</span> Reports</button>
+      <button data-view="settings"><span>⚙</span> Settings</button>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <button class="icon-btn menu" id="menuBtn">☰</button>
+      <div class="page-heading"><span id="crumb">Dashboard</span><small id="today"></small></div>
+      <div class="top-actions">
+        <button class="icon-btn" title="Notifications">🔔</button>
+        <button class="profile" id="profileBtn"><span>CM</span><div><b>Admin</b><small>Administrator</small></div></button>
+      </div>
+    </header>
+
+    <section class="content" id="content"></section>
+  </main>
+</div>
+
+<div class="mobile-nav">
+  <button data-view="dashboard" class="active">⌂<small>Home</small></button>
+  <button data-view="clients">♙<small>Clients</small></button>
+  <button data-view="payments">₹<small>Payments</small></button>
+  <button data-view="filings">✓<small>Filings</small></button>
+  <button data-view="tools">⚙<small>Tools</small></button>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>
