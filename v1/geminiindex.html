@@ -1,0 +1,1381 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CM Filings - Tax Compliance Management Admin</title>
+    <!-- Favicon & App Icon -->
+    <link rel="icon" type="image/png" href="assets/logo.png" onerror="this.href='https://placehold.co/64x64/B10000/ffffff?text=CM'">
+    <link rel="apple-touch-icon" href="assets/logo.png">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js for Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#FCEAEA',
+                            100: '#f9d6d6',
+                            500: '#B10000',
+                            600: '#B10000', // Primary
+                            700: '#8E0000', // Primary Hover
+                            900: '#5a0000',
+                            surface: '#FFF7F7',
+                        },
+                        ui: {
+                            canvas: '#F6F7F9', // Very light grey canvas as specified
+                            card: '#FFFFFF',
+                            textMain: '#17181A',
+                            textSec: '#667085',
+                            border: '#E7E9ED',
+                        },
+                        status: {
+                            successBg: '#ECFDF3',
+                            successText: '#16A34A',
+                            warningBg: '#FFF7E6',
+                            warningText: '#D97706',
+                            errorBg: '#FEF2F2',
+                            errorText: '#DC2626',
+                            infoBg: '#EFF6FF',
+                            infoText: '#2563EB',
+                            highlightBg: '#F5F3FF',
+                            highlightText: '#7C3AED',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'm3': '1rem',
+                        'm3-full': '9999px'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #F6F7F9; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #B10000; }
+        #splash-screen {
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+    </style>
+</head>
+<body class="bg-[#F6F7F9] font-sans text-[#17181A] antialiased min-h-screen flex flex-col pb-24 lg:pb-0">
+
+    <div id="splash-screen" class="fixed inset-0 bg-[#17181A] z-50 flex flex-col items-center justify-center text-white p-6">
+        <div class="bg-gradient-to-tr from-[#B10000] to-red-600 p-4 rounded-2xl shadow-2xl mb-4 animate-bounce">
+            <span class="text-3xl font-extrabold tracking-wider text-white">CM</span>
+        </div>
+        <h1 class="font-extrabold text-2xl tracking-widest text-white">CM FILINGS</h1>
+        <p class="text-xs text-red-300 mt-1 uppercase tracking-widest">Tax . Compliance . Vault</p>
+        <div class="mt-8 flex items-center space-x-2">
+            <div class="w-2.5 h-2.5 bg-[#B10000] rounded-full animate-ping"></div>
+            <span class="text-xs text-slate-400 font-medium" id="splash-status">Connecting cloud workspace...</span>
+        </div>
+    </div>
+
+    <header class="bg-[#17181A] text-white sticky top-0 z-40 shadow-sm border-b border-neutral-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-[#B10000] text-white p-2 rounded-xl shadow-lg font-extrabold text-sm w-9 h-9 flex items-center justify-center">
+                    CM
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg tracking-wider text-white">CM FILINGS</h1>
+                    <p class="text-[10px] tracking-widest text-red-400 font-medium uppercase">TAX COMPLIANCE ADMIN</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <div id="sync-status" class="hidden sm:flex items-center space-x-1.5 px-3 py-1 bg-neutral-800 border border-neutral-700 rounded-full text-[11px] text-emerald-400 font-medium">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span id="sync-text">Cloud Sync Active</span>
+                </div>
+                <button onclick="openNotificationModal()" class="relative p-2 text-slate-300 hover:text-white transition rounded-full hover:bg-neutral-800">
+                    <i class="fa-regular fa-bell text-lg"></i>
+                    <span class="absolute top-1 right-1 w-2 h-2 bg-[#B10000] rounded-full animate-pulse"></span>
+                </button>
+                <div class="h-6 w-[1px] bg-neutral-800 hidden sm:block"></div>
+                <div class="flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-full bg-[#B10000] flex items-center justify-center font-bold text-white shadow text-xs">
+                        AP
+                    </div>
+                    <div class="hidden md:block text-left">
+                        <p class="text-xs font-semibold text-white" id="user-display-name">Admin Principal</p>
+                        <p class="text-[10px] text-red-300 truncate max-w-[120px]" id="user-uid-display">Connecting...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-5 gap-6">
+        
+        <!-- Sidebar Navigation (Desktop) -->
+        <aside class="hidden lg:flex lg:col-span-1 bg-white rounded-m3 shadow-sm p-4 flex-col justify-between border border-[#E7E9ED]">
+            <nav class="space-y-1">
+                <p class="px-3 text-[10px] font-bold text-[#667085] uppercase tracking-wider mb-2">Main Modules</p>
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition bg-[#B10000] text-white shadow-sm">
+                    <i class="fa-solid fa-chart-pie w-4"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button onclick="switchTab('clients')" id="nav-clients" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition text-[#17181A] hover:bg-[#FFF7F7]">
+                    <i class="fa-solid fa-users w-4 text-[#667085]"></i>
+                    <span>Clients</span>
+                </button>
+                <button onclick="switchTab('compliance')" id="nav-compliance" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition text-[#17181A] hover:bg-[#FFF7F7]">
+                    <i class="fa-solid fa-file-shield w-4 text-[#667085]"></i>
+                    <span>Compliance</span>
+                </button>
+                <button onclick="switchTab('invoices')" id="nav-invoices" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition text-[#17181A] hover:bg-[#FFF7F7]">
+                    <i class="fa-solid fa-file-invoice-dollar w-4 text-[#667085]"></i>
+                    <span>Invoices</span>
+                </button>
+                <button onclick="switchTab('payments')" id="nav-payments" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition text-[#17181A] hover:bg-[#FFF7F7]">
+                    <i class="fa-solid fa-indian-rupee-sign w-4 text-[#667085]"></i>
+                    <span>Payments</span>
+                </button>
+                <button onclick="switchTab('calendar')" id="nav-calendar" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition text-[#17181A] hover:bg-[#FFF7F7]">
+                    <i class="fa-solid fa-calendar-days w-4 text-[#667085]"></i>
+                    <span>Calendar</span>
+                </button>
+                <button onclick="switchTab('documents')" id="nav-documents" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition text-[#17181A] hover:bg-[#FFF7F7]">
+                    <i class="fa-solid fa-folder-open w-4 text-[#667085]"></i>
+                    <span>Documents</span>
+                </button>
+                <button onclick="switchTab('credentials')" id="nav-credentials" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition text-[#17181A] hover:bg-[#FFF7F7]">
+                    <i class="fa-solid fa-key w-4 text-[#667085]"></i>
+                    <span>Credentials</span>
+                </button>
+                <button onclick="switchTab('reminders')" id="nav-reminders" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition text-[#17181A] hover:bg-[#FFF7F7]">
+                    <i class="fa-solid fa-paper-plane w-4 text-[#667085]"></i>
+                    <span>Reminders</span>
+                </button>
+            </nav>
+
+            <div class="mt-6 pt-4 border-t border-[#E7E9ED]">
+                <div class="bg-[#FFF7F7] p-3 rounded-xl border border-red-100">
+                    <p class="text-[11px] font-bold text-[#B10000] mb-1">Quick Actions</p>
+                    <button onclick="openClientModal()" class="w-full bg-[#B10000] hover:bg-[#8E0000] text-white text-xs font-medium py-2 px-3 rounded-lg shadow transition flex items-center justify-center space-x-1.5 mb-2">
+                        <i class="fa-solid fa-user-plus text-[10px]"></i>
+                        <span>Add Client</span>
+                    </button>
+                    <button onclick="openComplianceModal()" class="w-full bg-white border border-[#E7E9ED] text-[#17181A] hover:bg-neutral-50 text-xs font-medium py-2 px-3 rounded-lg transition flex items-center justify-center space-x-1.5">
+                        <i class="fa-solid fa-plus text-[10px] text-[#B10000]"></i>
+                        <span>Add Compliance</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="lg:col-span-4 space-y-6">
+
+            <!-- 1. DASHBOARD TAB -->
+            <section id="tab-dashboard" class="space-y-6">
+                <!-- Metrics Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-m3 shadow-sm border border-[#E7E9ED]">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-semibold text-[#667085] uppercase tracking-wider">Total Clients</span>
+                            <div class="w-8 h-8 rounded-lg bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                        </div>
+                        <h2 class="text-2xl font-bold text-[#17181A]" id="stat-total-clients">1,482</h2>
+                        <span class="text-xs text-[#16A34A] font-medium flex items-center mt-1"><i class="fa-solid fa-arrow-trend-up mr-1"></i> +12% this month</span>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-m3 shadow-sm border border-[#E7E9ED]">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-semibold text-[#667085] uppercase tracking-wider">Pending Filings</span>
+                            <div class="w-8 h-8 rounded-lg bg-[#FFF7E6] text-[#D97706] flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-clock-rotate-left"></i>
+                            </div>
+                        </div>
+                        <h2 class="text-2xl font-bold text-[#17181A]" id="stat-pending">84</h2>
+                        <span class="text-xs text-[#D97706] font-medium flex items-center mt-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Due in 7 days</span>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-m3 shadow-sm border border-[#E7E9ED]">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-semibold text-[#667085] uppercase tracking-wider">Payments Due</span>
+                            <div class="w-8 h-8 rounded-lg bg-[#FEF2F2] text-[#DC2626] flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-indian-rupee-sign"></i>
+                            </div>
+                        </div>
+                        <h2 class="text-2xl font-bold text-[#17181A]" id="stat-revenue">₹1,42,000</h2>
+                        <span class="text-xs text-[#DC2626] font-medium flex items-center mt-1"><i class="fa-solid fa-file-invoice mr-1"></i> 18 invoices pending</span>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-m3 shadow-sm border border-[#E7E9ED]">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-semibold text-[#667085] uppercase tracking-wider">Completed Filings</span>
+                            <div class="w-8 h-8 rounded-lg bg-[#ECFDF3] text-[#16A34A] flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+                        </div>
+                        <h2 class="text-2xl font-bold text-[#17181A]" id="stat-completed">1,320</h2>
+                        <span class="text-xs text-[#16A34A] font-medium flex items-center mt-1"><i class="fa-solid fa-check mr-1"></i> 94.2% Success</span>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white p-5 rounded-m3 shadow-sm border border-[#E7E9ED]">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-[#17181A] text-sm">Compliance Status Breakdown</h3>
+                            <span class="text-xs text-[#667085]">FY 2025-26</span>
+                        </div>
+                        <div class="h-60 relative">
+                            <canvas id="complianceChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-m3 shadow-sm border border-[#E7E9ED]">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-[#17181A] text-sm">Payment Status Distribution</h3>
+                            <span class="text-xs text-[#667085]">Invoices & Proformas</span>
+                        </div>
+                        <div class="h-60 relative">
+                            <canvas id="paymentChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Compliance Table -->
+                <div class="bg-white rounded-m3 shadow-sm border border-[#E7E9ED] overflow-hidden">
+                    <div class="px-6 py-4 border-b border-[#E7E9ED] flex items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-[#17181A] text-sm">Upcoming Compliance Records</h3>
+                            <p class="text-xs text-[#667085]">Priority statutory filings requiring attention</p>
+                        </div>
+                        <button onclick="switchTab('compliance')" class="text-xs font-semibold text-[#B10000] hover:underline">View All &rarr;</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-[#F6F7F9] text-[#667085] font-semibold uppercase tracking-wider text-[10px]">
+                                    <th class="py-3 px-6">Client</th>
+                                    <th class="py-3 px-4">Compliance Type</th>
+                                    <th class="py-3 px-4">Period</th>
+                                    <th class="py-3 px-4">Due Date</th>
+                                    <th class="py-3 px-4">Status</th>
+                                    <th class="py-3 px-6 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-[#E7E9ED] text-[#17181A]" id="dashboard-compliance-tbody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. CLIENTS TAB -->
+            <section id="tab-clients" class="space-y-6 hidden">
+                <div class="bg-white p-5 rounded-m3 shadow-sm border border-[#E7E9ED] flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="relative w-full md:w-80">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-[#667085] text-xs"></i>
+                        <input type="text" id="client-search" oninput="renderClientsTable()" placeholder="Search clients, PAN, GSTIN..." class="w-full pl-9 pr-4 py-2.5 bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl text-xs font-medium focus:outline-none focus:border-[#B10000]">
+                    </div>
+                    <div class="flex items-center space-x-3 w-full md:w-auto justify-end">
+                        <select id="client-cat-filter" onchange="renderClientsTable()" class="text-xs bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3.5 py-2.5 font-medium text-[#17181A] outline-none">
+                            <option value="">All Categories</option>
+                            <option value="Company">Company</option>
+                            <option value="LLP">LLP</option>
+                            <option value="Partnership">Partnership</option>
+                            <option value="Proprietorship">Proprietorship</option>
+                        </select>
+                        <button onclick="openClientModal()" class="bg-[#B10000] hover:bg-[#8E0000] text-white text-xs font-medium py-2.5 px-4 rounded-xl shadow transition flex items-center space-x-1.5 whitespace-nowrap">
+                            <i class="fa-solid fa-user-plus text-xs"></i>
+                            <span>New Client</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-m3 shadow-sm border border-[#E7E9ED] overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-[#F6F7F9] text-[#667085] font-semibold uppercase tracking-wider text-[10px]">
+                                    <th class="py-3 px-6">Client / Trade Name</th>
+                                    <th class="py-3 px-4">Type</th>
+                                    <th class="py-3 px-4">PAN / GSTIN</th>
+                                    <th class="py-3 px-4">Contact</th>
+                                    <th class="py-3 px-4">Staff</th>
+                                    <th class="py-3 px-4">Status</th>
+                                    <th class="py-3 px-6 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-[#E7E9ED] text-[#17181A]" id="clients-table-body">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. COMPLIANCE RECORDS TAB -->
+            <section id="tab-compliance" class="space-y-6 hidden">
+                <div class="bg-white p-5 rounded-m3 shadow-sm border border-[#E7E9ED] flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="relative w-full md:w-80">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-[#667085] text-xs"></i>
+                        <input type="text" id="comp-search" oninput="renderComplianceTable()" placeholder="Search compliance records..." class="w-full pl-9 pr-4 py-2.5 bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl text-xs font-medium focus:outline-none focus:border-[#B10000]">
+                    </div>
+                    <div class="flex items-center space-x-3 w-full md:w-auto justify-end">
+                        <select id="comp-status-filter" onchange="renderComplianceTable()" class="text-xs bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3.5 py-2.5 font-medium text-[#17181A] outline-none">
+                            <option value="">All Statuses</option>
+                            <option value="Not Started">Not Started</option>
+                            <option value="Documents Pending">Documents Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Review">Review</option>
+                            <option value="Filed">Filed</option>
+                            <option value="Acknowledgement Received">Acknowledgement Received</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                        <button onclick="openComplianceModal()" class="bg-[#B10000] hover:bg-[#8E0000] text-white text-xs font-medium py-2.5 px-4 rounded-xl shadow transition flex items-center space-x-1.5 whitespace-nowrap">
+                            <i class="fa-solid fa-plus text-xs"></i>
+                            <span>New Compliance</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-m3 shadow-sm border border-[#E7E9ED] overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-[#F6F7F9] text-[#667085] font-semibold uppercase tracking-wider text-[10px]">
+                                    <th class="py-3 px-6">Client</th>
+                                    <th class="py-3 px-4">Compliance Type</th>
+                                    <th class="py-3 px-4">Period</th>
+                                    <th class="py-3 px-4">Due Date</th>
+                                    <th class="py-3 px-4">Fee / Status</th>
+                                    <th class="py-3 px-4">Workflow Status</th>
+                                    <th class="py-3 px-6 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-[#E7E9ED] text-[#17181A]" id="compliance-table-body">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. INVOICES TAB -->
+            <section id="tab-invoices" class="space-y-6 hidden">
+                <div class="bg-white p-5 rounded-m3 shadow-sm border border-[#E7E9ED] flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-bold text-[#17181A] text-sm">Professional Fee Invoices & Proformas</h3>
+                        <p class="text-xs text-[#667085]">Automatically linked to compliance records and professional fee calculations.</p>
+                    </div>
+                    <button onclick="openInvoiceModal()" class="bg-[#B10000] hover:bg-[#8E0000] text-white text-xs font-medium py-2.5 px-4 rounded-xl shadow transition flex items-center space-x-1.5 whitespace-nowrap">
+                        <i class="fa-solid fa-file-invoice text-xs"></i>
+                        <span>Generate Invoice</span>
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-m3 shadow-sm border border-[#E7E9ED] overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-[#F6F7F9] text-[#667085] font-semibold uppercase tracking-wider text-[10px]">
+                                    <th class="py-3 px-6">Invoice #</th>
+                                    <th class="py-3 px-4">Client</th>
+                                    <th class="py-3 px-4">Compliance</th>
+                                    <th class="py-3 px-4">Amount (₹)</th>
+                                    <th class="py-3 px-4">Due Date</th>
+                                    <th class="py-3 px-4">Payment Status</th>
+                                    <th class="py-3 px-6 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-[#E7E9ED] text-[#17181A]" id="invoices-table-body">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. PAYMENTS TAB -->
+            <section id="tab-payments" class="space-y-6 hidden">
+                <div class="bg-white p-5 rounded-m3 shadow-sm border border-[#E7E9ED] flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-bold text-[#17181A] text-sm">Payment Requests & UPI / Gateway Tracking</h3>
+                        <p class="text-xs text-[#667085]">Manage payment requests sent to clients for professional fees.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="payments-grid">
+                    <!-- Populated dynamically -->
+                </div>
+            </section>
+
+            <!-- 6. CALENDAR TAB -->
+            <section id="tab-calendar" class="space-y-6 hidden">
+                <div class="bg-white p-5 rounded-m3 shadow-sm border border-[#E7E9ED] flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-bold text-[#17181A] text-sm">Compliance Calendar & Due Dates</h3>
+                        <p class="text-xs text-[#667085]">Statutory filing schedules categorized by urgency.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="calendar-grid">
+                    <!-- Populated dynamically -->
+                </div>
+            </section>
+
+            <!-- 7. DOCUMENTS TAB -->
+            <section id="tab-documents" class="space-y-6 hidden">
+                <div class="bg-white p-5 rounded-m3 shadow-sm border border-[#E7E9ED] flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-bold text-[#17181A] text-sm">Client Document Vault</h3>
+                        <p class="text-xs text-[#667085]">Secure repository for KYC, balance sheets, and acknowledgements.</p>
+                    </div>
+                    <label class="bg-[#B10000] hover:bg-[#8E0000] text-white text-xs font-medium py-2.5 px-4 rounded-xl shadow transition cursor-pointer flex items-center space-x-1.5">
+                        <i class="fa-solid fa-cloud-arrow-up text-xs"></i>
+                        <span>Upload Document</span>
+                        <input type="file" id="global-doc-input" onchange="handleDocumentUpload(event)" class="hidden">
+                    </label>
+                </div>
+
+                <div class="bg-white rounded-m3 shadow-sm border border-[#E7E9ED] overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-[#F6F7F9] text-[#667085] font-semibold uppercase tracking-wider text-[10px]">
+                                    <th class="py-3 px-6">Document Name</th>
+                                    <th class="py-3 px-4">Client</th>
+                                    <th class="py-3 px-4">Category</th>
+                                    <th class="py-3 px-4">Date</th>
+                                    <th class="py-3 px-4">Size</th>
+                                    <th class="py-3 px-6 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-[#E7E9ED] text-[#17181A]" id="documents-table-body">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 8. CREDENTIALS VAULT TAB -->
+            <section id="tab-credentials" class="space-y-6 hidden">
+                <div class="bg-white p-5 rounded-m3 shadow-sm border border-[#E7E9ED] flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-bold text-[#17181A] text-sm">Secured Credentials Vault</h3>
+                        <p class="text-xs text-[#667085]">Access-controlled portal credentials (GST, IT, TRACES, MCA, EPFO).</p>
+                    </div>
+                    <button onclick="openCredentialModal()" class="bg-[#B10000] hover:bg-[#8E0000] text-white text-xs font-medium py-2.5 px-4 rounded-xl shadow transition flex items-center space-x-1.5 whitespace-nowrap">
+                        <i class="fa-solid fa-key text-xs"></i>
+                        <span>Add Credential</span>
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-m3 shadow-sm border border-[#E7E9ED] overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-[#F6F7F9] text-[#667085] font-semibold uppercase tracking-wider text-[10px]">
+                                    <th class="py-3 px-6">Client</th>
+                                    <th class="py-3 px-4">Portal / Service</th>
+                                    <th class="py-3 px-4">Username</th>
+                                    <th class="py-3 px-4">Status</th>
+                                    <th class="py-3 px-6 text-right">Access Controls</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-[#E7E9ED] text-[#17181A]" id="credentials-table-body">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 9. REMINDERS TAB -->
+            <section id="tab-reminders" class="space-y-6 hidden">
+                <div class="bg-white p-5 rounded-m3 shadow-sm border border-[#E7E9ED] flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-bold text-[#17181A] text-sm">Reminders & Communication Log</h3>
+                        <p class="text-xs text-[#667085]">WhatsApp & Email broadcasts sent to clients for pending filings.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-m3 shadow-sm border border-[#E7E9ED] overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-[#F6F7F9] text-[#667085] font-semibold uppercase tracking-wider text-[10px]">
+                                    <th class="py-3 px-6">Date & Time</th>
+                                    <th class="py-3 px-4">Channel</th>
+                                    <th class="py-3 px-4">Recipient Client</th>
+                                    <th class="py-3 px-4">Message / Purpose</th>
+                                    <th class="py-3 px-4">Staff</th>
+                                    <th class="py-3 px-6 text-right">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-[#E7E9ED] text-[#17181A]" id="reminders-table-body">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav aria-label="Bottom Navigation" class="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-[#E7E9ED] z-40 px-4 py-2.5 flex items-center justify-between shadow-2xl">
+        <button onclick="switchTab('dashboard')" id="bnav-dashboard" class="flex flex-col items-center text-[#B10000] transition">
+            <i class="fa-solid fa-chart-pie text-base mb-0.5"></i>
+            <span class="text-[10px] font-semibold">Dashboard</span>
+        </button>
+        <button onclick="switchTab('clients')" id="bnav-clients" class="flex flex-col items-center text-[#667085] hover:text-[#B10000] transition">
+            <i class="fa-solid fa-users text-base mb-0.5"></i>
+            <span class="text-[10px] font-medium">Clients</span>
+        </button>
+        <button onclick="switchTab('compliance')" id="bnav-compliance" class="flex flex-col items-center text-[#667085] hover:text-[#B10000] transition">
+            <i class="fa-solid fa-file-shield text-base mb-0.5"></i>
+            <span class="text-[10px] font-medium">Compliance</span>
+        </button>
+        <button onclick="switchTab('invoices')" id="bnav-invoices" class="flex flex-col items-center text-[#667085] hover:text-[#B10000] transition">
+            <i class="fa-solid fa-file-invoice-dollar text-base mb-0.5"></i>
+            <span class="text-[10px] font-medium">Invoices</span>
+        </button>
+        <button onclick="switchTab('calendar')" id="bnav-calendar" class="flex flex-col items-center text-[#667085] hover:text-[#B10000] transition">
+            <i class="fa-solid fa-calendar-days text-base mb-0.5"></i>
+            <span class="text-[10px] font-medium">Calendar</span>
+        </button>
+    </nav>
+
+    <!-- MODALS -->
+
+    <!-- Add/Edit Client Modal -->
+    <div id="modal-client" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-m3 shadow-2xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto border border-[#E7E9ED]">
+            <div class="flex items-center justify-between border-b border-[#E7E9ED] pb-3">
+                <h3 class="font-bold text-[#17181A] text-sm sm:text-base" id="client-modal-title">Add Client Record</h3>
+                <button onclick="closeModal('client')" class="text-[#667085] hover:text-[#17181A]"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="saveClient(event)" class="space-y-3.5 text-xs">
+                <input type="hidden" id="client-edit-id">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-[#17181A] mb-1">Client Code / ID</label>
+                        <input type="text" id="cl-code" required placeholder="e.g. CMF-101" class="w-full bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3.5 py-2.5 font-medium focus:outline-none focus:border-[#B10000]">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-[#17181A] mb-1">Legal / Trade Name</label>
+                        <input type="text" id="cl-name" required placeholder="e.g. Apex Global Logistics LLP" class="w-full bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3.5 py-2.5 font-medium focus:outline-none focus:border-[#B10000]">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-[#17181A] mb-1">Business Category</label>
+                        <select id="cl-category" class="w-full bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3.5 py-2.5 font-medium focus:outline-none">
+                            <option>Company</option>
+                            <option>LLP</option>
+                            <option>Partnership</option>
+                            <option>Proprietorship</option>
+                            <option>Individual</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-[#17181A] mb-1">PAN Number</label>
+                        <input type="text" id="cl-pan" required placeholder="ABCDE1234F" class="w-full bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3.5 py-2.5 uppercase font-mono focus:outline-none">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block font-semibold text-[#17181A] mb-1">GSTIN</label>
+                        <input type="text" id="cl-gstin" placeholder="29AABCA1234" class="w-full bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3 py-2 uppercase font-mono focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-[#17181A] mb-1">TAN</label>
+                        <input type="text" id="cl-tan" placeholder="BLRA12345C" class="w-full bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3 py-2 uppercase font-mono focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-[#17181A] mb-1">CIN / LLPIN</label>
+                        <input type="text" id="cl-cin" placeholder="U72200KA..." class="w-full bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3 py-2 uppercase font-mono focus:outline-none">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block font-semibold text-[#17181A] mb-1">Contact Person</label>
+                        <input type="text" id="cl-contact" placeholder="Rajesh Kumar" class="w-full bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3 py-2 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-[#17181A] mb-1">Mobile / WhatsApp</label>
+                        <input type="text" id="cl-mobile" placeholder="+91 98765 43210" class="w-full bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3 py-2 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-[#17181A] mb-1">Email</label>
+                        <input type="email" id="cl-email" placeholder="contact@apex.com" class="w-full bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3 py-2 focus:outline-none">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-[#17181A] mb-1">Address / State / District</label>
+                        <input type="text" id="cl-address" placeholder="Bangalore, Karnataka" class="w-full bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3.5 py-2.5 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-[#17181A] mb-1">Assigned Staff</label>
+                        <input type="text" id="cl-staff" value="Admin Principal" class="w-full bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3.5 py-2.5 focus:outline-none">
+                    </div>
+                </div>
+                <div class="pt-3 flex items-center justify-end space-x-2 border-t border-[#E7E9ED]">
+                    <button type="button" onclick="closeModal('client')" class="px-4 py-2 bg-neutral-100 text-[#667085] rounded-xl">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-[#B10000] text-white rounded-xl font-medium">Save Client</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add/Edit Compliance Modal -->
+    <div id="modal-compliance" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-m3 shadow-2xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto border border-[#E7E9ED]">
+            <div class="flex items-center justify-between border-b border-[#E7E9ED] pb-3">
+                <h3 class="font-bold text-[#17181A] text-sm sm:text-base">Add Compliance Record</h3>
+                <button onclick="closeModal('compliance')" class="text-[#667085] hover:text-[#17181A]"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="saveCompliance(event)" class="space-y-3.5 text-xs">
+                <div>
+                    <label class="block font-semibold text-[#17181A] mb-1">Select Client</label>
+                    <select id="cp-client" required class="w-full bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3.5 py-2.5 font-medium focus:outline-none">
+                        <!-- Populated by JS -->
+                    </select>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-[#17181A] mb-1">Compliance Type</label>
+                        <select id="cp-type" class="w-full bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3.5 py-2.5 font-medium focus:outline-none">
+                            <option>GSTR-1</option>
+                            <option>GSTR-3B</option>
+                            <option>GSTR-9</option>
+                            <option>GSTR-9C</option>
+                            <option>TDS 24Q</option>
+                            <option>TDS 26Q</option>
+                            <option>Income Tax Return</option>
+                            <option>Advance Tax</option>
+                            <option>ROC / MCA</option>
+                            <option>PF / ESI</option>
+                            <option>Professional Tax</option>
+                            <option>FSSAI</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-[#17181A] mb-1">Filing Period</label>
+                        <input type="text" id="cp-period" required placeholder="e.g. September 2026" class="w-full bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3.5 py-2.5 focus:outline-none">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-[#17181A] mb-1">Due Date</label>
+                        <input type="date" id="cp-duedate" required class="w-full bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3.5 py-2.5 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-[#17181A] mb-1">Workflow Status</label>
+                        <select id="cp-status" class="w-full bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3.5 py-2.5 focus:outline-none">
+                            <option>Not Started</option>
+                            <option>Documents Pending</option>
+                            <option>In Progress</option>
+                            <option>Review</option>
+                            <option>Filed</option>
+                            <option>Acknowledgement Received</option>
+                            <option>Completed</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-[#17181A] mb-1">Professional Fee (₹)</label>
+                        <input type="number" id="cp-fee" required value="2000" class="w-full bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3.5 py-2.5 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-[#17181A] mb-1">Assigned Staff</label>
+                        <input type="text" id="cp-staff" value="Admin Principal" class="w-full bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3.5 py-2.5 focus:outline-none">
+                    </div>
+                </div>
+                <div class="pt-3 flex items-center justify-end space-x-2 border-t border-[#E7E9ED]">
+                    <button type="button" onclick="closeModal('compliance')" class="px-4 py-2 bg-neutral-100 text-[#667085] rounded-xl">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-[#B10000] text-white rounded-xl font-medium">Save & Generate Invoice</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Credential Modal -->
+    <div id="modal-credential" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-m3 shadow-2xl max-w-sm w-full p-6 space-y-4 border border-[#E7E9ED]">
+            <div class="flex items-center justify-between border-b border-[#E7E9ED] pb-3">
+                <h3 class="font-bold text-[#17181A] text-sm">Add Client Portal Credential</h3>
+                <button onclick="closeModal('credential')" class="text-[#667085] hover:text-[#17181A]"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="saveCredential(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold text-[#17181A] mb-1">Select Client</label>
+                    <select id="cr-client" required class="w-full bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3 py-2 font-medium focus:outline-none">
+                        <!-- Populated by JS -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-semibold text-[#17181A] mb-1">Portal / Service</label>
+                    <select id="cr-portal" class="w-full bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3 py-2 font-medium focus:outline-none">
+                        <option>GST Portal</option>
+                        <option>Income Tax Portal</option>
+                        <option>TRACES</option>
+                        <option>MCA Portal</option>
+                        <option>EPFO Portal</option>
+                        <option>Professional Tax</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-semibold text-[#17181A] mb-1">Username / ID</label>
+                    <input type="text" id="cr-username" required placeholder="GSTIN or PAN" class="w-full bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3 py-2 font-mono focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold text-[#17181A] mb-1">Password (Encrypted Vault)</label>
+                    <input type="password" id="cr-password" required placeholder="••••••••" class="w-full bg-[#F6F7F9] border border-[#E7E9ED] rounded-xl px-3 py-2 focus:outline-none">
+                </div>
+                <div class="pt-3 flex items-center justify-end space-x-2">
+                    <button type="button" onclick="closeModal('credential')" class="px-4 py-2 bg-neutral-100 text-[#667085] rounded-xl">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-[#B10000] text-white rounded-xl">Save Vault</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notifications Modal -->
+    <div id="modal-notifications" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-m3 shadow-2xl max-w-sm w-full p-6 space-y-4 border border-[#E7E9ED]">
+            <div class="flex items-center justify-between border-b border-[#E7E9ED] pb-3">
+                <h3 class="font-bold text-[#17181A] text-sm">System Notifications</h3>
+                <button onclick="closeModal('notifications')" class="text-[#667085] hover:text-[#17181A]"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-3 text-xs">
+                <div class="p-3 bg-red-50 border border-red-100 rounded-xl flex items-start space-x-2">
+                    <i class="fa-solid fa-triangle-exclamation text-[#B10000] mt-0.5"></i>
+                    <div>
+                        <p class="font-semibold text-red-900">GSTR-3B Due Soon</p>
+                        <p class="text-red-700 text-[11px]">14 clients have pending monthly returns for September.</p>
+                    </div>
+                </div>
+                <div class="p-3 bg-amber-50 border border-amber-100 rounded-xl flex items-start space-x-2">
+                    <i class="fa-solid fa-clock text-amber-600 mt-0.5"></i>
+                    <div>
+                        <p class="font-semibold text-amber-900">Payment Request Overdue</p>
+                        <p class="text-amber-700 text-[11px]">₹1,42,000 professional fees pending collection.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, addDoc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'cm-filings-default-app';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "AIzaSyMockKeyForRuntimeFallback_CMFilings",
+            authDomain: "cm-filings-admin.firebaseapp.com",
+            projectId: "cm-filings-admin"
+        };
+
+        let app, db, auth;
+        let currentUser = null;
+
+        // Mock State Default Data
+        window.clientsData = [
+            { id: 'c1', code: 'CMF-101', name: 'Apex Global Logistics LLP', category: 'LLP', pan: '33AABCA8891K', gstin: '33AABCA8891K1ZS', tan: 'BLRA12345C', contact: 'Rajesh V.', mobile: '+919876543210', email: 'apex@logistics.com', address: 'Bangalore, KA', staff: 'Rahul V.', status: 'Active' },
+            { id: 'c2', code: 'CMF-102', name: 'Zenith Software Solutions', category: 'Company', pan: '29BBVCS9921L', gstin: '29BBVCS9921L1ZO', tan: 'BLRZ98765D', contact: 'Priya S.', mobile: '+919944332211', email: 'admin@zenithsoft.com', address: 'Chennai, TN', staff: 'Priya S.', status: 'Active' },
+            { id: 'c3', code: 'CMF-103', name: 'Kural Traders & Exports', category: 'Partnership', pan: '32CCKTR4412M', gstin: '32CCKTR4412M1ZT', tan: 'COCK11223E', contact: 'Kuralavan', mobile: '+919840012345', email: 'kural@traders.in', address: 'Kochi, KL', staff: 'Admin Principal', status: 'Active' }
+        ];
+
+        window.complianceData = [
+            { id: 'cp1', clientId: 'c1', type: 'GSTR-3B', period: 'September 2026', dueDate: '2026-10-20', status: 'In Progress', fee: 2500, staff: 'Rahul V.', payment: 'Paid', ack: 'ACK-99281' },
+            { id: 'cp2', clientId: 'c2', type: 'Income Tax Return', period: 'FY 2025-26', dueDate: '2026-10-31', status: 'Documents Pending', fee: 5000, staff: 'Priya S.', payment: 'Payment Requested', ack: '-' },
+            { id: 'cp3', clientId: 'c3', type: 'GSTR-1', period: 'September 2026', dueDate: '2026-10-11', status: 'Filed', fee: 2000, staff: 'Admin Principal', payment: 'Paid', ack: 'ACK-44102' }
+        ];
+
+        window.invoicesData = [
+            { id: 'CMF-INV-001', clientId: 'c1', compliance: 'GSTR-3B (Sep 2026)', amount: 2950, dueDate: '2026-10-25', status: 'Paid', date: '2026-10-01' },
+            { id: 'CMF-INV-002', clientId: 'c2', compliance: 'Income Tax Return (FY25-26)', amount: 5900, dueDate: '2026-10-15', status: 'Payment Requested', date: '2026-10-02' }
+        ];
+
+        window.documentsData = [
+            { id: 'd1', name: 'Audited_Balance_Sheet_FY25.pdf', client: 'Apex Global Logistics LLP', category: 'Financials', date: '2026-10-01', size: '4.2 MB' },
+            { id: 'd2', name: 'GST_Acknowledgement_GSTR1.pdf', client: 'Kural Traders & Exports', category: 'Acknowledgement', date: '2026-10-02', size: '1.1 MB' }
+        ];
+
+        window.credentialsData = [
+            { id: 'cr1', clientId: 'c1', portal: 'GST Portal', username: '33AABCA8891K1ZS', status: 'Active' },
+            { id: 'cr2', clientId: 'c2', portal: 'Income Tax Portal', username: '29BBVCS9921L', status: 'Active' },
+            { id: 'cr3', clientId: 'c3', portal: 'TRACES', username: 'COCK11223E', status: 'Active' }
+        ];
+
+        window.remindersData = [
+            { id: 'r1', date: '2026-10-03 10:30 AM', channel: 'WhatsApp', client: 'Zenith Software Solutions', message: 'Your Income Tax Return filing for FY 2025-26 is pending. Please upload documents.', staff: 'Priya S.', status: 'Delivered' },
+            { id: 'r2', date: '2026-10-02 04:15 PM', channel: 'Email', client: 'Apex Global Logistics LLP', message: 'Payment Request for GSTR-3B professional fee: ₹2,950.', staff: 'Rahul V.', status: 'Sent' }
+        ];
+
+        async function initFirebase() {
+            try {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        currentUser = user;
+                        document.getElementById('user-uid-display').innerText = `UID: ${user.uid.substring(0, 8)}...`;
+                        document.getElementById('sync-text').innerText = "Cloud Firestore Live";
+                    }
+                });
+            } catch (err) {
+                console.warn("Firebase fallback mode:", err);
+                document.getElementById('sync-text').innerText = "Local Workspace Mode";
+                document.getElementById('user-uid-display').innerText = "Offline Mode";
+            } finally {
+                setTimeout(() => {
+                    const splash = document.getElementById('splash-screen');
+                    if(splash) {
+                        splash.style.opacity = '0';
+                        splash.style.visibility = 'hidden';
+                    }
+                }, 600);
+                renderAll();
+                initCharts();
+            }
+        }
+
+        // Tab Navigation Controller
+        window.switchTab = function(tabId) {
+            const tabs = ['dashboard', 'clients', 'compliance', 'invoices', 'payments', 'calendar', 'documents', 'credentials', 'reminders'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                const nav = document.getElementById(`nav-${t}`);
+                const bnav = document.getElementById(`bnav-${t}`);
+                if (el) el.classList.add('hidden');
+                if (nav) nav.className = "w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition text-[#17181A] hover:bg-[#FFF7F7]";
+                if (bnav) bnav.className = "flex flex-col items-center text-[#667085] hover:text-[#B10000] transition";
+            });
+
+            const activeTab = document.getElementById(`tab-${tabId}`);
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            const activeBNav = document.getElementById(`bnav-${tabId}`);
+
+            if (activeTab) activeTab.classList.remove('hidden');
+            if (activeNav) activeNav.className = "w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition bg-[#B10000] text-white shadow-sm";
+            if (activeBNav) activeBNav.className = "flex flex-col items-center text-[#B10000] transition";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.renderAll = function() {
+            renderDashboard();
+            renderClientsTable();
+            renderComplianceTable();
+            renderInvoicesTable();
+            renderPaymentsGrid();
+            renderCalendarGrid();
+            renderDocumentsTable();
+            renderCredentialsTable();
+            renderRemindersTable();
+            populateClientDropdowns();
+        };
+
+        function renderDashboard() {
+            document.getElementById('stat-total-clients').innerText = window.clientsData.length;
+            document.getElementById('stat-pending').innerText = window.complianceData.filter(c => c.status !== 'Completed' && c.status !== 'Filed').length;
+            document.getElementById('stat-completed').innerText = window.complianceData.filter(c => c.status === 'Completed' || c.status === 'Filed').length;
+            
+            const tbody = document.getElementById('dashboard-compliance-tbody');
+            if(!tbody) return;
+            tbody.innerHTML = window.complianceData.slice(0, 5).map(c => {
+                const client = window.clientsData.find(cl => cl.id === c.clientId) || { name: 'Unknown' };
+                return `
+                    <tr class="hover:bg-[#F6F7F9] transition">
+                        <td class="py-3 px-6 font-semibold text-[#17181A]">${client.name}</td>
+                        <td class="py-3 px-4 font-medium">${c.type}</td>
+                        <td class="py-3 px-4 text-[#667085]">${c.period}</td>
+                        <td class="py-3 px-4 font-mono">${c.dueDate}</td>
+                        <td class="py-3 px-4"><span class="px-2.5 py-1 rounded-full text-[10px] font-semibold ${getStatusBadgeClass(c.status)}">${c.status}</span></td>
+                        <td class="py-3 px-6 text-right">
+                            <button onclick="sendReminderPrompt('${client.name}', '${c.type}')" class="text-[#B10000] bg-red-50 hover:bg-red-100 px-2.5 py-1 rounded-lg text-xs font-medium"><i class="fa-solid fa-paper-plane mr-1"></i> Remind</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        window.renderClientsTable = function() {
+            const tbody = document.getElementById('clients-table-body');
+            if(!tbody) return;
+            const search = document.getElementById('client-search')?.value.toLowerCase() || '';
+            const catFilter = document.getElementById('client-cat-filter')?.value || '';
+
+            const filtered = window.clientsData.filter(c => {
+                const matchS = c.name.toLowerCase().includes(search) || c.pan.toLowerCase().includes(search) || (c.gstin && c.gstin.toLowerCase().includes(search));
+                const matchC = catFilter ? c.category === catFilter : true;
+                return matchS && matchC;
+            });
+
+            tbody.innerHTML = filtered.map(c => `
+                <tr class="hover:bg-[#F6F7F9] transition">
+                    <td class="py-3.5 px-6">
+                        <p class="font-bold text-[#17181A]">${c.name}</p>
+                        <p class="text-[10px] text-[#667085] font-mono">${c.code}</p>
+                    </td>
+                    <td class="py-3.5 px-4"><span class="px-2 py-0.5 bg-neutral-100 rounded text-[10px] font-medium">${c.category}</span></td>
+                    <td class="py-3.5 px-4 font-mono text-[11px]">
+                        <p>PAN: ${c.pan}</p>
+                        <p class="text-[#667085]">GST: ${c.gstin || 'N/A'}</p>
+                    </td>
+                    <td class="py-3.5 px-4">
+                        <p class="font-medium">${c.contact || '-'}</p>
+                        <p class="text-[10px] text-[#667085]">${c.mobile || ''}</p>
+                    </td>
+                    <td class="py-3.5 px-4 text-[#667085]">${c.staff}</td>
+                    <td class="py-3.5 px-4"><span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700">${c.status}</span></td>
+                    <td class="py-3.5 px-6 text-right space-x-1">
+                        <button onclick="editClient('${c.id}')" class="text-blue-600 bg-blue-50 px-2 py-1 rounded text-xs"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteClient('${c.id}')" class="text-red-600 bg-red-50 px-2 py-1 rounded text-xs"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        window.renderComplianceTable = function() {
+            const tbody = document.getElementById('compliance-table-body');
+            if(!tbody) return;
+            const search = document.getElementById('comp-search')?.value.toLowerCase() || '';
+            const statusFilter = document.getElementById('comp-status-filter')?.value || '';
+
+            const filtered = window.complianceData.filter(cp => {
+                const client = window.clientsData.find(c => c.id === cp.clientId) || {};
+                const matchS = client.name?.toLowerCase().includes(search) || cp.type.toLowerCase().includes(search);
+                const matchSt = statusFilter ? cp.status === statusFilter : true;
+                return matchS && matchSt;
+            });
+
+            tbody.innerHTML = filtered.map(cp => {
+                const client = window.clientsData.find(c => c.id === cp.clientId) || { name: 'Unknown' };
+                return `
+                    <tr class="hover:bg-[#F6F7F9] transition">
+                        <td class="py-3.5 px-6 font-semibold text-[#17181A]">${client.name}</td>
+                        <td class="py-3.5 px-4 font-medium text-[#B10000]">${cp.type}</td>
+                        <td class="py-3.5 px-4 text-[#667085]">${cp.period}</td>
+                        <td class="py-3.5 px-4 font-mono">${cp.dueDate}</td>
+                        <td class="py-3.5 px-4 font-semibold">₹${cp.fee}</td>
+                        <td class="py-3.5 px-4">
+                            <select onchange="updateComplianceStatus('${cp.id}', this.value)" class="text-[11px] font-semibold px-2.5 py-1 rounded-full outline-none border ${getStatusBadgeClass(cp.status)}">
+                                <option ${cp.status==='Not Started'?'selected':''}>Not Started</option>
+                                <option ${cp.status==='Documents Pending'?'selected':''}>Documents Pending</option>
+                                <option ${cp.status==='In Progress'?'selected':''}>In Progress</option>
+                                <option ${cp.status==='Review'?'selected':''}>Review</option>
+                                <option ${cp.status==='Filed'?'selected':''}>Filed</option>
+                                <option ${cp.status==='Acknowledgement Received'?'selected':''}>Acknowledgement Received</option>
+                                <option ${cp.status==='Completed'?'selected':''}>Completed</option>
+                            </select>
+                        </td>
+                        <td class="py-3.5 px-6 text-right space-x-1">
+                            <button onclick="sendReminderPrompt('${client.name}', '${cp.type}')" class="text-neutral-700 bg-neutral-100 px-2.5 py-1 rounded text-xs"><i class="fa-solid fa-paper-plane"></i></button>
+                            <button onclick="deleteCompliance('${cp.id}')" class="text-red-600 bg-red-50 px-2 py-1 rounded text-xs"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        window.renderInvoicesTable = function() {
+            const tbody = document.getElementById('invoices-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = window.invoicesData.map(inv => {
+                const client = window.clientsData.find(c => c.id === inv.clientId) || { name: 'Unknown' };
+                return `
+                    <tr class="hover:bg-[#F6F7F9] transition">
+                        <td class="py-3.5 px-6 font-mono font-bold text-[#17181A]">${inv.id}</td>
+                        <td class="py-3.5 px-4 font-semibold">${client.name}</td>
+                        <td class="py-3.5 px-4 text-[#667085]">${inv.compliance}</td>
+                        <td class="py-3.5 px-4 font-bold text-emerald-700">₹${inv.amount}</td>
+                        <td class="py-3.5 px-4 font-mono">${inv.dueDate}</td>
+                        <td class="py-3.5 px-4"><span class="px-2.5 py-1 rounded-full text-[10px] font-semibold ${getPaymentBadgeClass(inv.status)}">${inv.status}</span></td>
+                        <td class="py-3.5 px-6 text-right">
+                            <button onclick="showCustomToast('Downloading PDF Proforma/Invoice ${inv.id}')" class="text-[#B10000] bg-red-50 hover:bg-red-100 px-3 py-1 rounded text-xs font-medium"><i class="fa-solid fa-file-pdf mr-1"></i> PDF</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        window.renderPaymentsGrid = function() {
+            const grid = document.getElementById('payments-grid');
+            if(!grid) return;
+            grid.innerHTML = window.invoicesData.map(inv => {
+                const client = window.clientsData.find(c => c.id === inv.clientId) || { name: 'Unknown' };
+                return `
+                    <div class="bg-white p-5 rounded-m3 shadow-sm border border-[#E7E9ED] flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-mono text-xs font-bold text-[#667085]">${inv.id}</span>
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${getPaymentBadgeClass(inv.status)}">${inv.status}</span>
+                            </div>
+                            <h4 class="font-bold text-[#17181A] text-sm mb-1">${client.name}</h4>
+                            <p class="text-xs text-[#667085] mb-3">${inv.compliance}</p>
+                            <p class="text-xl font-extrabold text-[#17181A] mb-4">₹${inv.amount} <span class="text-xs font-normal text-[#667085]">(incl. GST)</span></p>
+                        </div>
+                        <div class="space-y-2">
+                            <button onclick="requestPaymentGateway('${inv.id}', '${client.name}', ${inv.amount})" class="w-full py-2 bg-[#B10000] hover:bg-[#8E0000] text-white rounded-xl text-xs font-medium transition shadow flex items-center justify-center space-x-1.5">
+                                <i class="fa-solid fa-qrcode"></i>
+                                <span>Request UPI / QR Payment</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.renderCalendarGrid = function() {
+            const grid = document.getElementById('calendar-grid');
+            if(!grid) return;
+            grid.innerHTML = `
+                <div class="bg-white p-5 rounded-m3 shadow-sm border border-[#E7E9ED]">
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="font-bold text-[#17181A] text-sm">Today / Immediate</h4>
+                        <span class="px-2 py-0.5 bg-red-100 text-[#B10000] text-[10px] font-bold rounded">Urgent</span>
+                    </div>
+                    <div class="space-y-2.5 mt-3">
+                        <div class="p-3 bg-red-50/50 rounded-xl border border-red-100">
+                            <p class="font-bold text-xs text-[#17181A]">GSTR-3B Monthly Return</p>
+                            <p class="text-[11px] text-[#667085]">14 clients pending submission today</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-m3 shadow-sm border border-[#E7E9ED]">
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="font-bold text-[#17181A] text-sm">Due in 3 to 7 Days</h4>
+                        <span class="px-2 py-0.5 bg-amber-100 text-amber-800 text-[10px] font-bold rounded">Upcoming</span>
+                    </div>
+                    <div class="space-y-2.5 mt-3">
+                        <div class="p-3 bg-amber-50/50 rounded-xl border border-amber-100">
+                            <p class="font-bold text-xs text-[#17181A]">TDS Return Q2 (24Q/26Q)</p>
+                            <p class="text-[11px] text-[#667085]">8 corporate accounts due in 5 days</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-m3 shadow-sm border border-[#E7E9ED]">
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="font-bold text-[#17181A] text-sm">Due in 15 Days</h4>
+                        <span class="px-2 py-0.5 bg-blue-100 text-blue-800 text-[10px] font-bold rounded">Planned</span>
+                    </div>
+                    <div class="space-y-2.5 mt-3">
+                        <div class="p-3 bg-blue-50/50 rounded-xl border border-blue-100">
+                            <p class="font-bold text-xs text-[#17181A]">Advance Tax Q2 Installment</p>
+                            <p class="text-[11px] text-[#667085]">All eligible corporate & LLP clients</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.renderDocumentsTable = function() {
+            const tbody = document.getElementById('documents-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = window.documentsData.map(d => `
+                <tr class="hover:bg-[#F6F7F9] transition">
+                    <td class="py-3.5 px-6 font-semibold text-[#17181A] flex items-center space-x-2">
+                        <i class="fa-solid fa-file-pdf text-[#B10000] text-sm"></i>
+                        <span>${d.name}</span>
+                    </td>
+                    <td class="py-3.5 px-4 text-[#667085]">${d.client}</td>
+                    <td class="py-3.5 px-4"><span class="px-2 py-0.5 bg-neutral-100 rounded text-[10px]">${d.category}</span></td>
+                    <td class="py-3.5 px-4 text-[#667085] font-mono">${d.date}</td>
+                    <td class="py-3.5 px-4 text-[#667085]">${d.size}</td>
+                    <td class="py-3.5 px-6 text-right">
+                        <button onclick="showCustomToast('Downloading secure document vault file...')" class="text-[#B10000] bg-red-50 hover:bg-red-100 px-3 py-1 rounded text-xs font-medium"><i class="fa-solid fa-cloud-arrow-down mr-1"></i> Download</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        window.renderCredentialsTable = function() {
+            const tbody = document.getElementById('credentials-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = window.credentialsData.map(cr => {
+                const client = window.clientsData.find(c => c.id === cr.clientId) || { name: 'Unknown' };
+                return `
+                    <tr class="hover:bg-[#F6F7F9] transition">
+                        <td class="py-3.5 px-6 font-semibold text-[#17181A]">${client.name}</td>
+                        <td class="py-3.5 px-4 font-medium text-[#B10000]">${cr.portal}</td>
+                        <td class="py-3.5 px-4 font-mono text-[11px]">${cr.username}</td>
+                        <td class="py-3.5 px-4"><span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700">${cr.status}</span></td>
+                        <td class="py-3.5 px-6 text-right space-x-2">
+                            <button onclick="revealPassword('${cr.portal}')" class="text-blue-600 bg-blue-50 px-2.5 py-1 rounded text-xs font-medium"><i class="fa-solid fa-eye mr-1"></i> View Password</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        window.renderRemindersTable = function() {
+            const tbody = document.getElementById('reminders-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = window.remindersData.map(r => `
+                <tr class="hover:bg-[#F6F7F9] transition">
+                    <td class="py-3.5 px-6 font-mono text-[11px] text-[#667085]">${r.date}</td>
+                    <td class="py-3.5 px-4 font-semibold text-[#17181A]"><i class="fa-brands fa-whatsapp text-emerald-600 mr-1"></i> ${r.channel}</td>
+                    <td class="py-3.5 px-4 font-medium">${r.client}</td>
+                    <td class="py-3.5 px-4 text-[#667085] max-w-xs truncate">${r.message}</td>
+                    <td class="py-3.5 px-4 text-[#667085]">${r.staff}</td>
+                    <td class="py-3.5 px-6 text-right"><span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700">${r.status}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        // Helpers & Badges
+        function getStatusBadgeClass(status) {
+            switch(status) {
+                case 'Completed':
+                case 'Filed':
+                case 'Acknowledgement Received': return 'bg-[#ECFDF3] text-[#16A34A] border-emerald-200';
+                case 'In Progress':
+                case 'Review': return 'bg-[#EFF6FF] text-[#2563EB] border-blue-200';
+                case 'Documents Pending':
+                case 'Not Started': return 'bg-[#FFF7E6] text-[#D97706] border-amber-200';
+                default: return 'bg-neutral-100 text-neutral-700 border-neutral-200';
+            }
+        }
+
+        function getPaymentBadgeClass(status) {
+            switch(status) {
+                case 'Paid': return 'bg-[#ECFDF3] text-[#16A34A]';
+                case 'Payment Requested': return 'bg-[#FFF7E6] text-[#D97706]';
+                case 'Partially Paid': return 'bg-[#EFF6FF] text-[#2563EB]';
+                case 'Overdue': return 'bg-[#FEF2F2] text-[#DC2626]';
+                default: return 'bg-neutral-100 text-neutral-700';
+            }
+        }
+
+        function populateClientDropdowns() {
+            const dropdowns = [document.getElementById('cp-client'), document.getElementById('cr-client')];
+            dropdowns.forEach(dd => {
+                if(!dd) return;
+                dd.innerHTML = window.clientsData.map(c => `<option value="${c.id}">${c.name} (${c.code})</option>`).join('');
+            });
+        }
+
+        // Modals
+        window.openClientModal = function() {
+            document.getElementById('client-edit-id').value = '';
+            document.getElementById('client-modal-title').innerText = "Add Client Record";
+            document.getElementById('modal-client').classList.remove('hidden');
+        };
+
+        window.openComplianceModal = function() {
+            document.getElementById('modal-compliance').classList.remove('hidden');
+        };
+
+        window.openCredentialModal = function() {
+            document.getElementById('modal-credential').classList.remove('hidden');
+        };
+
+        window.openNotificationModal = function() {
+            document.getElementById('modal-notifications').classList.remove('hidden');
+        };
+
+        window.closeModal = function(name) {
+            document.getElementById(`modal-${name}`).classList.add('hidden');
+        };
+
+        window.saveClient = function(e) {
+            e.preventDefault();
+            const id = document.getElementById('client-edit-id').value || 'c_' + Date.now();
+            const client = {
+                id,
+                code: document.getElementById('cl-code').value,
+                name: document.getElementById('cl-name').value,
+                category: document.getElementById('cl-category').value,
+                pan: document.getElementById('cl-pan').value.toUpperCase(),
+                gstin: document.getElementById('cl-gstin').value.toUpperCase(),
+                tan: document.getElementById('cl-tan').value.toUpperCase(),
+                cin: document.getElementById('cl-cin').value.toUpperCase(),
+                contact: document.getElementById('cl-contact').value,
+                mobile: document.getElementById('cl-mobile').value,
+                email: document.getElementById('cl-email').value,
+                address: document.getElementById('cl-address').value,
+                staff: document.getElementById('cl-staff').value,
+                status: 'Active'
+            };
+
+            const index = window.clientsData.findIndex(c => c.id === id);
+            if(index >= 0) window.clientsData[index] = client;
+            else window.clientsData.unshift(client);
+
+            closeModal('client');
+            renderAll();
+            showCustomToast("Client record saved successfully!");
+        };
+
+        window.saveCompliance = function(e) {
+            e.preventDefault();
+            const clientId = document.getElementById('cp-client').value;
+            const type = document.getElementById('cp-type').value;
+            const period = document.getElementById('cp-period').value;
+            const dueDate = document.getElementById('cp-duedate').value;
+            const status = document.getElementById('cp-status').value;
+            const fee = parseFloat(document.getElementById('cp-fee').value) || 2000;
+            const staff = document.getElementById('cp-staff').value;
+
+            const newComp = {
+                id: 'cp_' + Date.now(),
+                clientId, type, period, dueDate, status, fee, staff,
+                payment: 'Payment Requested',
+                ack: '-'
+            };
+            window.complianceData.unshift(newComp);
+
+            // Auto-generate Proforma Invoice
+            const invId = 'CMF-INV-' + Math.floor(100000 + Math.random() * 900000);
+            const totalWithGst = Math.round(fee * 1.18);
+            window.invoicesData.unshift({
+                id: invId,
+                clientId,
+                compliance: `${type} (${period})`,
+                amount: totalWithGst,
+                dueDate: dueDate || '2026-10-30',
+                status: 'Payment Requested',
+                date: new Date().toISOString().split('T')[0]
+            });
+
+            closeModal('compliance');
+            renderAll();
+            showCustomToast("Compliance record and professional invoice created!");
+        };
+
+        window.saveCredential = function(e) {
+            e.preventDefault();
+            const clientId = document.getElementById('cr-client').value;
+            const portal = document.getElementById('cr-portal').value;
+            const username = document.getElementById('cr-username').value;
+
+            window.credentialsData.unshift({
+                id: 'cr_' + Date.now(),
+                clientId, portal, username, status: 'Active'
+            });
+
+            closeModal('credential');
+            renderAll();
+            showCustomToast("Portal credential safely stored in vault!");
+        };
+
+        window.updateComplianceStatus = function(id, newStatus) {
+            const comp = window.complianceData.find(c => c.id === id);
+            if(comp) {
+                comp.status = newStatus;
+                renderDashboard();
+                showCustomToast(`Compliance workflow status updated to: ${newStatus}`);
+            }
+        };
+
+        window.sendReminderPrompt = function(clientName, compType) {
+            const msg = `Reminder: Your ${compType} filing is pending. Please upload required documents.`;
+            window.remindersData.unshift({
+                id: 'r_' + Date.now(),
+                date: new Date().toLocaleString(),
+                channel: 'WhatsApp',
+                client: clientName,
+                message: msg,
+                staff: 'Admin Principal',
+                status: 'Delivered'
+            });
+            renderRemindersTable();
+            showCustomToast(`WhatsApp reminder successfully dispatched to ${clientName}!`);
+        };
+
+        window.requestPaymentGateway = function(invId, clientName, amount) {
+            showCustomToast(`UPI QR & Payment Link generated for ${clientName} (₹${amount}). Sent via WhatsApp.`);
+        };
+
+        window.revealPassword = function(portal) {
+            showCustomToast(`Access Control Verified: Password for ${portal} displayed securely.`);
+        };
+
+        window.deleteClient = function(id) {
+            window.clientsData = window.clientsData.filter(c => c.id !== id);
+            renderAll();
+        };
+
+        window.deleteCompliance = function(id) {
+            window.complianceData = window.complianceData.filter(c => c.id !== id);
+            renderAll();
+        };
+
+        window.showCustomToast = function(msg) {
+            const toast = document.createElement('div');
+            toast.className = "fixed bottom-5 right-5 bg-[#17181A] text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-2xl z-50 flex items-center space-x-2 border border-neutral-700";
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i><span>${msg}</span>`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3500);
+        };
+
+        function initCharts() {
+            const ctx1 = document.getElementById('complianceChart')?.getContext('2d');
+            if(ctx1) {
+                new Chart(ctx1, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Completed / Filed', 'In Progress / Review', 'Documents Pending', 'Not Started'],
+                        datasets: [{
+                            data: [1320, 48, 24, 12],
+                            backgroundColor: ['#16A34A', '#2563EB', '#D97706', '#64748B']
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } } }
+                });
+            }
+
+            const ctx2 = document.getElementById('paymentChart')?.getContext('2d');
+            if(ctx2) {
+                new Chart(ctx2, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Paid', 'Payment Requested', 'Partially Paid', 'Overdue'],
+                        datasets: [{
+                            label: 'Amount (₹)',
+                            data: [420000, 142000, 35000, 18000],
+                            backgroundColor: '#B10000',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: '#E7E9ED' } } } }
+                });
+            }
+        }
+
+        window.onload = function() {
+            initFirebase();
+        };
+    </script>
+</body>
+</html>
