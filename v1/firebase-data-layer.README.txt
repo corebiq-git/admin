@@ -1,0 +1,11 @@
+Firebase integration point:
+- clients -> Firestore clients collection
+- compliances -> Firestore compliances collection
+- invoices -> invoices
+- payments -> payments
+- reminders -> reminders
+- credentials -> credentials (secure access control required)
+- documents metadata -> Firestore documents
+- actual files -> Firebase Storage
+
+Keep the existing UI contracts and replace the LocalStorage store in app.js with Firestore listeners/actions when the Firebase project is ready.
