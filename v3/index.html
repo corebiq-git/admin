@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CM Filings - Focused On Compliances</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Roboto for Material 3 look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Material-style icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        m3Primary: '#005FB8',
+                        m3OnPrimary: '#FFFFFF',
+                        m3PrimaryContainer: '#D1E4FF',
+                        m3OnPrimaryContainer: '#001D36',
+                        m3Surface: '#FDFCFF',
+                        m3SurfaceContainer: '#F0F4F8',
+                        m3SurfaceVariant: '#E1E2EC',
+                        m3OnSurface: '#1A1C1E',
+                        m3OnSurfaceVariant: '#44474F',
+                        m3Outline: '#74777F',
+                        m3Error: '#BA1A1A',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Roboto', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'm3-1': '0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.30)',
+                        'm3-2': '0px 2px 6px 2px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.30)',
+                        'm3-3': '0px 4px 8px 3px rgba(0, 0, 0, 0.15), 0px 1px 3px 0px rgba(0, 0, 0, 0.30)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom M3 ripples and transitions */
+        .m3-state-layer {
+            position: relative;
+            overflow: hidden;
+        }
+        .m3-state-layer::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: currentColor;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+        .m3-state-layer:hover::after {
+            opacity: 0.08;
+        }
+        .m3-state-layer:active::after {
+            opacity: 0.12;
+        }
+    </style>
+</head>
+<body class="bg-m3Surface text-m3OnSurface font-sans antialiased selection:bg-m3PrimaryContainer selection:text-m3OnPrimaryContainer">
+
+    <header class="sticky top-0 z-50 bg-m3SurfaceContainer/90 backdrop-blur-md border-b border-m3SurfaceVariant shadow-sm transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 rounded-2xl bg-m3Primary text-m3OnPrimary flex items-center justify-center font-bold text-xl shadow-m3-1">
+                    CM
+                </div>
+                <div>
+                    <span class="text-xl font-bold tracking-tight text-m3OnSurface">CM FILINGS</span>
+                    <span class="block text-xs font-medium text-m3Primary tracking-widest uppercase">Focused On Compliances</span>
+                </div>
+            </div>
+            
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium">
+                <a href="#services" class="text-m3OnSurfaceVariant hover:text-m3Primary transition-colors">Services</a>
+                <a href="#calculator" class="text-m3OnSurfaceVariant hover:text-m3Primary transition-colors">Fee Calculator</a>
+                <a href="#why-us" class="text-m3OnSurfaceVariant hover:text-m3Primary transition-colors">Why Us</a>
+                <a href="#testimonials" class="text-m3OnSurfaceVariant hover:text-m3Primary transition-colors">Clients</a>
+                <a href="#faq" class="text-m3OnSurfaceVariant hover:text-m3Primary transition-colors">FAQ</a>
+            </nav>
+
+            <div class="hidden md:flex items-center space-x-4">
+                <a href="tel:+919876543210" class="flex items-center space-x-2 text-sm font-semibold text-m3Primary px-4 py-2.5 rounded-full hover:bg-m3PrimaryContainer/30 transition-colors">
+                    <i class="fa-solid fa-phone"></i>
+                    <span>+91 98765 43210</span>
+                </a>
+                <button onclick="openConsultationModal()" class="m3-state-layer bg-m3Primary text-m3OnPrimary px-6 py-2.5 rounded-full font-medium shadow-m3-1 hover:shadow-m3-2 transition-all">
+                    Get Started
+                </button>
+            </div>
+
+            <!-- Mobile menu button -->
+            <button onclick="toggleMobileMenu()" class="md:hidden p-3 rounded-full hover:bg-m3SurfaceVariant/50 text-m3OnSurface">
+                <i class="fa-solid fa-bars text-xl" id="menuIcon"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Drawer -->
+        <div id="mobileMenu" class="hidden md:hidden absolute top-20 left-0 w-full bg-m3SurfaceContainer border-b border-m3SurfaceVariant shadow-m3-2 p-6 space-y-4">
+            <a href="#services" onclick="toggleMobileMenu()" class="block text-lg font-medium text-m3OnSurface py-2">Services</a>
+            <a href="#calculator" onclick="toggleMobileMenu()" class="block text-lg font-medium text-m3OnSurface py-2">Fee Calculator</a>
+            <a href="#why-us" onclick="toggleMobileMenu()" class="block text-lg font-medium text-m3OnSurface py-2">Why Us</a>
+            <a href="#testimonials" onclick="toggleMobileMenu()" class="block text-lg font-medium text-m3OnSurface py-2">Clients</a>
+            <a href="#faq" onclick="toggleMobileMenu()" class="block text-lg font-medium text-m3OnSurface py-2">FAQ</a>
+            <div class="pt-4 border-t border-m3SurfaceVariant flex flex-col space-y-3">
+                <a href="tel:+919876543210" class="text-center font-semibold text-m3Primary py-2">
+                    <i class="fa-solid fa-phone mr-2"></i> +91 98765 43210
+                </a>
+                <button onclick="openConsultationModal(); toggleMobileMenu();" class="w-full bg-m3Primary text-m3OnPrimary py-3 rounded-full font-medium shadow-m3-1">
+                    Get Started
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section class="relative overflow-hidden pt-16 pb-24 lg:pt-28 lg:pb-36 bg-gradient-to-b from-m3SurfaceContainer/50 to-m3Surface">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-7 space-y-8 text-center lg:text-left">
+                    <div class="inline-flex items-center space-x-2 bg-m3PrimaryContainer text-m3OnPrimaryContainer px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider shadow-sm">
+                        <i class="fa-solid fa-shield-halved text-m3Primary"></i>
+                        <span>India's Trusted Compliance Partner</span>
+                    </div>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-m3OnSurface leading-tight">
+                        Seamless Corporate Compliances, <span class="text-m3Primary">Zero Stress.</span>
+                    </h1>
+                    <p class="text-lg sm:text-xl text-m3OnSurfaceVariant max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                        From Company Registration to GST, ROC Annual Filings, and Trademark protection. We keep your business 100% compliant so you can focus on growth.
+                    </p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
+                        <button onclick="openConsultationModal()" class="w-full sm:w-auto bg-m3Primary text-m3OnPrimary px-8 py-4 rounded-full font-semibold shadow-m3-2 hover:shadow-m3-3 transition-all flex items-center justify-center space-x-3">
+                            <span>Book Free Consultation</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                        <a href="#services" class="w-full sm:w-auto border-2 border-m3Outline/40 text-m3OnSurface px-8 py-3.5 rounded-full font-semibold hover:bg-m3SurfaceVariant/50 transition-all text-center">
+                            Explore Services
+                        </a>
+                    </div>
+                    <div class="pt-6 grid grid-cols-3 gap-4 border-t border-m3SurfaceVariant/80">
+                        <div>
+                            <p class="text-2xl sm:text-3xl font-extrabold text-m3Primary">10,000+</p>
+                            <p class="text-xs sm:text-sm text-m3OnSurfaceVariant font-medium">Filings Done</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl sm:text-3xl font-extrabold text-m3Primary">99.8%</p>
+                            <p class="text-xs sm:text-sm text-m3OnSurfaceVariant font-medium">Client Success</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl sm:text-3xl font-extrabold text-m3Primary">15+ yrs</p>
+                            <p class="text-xs sm:text-sm text-m3OnSurfaceVariant font-medium">Expertise</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5">
+                    <div class="bg-m3SurfaceContainer p-8 rounded-[2.5rem] shadow-m3-3 border border-m3SurfaceVariant relative">
+                        <div class="absolute -top-4 -right-4 bg-m3PrimaryContainer text-m3OnPrimaryContainer px-4 py-2 rounded-2xl text-xs font-bold shadow-sm">
+                            <i class="fa-solid fa-bolt mr-1"></i> Fast Processing
+                        </div>
+                        <h3 class="text-2xl font-bold text-m3OnSurface mb-6">Quick Compliance Check</h3>
+                        <form id="quickLeadForm" onsubmit="handleQuickLead(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-m3OnSurfaceVariant mb-1">Your Full Name</label>
+                                <input type="text" required placeholder="John Doe" class="w-full px-4 py-3 bg-m3Surface border border-m3Outline/40 rounded-xl focus:outline-none focus:border-m3Primary text-m3OnSurface">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-m3OnSurfaceVariant mb-1">Phone Number</label>
+                                <input type="tel" required placeholder="+91 98765 43210" class="w-full px-4 py-3 bg-m3Surface border border-m3Outline/40 rounded-xl focus:outline-none focus:border-m3Primary text-m3OnSurface">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase text-m3OnSurfaceVariant mb-1">Select Service</label>
+                                <select class="w-full px-4 py-3 bg-m3Surface border border-m3Outline/40 rounded-xl focus:outline-none focus:border-m3Primary text-m3OnSurface">
+                                    <option>Private Limited Registration</option>
+                                    <option>GST Return Filing</option>
+                                    <option>ROC Annual Filing</option>
+                                    <option>Trademark Registration</option>
+                                    <option>Income Tax Filing</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="w-full bg-m3Primary text-m3OnPrimary py-3.5 rounded-xl font-semibold shadow-m3-1 hover:shadow-m3-2 transition-all">
+                                Request Callback
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="py-20 lg:py-32 bg-m3Surface">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="text-m3Primary font-bold text-sm tracking-widest uppercase bg-m3PrimaryContainer/50 px-4 py-1 rounded-full">Our Core Expertise</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-m3OnSurface">Comprehensive Compliance Solutions</h2>
+                <p class="text-m3OnSurfaceVariant text-base sm:text-lg">Everything your startup or enterprise needs to stay legally airtight, from incorporation to annual audit.</p>
+            </div>
+
+            <!-- Service Category Filter Chips -->
+            <div class="flex flex-wrap justify-center gap-3 mb-12">
+                <button onclick="filterServices('all')" class="service-chip px-5 py-2 rounded-full text-sm font-medium bg-m3Primary text-m3OnPrimary transition-all shadow-sm">All Services</button>
+                <button onclick="filterServices('registration')" class="service-chip px-5 py-2 rounded-full text-sm font-medium bg-m3SurfaceContainer text-m3OnSurfaceVariant hover:bg-m3SurfaceVariant transition-all">Registration</button>
+                <button onclick="filterServices('tax')" class="service-chip px-5 py-2 rounded-full text-sm font-medium bg-m3SurfaceContainer text-m3OnSurfaceVariant hover:bg-m3SurfaceVariant transition-all">Tax & GST</button>
+                <button onclick="filterServices('roc')" class="service-chip px-5 py-2 rounded-full text-sm font-medium bg-m3SurfaceContainer text-m3OnSurfaceVariant hover:bg-m3SurfaceVariant transition-all">ROC Filings</button>
+                <button onclick="filterServices('ipr')" class="service-chip px-5 py-2 rounded-full text-sm font-medium bg-m3SurfaceContainer text-m3OnSurfaceVariant hover:bg-m3SurfaceVariant transition-all">Trademark & IPR</button>
+            </div>
+
+            <!-- Services Grid -->
+            <div id="servicesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Service Card 1 -->
+                <div class="service-card bg-m3SurfaceContainer p-8 rounded-[2rem] border border-m3SurfaceVariant shadow-sm hover:shadow-m3-2 transition-all flex flex-col justify-between group" data-category="registration">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-m3PrimaryContainer text-m3Primary flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-building-columns"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-m3OnSurface mb-3">Company Registration</h3>
+                        <p class="text-m3OnSurfaceVariant text-sm leading-relaxed mb-6">
+                            Incorporate your Private Limited, LLP, OPC, or Partnership firm quickly with end-to-end MCA support.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-m3SurfaceVariant flex items-center justify-between">
+                        <span class="text-sm font-bold text-m3Primary">Starting ₹4,999</span>
+                        <button onclick="openConsultationModal()" class="text-m3Primary font-semibold text-sm hover:underline flex items-center space-x-1">
+                            <span>Enquire</span> <i class="fa-solid fa-chevron-right text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Service Card 2 -->
+                <div class="service-card bg-m3SurfaceContainer p-8 rounded-[2rem] border border-m3SurfaceVariant shadow-sm hover:shadow-m3-2 transition-all flex flex-col justify-between group" data-category="tax">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-m3PrimaryContainer text-m3Primary flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-file-invoice-dollar"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-m3OnSurface mb-3">GST Registration & Filing</h3>
+                        <p class="text-m3OnSurfaceVariant text-sm leading-relaxed mb-6">
+                            Hassle-free monthly/quarterly GST returns filing, reconciliation, and seamless GSTIN issuance.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-m3SurfaceVariant flex items-center justify-between">
+                        <span class="text-sm font-bold text-m3Primary">Starting ₹999/mo</span>
+                        <button onclick="openConsultationModal()" class="text-m3Primary font-semibold text-sm hover:underline flex items-center space-x-1">
+                            <span>Enquire</span> <i class="fa-solid fa-chevron-right text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Service Card 3 -->
+                <div class="service-card bg-m3SurfaceContainer p-8 rounded-[2rem] border border-m3SurfaceVariant shadow-sm hover:shadow-m3-2 transition-all flex flex-col justify-between group" data-category="roc">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-m3PrimaryContainer text-m3Primary flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-scale-balanced"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-m3OnSurface mb-3">ROC Annual Filings</h3>
+                        <p class="text-m3OnSurfaceVariant text-sm leading-relaxed mb-6">
+                            AOC-4, MGT-7 filing, annual compliance management, and secretarial audit by seasoned company secretaries.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-m3SurfaceVariant flex items-center justify-between">
+                        <span class="text-sm font-bold text-m3Primary">Starting ₹6,999</span>
+                        <button onclick="openConsultationModal()" class="text-m3Primary font-semibold text-sm hover:underline flex items-center space-x-1">
+                            <span>Enquire</span> <i class="fa-solid fa-chevron-right text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Service Card 4 -->
+                <div class="service-card bg-m3SurfaceContainer p-8 rounded-[2rem] border border-m3SurfaceVariant shadow-sm hover:shadow-m3-2 transition-all flex flex-col justify-between group" data-category="ipr">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-m3PrimaryContainer text-m3Primary flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-trademark"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-m3OnSurface mb-3">Trademark Registration</h3>
+                        <p class="text-m3OnSurfaceVariant text-sm leading-relaxed mb-6">
+                            Protect your brand name, logo, and tagline with fast-track trademark filing and opposition handling.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-m3SurfaceVariant flex items-center justify-between">
+                        <span class="text-sm font-bold text-m3Primary">Starting ₹1,999</span>
+                        <button onclick="openConsultationModal()" class="text-m3Primary font-semibold text-sm hover:underline flex items-center space-x-1">
+                            <span>Enquire</span> <i class="fa-solid fa-chevron-right text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Service Card 5 -->
+                <div class="service-card bg-m3SurfaceContainer p-8 rounded-[2rem] border border-m3SurfaceVariant shadow-sm hover:shadow-m3-2 transition-all flex flex-col justify-between group" data-category="tax">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-m3PrimaryContainer text-m3Primary flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-receipt"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-m3OnSurface mb-3">Income Tax Filing</h3>
+                        <p class="text-m3OnSurfaceVariant text-sm leading-relaxed mb-6">
+                            Expert tax planning and ITR filing for corporates, LLPs, partnership firms, and high-net-worth individuals.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-m3SurfaceVariant flex items-center justify-between">
+                        <span class="text-sm font-bold text-m3Primary">Starting ₹1,499</span>
+                        <button onclick="openConsultationModal()" class="text-m3Primary font-semibold text-sm hover:underline flex items-center space-x-1">
+                            <span>Enquire</span> <i class="fa-solid fa-chevron-right text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Service Card 6 -->
+                <div class="service-card bg-m3SurfaceContainer p-8 rounded-[2rem] border border-m3SurfaceVariant shadow-sm hover:shadow-m3-2 transition-all flex flex-col justify-between group" data-category="registration">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-m3PrimaryContainer text-m3Primary flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-certificate"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-m3OnSurface mb-3">MSME & Startup India</h3>
+                        <p class="text-m3OnSurfaceVariant text-sm leading-relaxed mb-6">
+                            Unlock government subsidies, tax exemptions, and easy credit by registering for MSME (Udyam) and DPIIT.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-m3SurfaceVariant flex items-center justify-between">
+                        <span class="text-sm font-bold text-m3Primary">Starting ₹999</span>
+                        <button onclick="openConsultationModal()" class="text-m3Primary font-semibold text-sm hover:underline flex items-center space-x-1">
+                            <span>Enquire</span> <i class="fa-solid fa-chevron-right text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="calculator" class="py-20 bg-m3SurfaceContainer/60 border-y border-m3SurfaceVariant">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-m3Surface p-8 sm:p-12 rounded-[2.5rem] shadow-m3-2 border border-m3SurfaceVariant">
+                <div class="text-center max-w-2xl mx-auto mb-10 space-y-3">
+                    <span class="text-m3Primary font-bold text-xs uppercase tracking-widest bg-m3PrimaryContainer/50 px-3 py-1 rounded-full">Interactive Estimator</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-m3OnSurface">Compliance Fee Calculator</h2>
+                    <p class="text-m3OnSurfaceVariant text-sm">Select your business parameters to estimate annual compliance packages instantly.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-m3OnSurface mb-2">1. Select Business Entity Type</label>
+                            <select id="calcEntityType" onchange="calculateFee()" class="w-full px-4 py-3 bg-m3SurfaceContainer border border-m3Outline/40 rounded-xl font-medium text-m3OnSurface">
+                                <option value="pvt">Private Limited Company</option>
+                                <option value="llp">Limited Liability Partnership (LLP)</option>
+                                <option value="prop">Proprietorship / Partnership</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-m3OnSurface mb-2">2. Monthly Turnover Range</label>
+                            <select id="calcTurnover" onchange="calculateFee()" class="w-full px-4 py-3 bg-m3SurfaceContainer border border-m3Outline/40 rounded-xl font-medium text-m3OnSurface">
+                                <option value="low">Under ₹20 Lakhs / month</option>
+                                <option value="mid">₹20 Lakhs - ₹1 Crore / month</option>
+                                <option value="high">Above ₹1 Crore / month</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-m3OnSurface mb-2">3. Additional Requirements</label>
+                            <div class="space-y-2 text-sm">
+                                <label class="flex items-center space-x-3 cursor-pointer">
+                                    <input type="checkbox" id="calcGst" onchange="calculateFee()" class="w-4 h-4 text-m3Primary rounded border-m3Outline">
+                                    <span class="text-m3OnSurfaceVariant">GST Monthly Filing Required</span>
+                                </label>
+                                <label class="flex items-center space-x-3 cursor-pointer">
+                                    <input type="checkbox" id="calcTds" onchange="calculateFee()" class="w-4 h-4 text-m3Primary rounded border-m3Outline">
+                                    <span class="text-m3OnSurfaceVariant">TDS & Payroll Compliance</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-m3PrimaryContainer/30 p-8 rounded-3xl border border-m3PrimaryContainer flex flex-col justify-between space-y-6">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-m3Primary">Estimated Package Cost</span>
+                            <div class="mt-2 flex items-baseline space-x-2">
+                                <span id="estimatedPrice" class="text-4xl font-extrabold text-m3OnSurface">₹14,999</span>
+                                <span class="text-sm font-medium text-m3OnSurfaceVariant">/ year</span>
+                            </div>
+                            <p class="text-xs text-m3OnSurfaceVariant mt-2">Includes dedicated Chartered Accountant & secretarial support.</p>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-2 text-xs text-m3OnSurface">
+                                <i class="fa-solid fa-circle-check text-m3Primary"></i>
+                                <span>Zero hidden government fees breakdown</span>
+                            </div>
+                            <div class="flex items-center space-x-2 text-xs text-m3OnSurface">
+                                <i class="fa-solid fa-circle-check text-m3Primary"></i>
+                                <span>Quarterly compliance review meetings</span>
+                            </div>
+                        </div>
+                        <button onclick="openConsultationModal()" class="w-full bg-m3Primary text-m3OnPrimary py-3.5 rounded-xl font-semibold shadow-m3-1 hover:shadow-m3-2 transition-all">
+                            Lock In This Estimate
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="why-us" class="py-20 lg:py-32 bg-m3Surface">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="text-m3Primary font-bold text-sm tracking-widest uppercase bg-m3PrimaryContainer/50 px-4 py-1 rounded-full">The CM Filings Advantage</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-m3OnSurface">Why Growing Businesses Choose Us</h2>
+                <p class="text-m3OnSurfaceVariant text-base">We combine cutting-edge tech filing portals with elite Chartered Accountants and Company Secretaries.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-m3SurfaceContainer p-8 rounded-[2rem] border border-m3SurfaceVariant space-y-4">
+                    <div class="w-12 h-12 rounded-xl bg-m3Primary text-m3OnPrimary flex items-center justify-center text-xl shadow-sm">
+                        <i class="fa-solid fa-user-tie"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-m3OnSurface">Expert CAs & CS Team</h3>
+                    <p class="text-m3OnSurfaceVariant text-sm leading-relaxed">Direct access to experienced professionals who understand complex regulatory nuances.</p>
+                </div>
+
+                <div class="bg-m3SurfaceContainer p-8 rounded-[2rem] border border-m3SurfaceVariant space-y-4">
+                    <div class="w-12 h-12 rounded-xl bg-m3Primary text-m3OnPrimary flex items-center justify-center text-xl shadow-sm">
+                        <i class="fa-solid fa-bolt-lightning"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-m3OnSurface">Lightning Fast Turnaround</h3>
+                    <p class="text-m3OnSurfaceVariant text-sm leading-relaxed">Automated document verification ensures same-day or next-day filing submissions.</p>
+                </div>
+
+                <div class="bg-m3SurfaceContainer p-8 rounded-[2rem] border border-m3SurfaceVariant space-y-4">
+                    <div class="w-12 h-12 rounded-xl bg-m3Primary text-m3OnPrimary flex items-center justify-center text-xl shadow-sm">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-m3OnSurface">100% Data Security</h3>
+                    <p class="text-m3OnSurfaceVariant text-sm leading-relaxed">Military-grade encryption and strict privacy protocols for all your financial documents.</p>
+                </div>
+
+                <div class="bg-m3SurfaceContainer p-8 rounded-[2rem] border border-m3SurfaceVariant space-y-4">
+                    <div class="w-12 h-12 rounded-xl bg-m3Primary text-m3OnPrimary flex items-center justify-center text-xl shadow-sm">
+                        <i class="fa-solid fa-headset"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-m3OnSurface">Dedicated Support Manager</h3>
+                    <p class="text-m3OnSurfaceVariant text-sm leading-relaxed">A single point of contact assigned to your account for prompt query resolution.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimonials" class="py-20 bg-m3SurfaceContainer/50 border-t border-m3SurfaceVariant">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="text-m3Primary font-bold text-sm tracking-widest uppercase bg-m3PrimaryContainer/50 px-4 py-1 rounded-full">Testimonials</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-m3OnSurface">Trusted by Founders Across India</h2>
+                <p class="text-m3OnSurfaceVariant text-base">Hear what our clients have to say about our compliance and filing services.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-m3Surface p-8 rounded-[2rem] border border-m3SurfaceVariant shadow-sm flex flex-col justify-between space-y-6">
+                    <div class="space-y-4">
+                        <div class="flex text-amber-500 space-x-1 text-sm">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-m3OnSurfaceVariant text-sm leading-relaxed">
+                            "CM Filings made our Private Limited incorporation completely seamless. Their team handled everything from DIN to PAN/TAN without us needing to visit any government office."
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-3 pt-4 border-t border-m3SurfaceVariant">
+                        <div class="w-10 h-10 rounded-full bg-m3PrimaryContainer text-m3Primary font-bold flex items-center justify-center text-sm">
+                            AK
+                        </div>
+                        <div>
+                            <p class="font-bold text-sm text-m3OnSurface">Aarav Kulkarni</p>
+                            <p class="text-xs text-m3OnSurfaceVariant">Founder, TechVanguard Solutions</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-m3Surface p-8 rounded-[2rem] border border-m3SurfaceVariant shadow-sm flex flex-col justify-between space-y-6">
+                    <div class="space-y-4">
+                        <div class="flex text-amber-500 space-x-1 text-sm">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-m3OnSurfaceVariant text-sm leading-relaxed">
+                            "We've been using their monthly GST filing and ROC annual compliance package for 2 years now. Zero penalties, timely reminders, and absolute peace of mind."
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-3 pt-4 border-t border-m3SurfaceVariant">
+                        <div class="w-10 h-10 rounded-full bg-m3PrimaryContainer text-m3Primary font-bold flex items-center justify-center text-sm">
+                            PS
+                        </div>
+                        <div>
+                            <p class="font-bold text-sm text-m3OnSurface">Priya Sharma</p>
+                            <p class="text-xs text-m3OnSurfaceVariant">Director, FinCorp Enterprises</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-m3Surface p-8 rounded-[2rem] border border-m3SurfaceVariant shadow-sm flex flex-col justify-between space-y-6">
+                    <div class="space-y-4">
+                        <div class="flex text-amber-500 space-x-1 text-sm">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-m3OnSurfaceVariant text-sm leading-relaxed">
+                            "Trademark registration was handled exceptionally well. Our dedicated advisor gave regular updates and cleared objections swiftly. Highly recommended!"
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-3 pt-4 border-t border-m3SurfaceVariant">
+                        <div class="w-10 h-10 rounded-full bg-m3PrimaryContainer text-m3Primary font-bold flex items-center justify-center text-sm">
+                            RM
+                        </div>
+                        <div>
+                            <p class="font-bold text-sm text-m3OnSurface">Rohan Mehta</p>
+                            <p class="text-xs text-m3OnSurfaceVariant">CEO, Craftify Retail</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-20 lg:py-32 bg-m3Surface">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 space-y-4">
+                <span class="text-m3Primary font-bold text-sm tracking-widest uppercase bg-m3PrimaryContainer/50 px-4 py-1 rounded-full">Got Questions?</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-m3OnSurface">Frequently Asked Questions</h2>
+            </div>
+
+            <div class="space-y-4">
+                <div class="bg-m3SurfaceContainer rounded-2xl border border-m3SurfaceVariant overflow-hidden">
+                    <button onclick="toggleFaq(this)" class="w-full px-6 py-4 text-left font-bold text-m3OnSurface flex items-center justify-between">
+                        <span>How long does company registration take with CM Filings?</span>
+                        <i class="fa-solid fa-chevron-down transition-transform"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-4 text-sm text-m3OnSurfaceVariant leading-relaxed">
+                        Typically, a Private Limited Company registration takes between 7 to 10 working days, subject to MCA portal approvals and document verification.
+                    </div>
+                </div>
+
+                <div class="bg-m3SurfaceContainer rounded-2xl border border-m3SurfaceVariant overflow-hidden">
+                    <button onclick="toggleFaq(this)" class="w-full px-6 py-4 text-left font-bold text-m3OnSurface flex items-center justify-between">
+                        <span>What documents are required for GST Registration?</span>
+                        <i class="fa-solid fa-chevron-down transition-transform"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-4 text-sm text-m3OnSurfaceVariant leading-relaxed">
+                        You need PAN card, Aadhaar card, passport size photo, business address proof (electricity bill/rent agreement), and bank account statement/cancelled cheque.
+                    </div>
+                </div>
+
+                <div class="bg-m3SurfaceContainer rounded-2xl border border-m3SurfaceVariant overflow-hidden">
+                    <button onclick="toggleFaq(this)" class="w-full px-6 py-4 text-left font-bold text-m3OnSurface flex items-center justify-between">
+                        <span>Are there any hidden government fees?</span>
+                        <i class="fa-solid fa-chevron-down transition-transform"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-4 text-sm text-m3OnSurfaceVariant leading-relaxed">
+                        No. All our quotes clearly state professional fees vs government stamp duty and filing fees. We believe in 100% pricing transparency.
+                    </div>
+                </div>
+
+                <div class="bg-m3SurfaceContainer rounded-2xl border border-m3SurfaceVariant overflow-hidden">
+                    <button onclick="toggleFaq(this)" class="w-full px-6 py-4 text-left font-bold text-m3OnSurface flex items-center justify-between">
+                        <span>Do I need to visit any office for filing?</span>
+                        <i class="fa-solid fa-chevron-down transition-transform"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-4 text-sm text-m3OnSurfaceVariant leading-relaxed">
+                        Not at all! Our entire process is 100% digital. You can upload documents securely online, and our experts will handle the rest.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Banner -->
+    <section class="py-20 bg-m3Primary text-m3OnPrimary text-center">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+            <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Ready to streamline your business compliance?</h2>
+            <p class="text-m3PrimaryContainer text-lg max-w-2xl mx-auto">Talk to our senior compliance advisors today for a free initial consultation.</p>
+            <button onclick="openConsultationModal()" class="bg-m3Surface text-m3Primary px-8 py-4 rounded-full font-bold shadow-m3-2 hover:bg-m3SurfaceContainer transition-all">
+                Schedule Free Expert Call
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-m3SurfaceContainer text-m3OnSurface py-16 border-t border-m3SurfaceVariant">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-10">
+            <div class="space-y-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-m3Primary text-m3OnPrimary flex items-center justify-center font-bold text-lg">
+                        CM
+                    </div>
+                    <span class="text-lg font-bold tracking-tight">CM FILINGS</span>
+                </div>
+                <p class="text-xs text-m3OnSurfaceVariant leading-relaxed">
+                    Focused On Compliances. Your trusted legal and financial partner for corporate success across India.
+                </p>
+                <div class="flex space-x-4 text-m3Primary text-lg">
+                    <a href="#" class="hover:opacity-80"><i class="fa-brands fa-linkedin"></i></a>
+                    <a href="#" class="hover:opacity-80"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#" class="hover:opacity-80"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="hover:opacity-80"><i class="fa-brands fa-facebook"></i></a>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="font-bold text-sm uppercase tracking-wider text-m3OnSurface mb-4">Quick Links</h4>
+                <ul class="space-y-2 text-sm text-m3OnSurfaceVariant">
+                    <li><a href="#services" class="hover:text-m3Primary">Services</a></li>
+                    <li><a href="#calculator" class="hover:text-m3Primary">Fee Calculator</a></li>
+                    <li><a href="#why-us" class="hover:text-m3Primary">Why Choose Us</a></li>
+                    <li><a href="#testimonials" class="hover:text-m3Primary">Client Reviews</a></li>
+                    <li><a href="#faq" class="hover:text-m3Primary">FAQ</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-bold text-sm uppercase tracking-wider text-m3OnSurface mb-4">Services</h4>
+                <ul class="space-y-2 text-sm text-m3OnSurfaceVariant">
+                    <li><a href="#services" class="hover:text-m3Primary">Company Incorporation</a></li>
+                    <li><a href="#services" class="hover:text-m3Primary">GST & Tax Filings</a></li>
+                    <li><a href="#services" class="hover:text-m3Primary">ROC Annual Compliance</a></li>
+                    <li><a href="#services" class="hover:text-m3Primary">Trademark Registration</a></li>
+                    <li><a href="#services" class="hover:text-m3Primary">MSME & Startup India</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-bold text-sm uppercase tracking-wider text-m3OnSurface mb-4">Contact Us</h4>
+                <ul class="space-y-3 text-sm text-m3OnSurfaceVariant">
+                    <li class="flex items-start space-x-3">
+                        <i class="fa-solid fa-location-dot text-m3Primary mt-1"></i>
+                        <span>B-Wing, Corporate Tower, Connaught Place, New Delhi, India</span>
+                    </li>
+                    <li class="flex items-center space-x-3">
+                        <i class="fa-solid fa-phone text-m3Primary"></i>
+                        <span>+91 98765 43210</span>
+                    </li>
+                    <li class="flex items-center space-x-3">
+                        <i class="fa-solid fa-envelope text-m3Primary"></i>
+                        <span>support@cmfilings.com</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-m3SurfaceVariant text-center text-xs text-m3OnSurfaceVariant">
+            &copy; 2026 CM Filings. All rights reserved. Focused On Compliances.
+        </div>
+    </footer>
+
+    <!-- Consultation Modal / Dialog -->
+    <div id="consultationModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div class="bg-m3Surface w-full max-w-lg p-8 rounded-[2.5rem] shadow-m3-3 border border-m3SurfaceVariant relative animate-in fade-in zoom-in duration-200">
+            <button onclick="closeConsultationModal()" class="absolute top-6 right-6 w-10 h-10 rounded-full bg-m3SurfaceContainer flex items-center justify-center text-m3OnSurface hover:bg-m3SurfaceVariant">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="mb-6">
+                <span class="text-xs font-bold text-m3Primary uppercase tracking-widest bg-m3PrimaryContainer/50 px-3 py-1 rounded-full">Free Expert Consultation</span>
+                <h3 class="text-2xl font-extrabold text-m3OnSurface mt-3">Book Your Session</h3>
+                <p class="text-sm text-m3OnSurfaceVariant mt-1">Fill in your details and our senior CA/CS will connect with you within 30 minutes.</p>
+            </div>
+            <form onsubmit="handleModalSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-m3OnSurfaceVariant mb-1">Full Name</label>
+                    <input type="text" required placeholder="Jane Doe" class="w-full px-4 py-3 bg-m3SurfaceContainer border border-m3Outline/40 rounded-xl focus:outline-none focus:border-m3Primary text-m3OnSurface">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-m3OnSurfaceVariant mb-1">Phone Number</label>
+                    <input type="tel" required placeholder="+91 98765 43210" class="w-full px-4 py-3 bg-m3SurfaceContainer border border-m3Outline/40 rounded-xl focus:outline-none focus:border-m3Primary text-m3OnSurface">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-m3OnSurfaceVariant mb-1">Requirement / Service</label>
+                    <input type="text" required placeholder="e.g. Private Limited Registration" class="w-full px-4 py-3 bg-m3SurfaceContainer border border-m3Outline/40 rounded-xl focus:outline-none focus:border-m3Primary text-m3OnSurface">
+                </div>
+                <button type="submit" class="w-full bg-m3Primary text-m3OnPrimary py-3.5 rounded-xl font-semibold shadow-m3-1 hover:shadow-m3-2 transition-all">
+                    Submit Request
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom Snackbar / Toast Message -->
+    <div id="toastMessage" class="hidden fixed bottom-6 right-6 z-50 bg-m3OnSurface text-m3Surface px-6 py-3.5 rounded-2xl shadow-m3-3 text-sm font-medium transition-all animate-bounce">
+        Request submitted successfully! We will call you shortly.
+    </div>
+
+    <script>
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const icon = document.getElementById('menuIcon');
+            menu.classList.toggle('hidden');
+            if(menu.classList.contains('hidden')) {
+                icon.classList.remove('fa-xmark');
+                icon.classList.add('fa-bars');
+            } else {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-xmark');
+            }
+        }
+
+        // Modal Controls
+        function openConsultationModal() {
+            document.getElementById('consultationModal').classList.remove('hidden');
+        }
+        function closeConsultationModal() {
+            document.getElementById('consultationModal').classList.add('hidden');
+        }
+
+        // Toast notification (replaces alert)
+        function showToast() {
+            const toast = document.getElementById('toastMessage');
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 4000);
+        }
+
+        function handleQuickLead(e) {
+            e.preventDefault();
+            e.target.reset();
+            showToast();
+        }
+
+        function handleModalSubmit(e) {
+            e.preventDefault();
+            closeConsultationModal();
+            e.target.reset();
+            showToast();
+        }
+
+        // Services Filter
+        function filterServices(category) {
+            const chips = document.querySelectorAll('.service-chip');
+            chips.forEach(chip => {
+                chip.classList.remove('bg-m3Primary', 'text-m3OnPrimary');
+                chip.classList.add('bg-m3SurfaceContainer', 'text-m3OnSurfaceVariant');
+            });
+            event.target.classList.remove('bg-m3SurfaceContainer', 'text-m3OnSurfaceVariant');
+            event.target.classList.add('bg-m3Primary', 'text-m3OnPrimary');
+
+            const cards = document.querySelectorAll('.service-card');
+            cards.forEach(card => {
+                if(category === 'all' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Fee Calculator Logic
+        function calculateFee() {
+            const entity = document.getElementById('calcEntityType').value;
+            const turnover = document.getElementById('calcTurnover').value;
+            const gst = document.getElementById('calcGst').checked;
+            const tds = document.getElementById('calcTds').checked;
+
+            let base = 9999;
+            if(entity === 'pvt') base = 14999;
+            if(entity === 'llp') base = 11999;
+            if(entity === 'prop') base = 7999;
+
+            if(turnover === 'mid') base += 5000;
+            if(turnover === 'high') base += 12000;
+
+            if(gst) base += 4000;
+            if(tds) base += 3000;
+
+            document.getElementById('estimatedPrice').innerText = '₹' + base.toLocaleString('en-IN');
+        }
+
+        // FAQ Accordion Toggle
+        function toggleFaq(button) {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('i');
+            content.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+        }
+
+        // Window load initialization
+        window.onload = function() {
+            calculateFee();
+        }
+    </script>
+</body>
+</html>
