@@ -1,0 +1,32 @@
+<style>
+    .bottom-nav { 
+        display: flex; justify-content: space-around; background: var(--surface); 
+        border-top: 1px solid var(--border); padding: 10px 0; 
+        padding-bottom: calc(10px + env(safe-area-inset-bottom)); 
+        position: fixed; bottom: 0; width: 100%; z-index: 900; 
+    }
+    .bottom-nav-item { 
+        display: flex; flex-direction: column; align-items: center; 
+        color: var(--text-muted); text-decoration: none; 
+        font-size: 10px; font-weight: 600; cursor: pointer; 
+        transition: color 0.2s ease;
+    }
+    .bottom-nav-item:hover { color: var(--text-main); }
+    .bottom-nav-item.active { color: var(--primary); }
+    .bottom-nav-icon { font-size: 24px; margin-bottom: 4px; }
+</style>
+
+<div class="bottom-nav">
+    <div class="bottom-nav-item active" onclick="window.switchView('view-dashboard', this)">
+        <span class="material-symbols-rounded bottom-nav-icon">dashboard</span> Home
+    </div>
+    <div class="bottom-nav-item" onclick="window.switchView('view-patients', this)">
+        <span class="material-symbols-rounded bottom-nav-icon">group</span> Patients
+    </div>
+    <div class="bottom-nav-item" onclick="window.switchView('view-appointments', this)">
+        <span class="material-symbols-rounded bottom-nav-icon">calendar_month</span> Schedule
+    </div>
+    <div class="bottom-nav-item" onclick="window.toggleSidebar()">
+        <span class="material-symbols-rounded bottom-nav-icon">menu</span> Menu
+    </div>
+</div>
