@@ -1,0 +1,190 @@
+<style>
+    /* =========================================================
+       PROGRESS CLOCK HEADER
+       ========================================================= */
+
+    .metric-round {
+        position: relative;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .clock-svg {
+        transform: rotate(-90deg);
+        position: absolute;
+    }
+
+    .clock-svg circle {
+        fill: none;
+        stroke-width: 4;
+        stroke-linecap: round;
+    }
+
+    .bg-track {
+        stroke: #F0F0F0;
+    }
+
+    .progress-arc {
+        transition: stroke-dashoffset 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .center-text {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        z-index: 1;
+        text-align: center;
+        line-height: 1;
+    }
+
+    .main-val {
+        font-size: 13px;
+        font-weight: 700;
+        color: #0a0a0a;
+        margin-bottom: 2px;
+    }
+
+    .sub-label {
+        font-size: 7px;
+        font-weight: 700;
+        color: #777777;
+        text-transform: uppercase;
+    }
+
+    .blue-pair .progress-arc {
+        stroke: #2563EB;
+    }
+
+    .yellow-pair .progress-arc {
+        stroke: #FFC72C;
+    }
+
+    /* =========================================================
+       LOGOUT
+       ========================================================= */
+
+    .logout-btn {
+        margin-left: 12px;
+        padding: 6px 12px;
+        background: #FEF2F2;
+        color: #EF4444;
+        border: 1px solid #FCA5A5;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .logout-btn:hover {
+        background: #EF4444;
+        color: #FFFFFF;
+    }
+
+    /* =========================================================
+       NOTIFICATION
+       ========================================================= */
+
+    @keyframes ring {
+        0% { transform: rotate(0); }
+        10% { transform: rotate(15deg); }
+        20% { transform: rotate(-10deg); }
+        30% { transform: rotate(5deg); }
+        40% { transform: rotate(-5deg); }
+        50% { transform: rotate(0); }
+        100% { transform: rotate(0); }
+    }
+
+    .bell-anim {
+        animation: ring 2s infinite;
+        transform-origin: top center;
+        color: #0062FF !important;
+    }
+
+    /* =========================================================
+       MOBILE SEARCH
+       ========================================================= */
+
+    .mobile-search-btn {
+        display: none;
+        width: 38px;
+        height: 38px;
+        border: 1px solid #E8E5E1;
+        background: #FAFAFA;
+        border-radius: 8px;
+        align-items: center;
+        justify-content: center;
+        color: #0F172A;
+        cursor: pointer;
+    }
+
+    .mobile-search-btn .material-symbols-rounded {
+        font-size: 21px;
+    }
+
+    .mobile-search-panel {
+        display: none;
+        position: absolute;
+        left: 12px;
+        right: 12px;
+        top: calc(100% + 6px);
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 10px;
+        padding: 8px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.10);
+        z-index: 9999;
+    }
+
+    .mobile-search-panel.open {
+        display: flex;
+    }
+
+    .mobile-search-inner {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        border-radius: 8px;
+        padding: 9px 11px;
+    }
+
+    .mobile-search-inner .material-symbols-rounded {
+        font-size: 20px;
+        color: #64748B;
+    }
+
+    .mobile-search-input {
+        width: 100%;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: #0F172A;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .mobile-search-input::placeholder {
+        color: #94A3B8;
+    }
+
+    /* =========================================================
+       DESKTOP SEARCH
+       ========================================================= */
+
+    .search-container {
+        width: 192px;
+        background: #FAFAFA;
+        border: 1px solid #E8E5E1;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        padding: 8px 12px;
+    }
+
+    .
