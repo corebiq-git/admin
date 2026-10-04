@@ -10,20 +10,22 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
+/* Gemini / Material 3 Style Variables */
 :root{
-    --primary:#0062FF;
-    --primary-light:#EAF2FF;
-    --bg:#F4F6F8;
-    --surface:#fff;
-    --text-main:#0F172A;
-    --text-muted:#64748B;
-    --border:#E2E8F0;
-    --shadow:0 4px 12px rgba(0,0,0,.04);
-    --success:#10B981;
-    --warning:#F59E0B;
-    --secondary:#475569;
-    --danger:#EF4444;
+    --primary: #0B57D0; /* M3 Google Blue */
+    --primary-light: #E3EBFA; /* M3 Primary Container */
+    --bg: #F0F4F9; /* Gemini Background */
+    --surface: #FFFFFF;
+    --text-main: #1F1F1F;
+    --text-muted: #444746;
+    --border: #E0E2E0; /* M3 Outline Variant */
+    --shadow: 0 2px 6px rgba(0,0,0,0.03), 0 4px 12px rgba(0,0,0,0.02);
+    --success: #0F5223;
+    --warning: #7D4E00;
+    --secondary: #444746;
+    --danger: #B3261E;
 }
+
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent}
 html,body{
     display:flex;
@@ -65,39 +67,40 @@ html,body{
 #main-content{
     flex:1;
     overflow-y:auto;
-    padding:24px;
+    padding:32px 24px;
     -webkit-overflow-scrolling:touch;
 }
-.view-section{display:none;animation:fadeIn .3s ease-in-out}
+.view-section{display:none;animation:fadeIn .4s cubic-bezier(0.2, 0, 0, 1)}
 .view-section.active{display:block}
 @keyframes fadeIn{
-    from{opacity:0;transform:translateY(10px)}
+    from{opacity:0;transform:translateY(16px)}
     to{opacity:1;transform:translateY(0)}
 }
 
 .dash-top-row{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
-    gap:20px;
+    gap:24px;
     margin-bottom:24px;
 }
 .dash-card{
     background:var(--surface);
-    border-radius:16px;
+    border-radius:24px; /* M3 Large Corner */
     padding:24px;
     box-shadow:var(--shadow);
-    border:1px solid var(--border);
+    border:1px solid rgba(224, 226, 224, 0.5);
     display:flex;
     flex-direction:column;
 }
 .card-title{
-    font-size:14px;
+    font-size:15px;
     font-weight:700;
     color:var(--text-main);
-    margin-bottom:20px;
+    margin-bottom:24px;
     display:flex;
     justify-content:space-between;
     align-items:center;
+    letter-spacing: -0.3px;
 }
 .fin-stat-container{
     display:flex;
@@ -107,31 +110,30 @@ html,body{
     justify-content:center;
 }
 .fin-stat{
-    padding:16px;
-    border-radius:12px;
-    background:#FAFAFA;
-    border:1px solid var(--border);
+    padding:20px;
+    border-radius:16px;
+    background:#F8F9FA;
+    border:none;
     display:flex;
     align-items:center;
     justify-content:space-between;
 }
-.fin-stat.alert{background:#fff5f5;border-color:#fecaca}
-.fin-stat.success-box{background:#ECFDF5;border-color:#A7F3D0}
+.fin-stat.alert{background:#F9DEDC; color:#410E0B;}
+.fin-stat.success-box{background:#C4EECE; color:#072711;}
 .fin-stat-info{display:flex;flex-direction:column}
 .fin-label{
     font-size:11px;
     font-weight:700;
-    color:var(--text-muted);
+    opacity:0.8;
     text-transform:uppercase;
-    margin-bottom:4px;
+    margin-bottom:6px;
     letter-spacing:.5px;
 }
-.fin-amount{font-size:24px;font-weight:800;color:var(--text-main)}
-.fin-stat.alert .fin-amount{color:var(--danger)}
-.fin-stat.success-box .fin-amount{color:var(--success)}
-.fin-icon{font-size:32px;color:var(--border)}
-.fin-stat.alert .fin-icon{color:#fca5a5}
-.fin-stat.success-box .fin-icon{color:#6EE7B7}
+.fin-amount{font-size:28px;font-weight:800;letter-spacing:-1px;}
+.fin-icon{font-size:32px;}
+.fin-stat.alert .fin-icon{color:#B3261E}
+.fin-stat.success-box .fin-icon{color:#0F5223}
+
 .chart-container{
     position:relative;
     height:180px;
@@ -139,77 +141,83 @@ html,body{
     display:flex;
     justify-content:center;
     align-items:center;
-    margin-bottom:16px;
+    margin-bottom:20px;
 }
-.mini-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mini-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .mini-stat{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    padding:8px 12px;
-    border-radius:8px;
-    background:#FAFAFA;
-    border:1px solid var(--border);
+    padding:10px 14px;
+    border-radius:12px;
+    background:#F8F9FA;
+    border:none;
 }
 .mini-stat-label{
-    font-size:11px;
+    font-size:12px;
     font-weight:600;
     color:var(--text-muted);
     display:flex;
     align-items:center;
-    gap:6px;
+    gap:8px;
 }
 .dot{width:8px;height:8px;border-radius:50%}
-.mini-stat-val{font-size:13px;font-weight:700;color:var(--text-main)}
+.mini-stat-val{font-size:14px;font-weight:700;color:var(--text-main)}
+
 .cal-header-row{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:16px;
+    margin-bottom:20px;
 }
 .cal-nav-btn{
-    background:#FAFAFA;
-    border:1px solid var(--border);
-    border-radius:6px;
+    background:transparent;
+    border:none;
+    border-radius:50%;
+    width:36px;
+    height:36px;
     font-size:20px;
     color:var(--text-main);
     cursor:pointer;
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:4px;
+    transition: background 0.2s;
 }
-.cal-nav-btn:hover{background:var(--surface);border-color:var(--primary);color:var(--primary)}
-.cal-month-title{font-size:14px;font-weight:700;color:var(--text-main)}
+.cal-nav-btn:hover{background:var(--primary-light);color:var(--primary)}
+.cal-month-title{font-size:15px;font-weight:700;color:var(--text-main)}
 .calendar-grid{
     display:grid;
     grid-template-columns:repeat(7,1fr);
-    gap:4px;
+    gap:6px;
     text-align:center;
 }
 .cal-day-name{
-    font-size:10px;
+    font-size:11px;
     font-weight:700;
     color:var(--text-muted);
-    padding-bottom:8px;
+    padding-bottom:12px;
     text-transform:uppercase;
 }
 .cal-day{
     padding:8px 0;
-    border-radius:8px;
+    border-radius:50%; /* Perfect circle for M3 */
+    aspect-ratio: 1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     font-size:13px;
     font-weight:600;
     cursor:pointer;
     transition:.2s;
-    border:1px solid transparent;
+    border:none;
     position:relative;
 }
-.cal-day:hover{background:#FAFAFA;border-color:var(--border)}
+.cal-day:hover{background:var(--primary-light); color:var(--primary)}
 .cal-day.active{
     background:var(--primary);
     color:#fff;
     font-weight:700;
-    box-shadow:0 4px 10px rgba(0,98,255,.3);
 }
 .cal-day.has-event::after{
     content:'';
@@ -220,16 +228,16 @@ html,body{
     width:4px;
     height:4px;
     border-radius:50%;
-    background:var(--text-main);
+    background:var(--primary);
 }
 .cal-day.active.has-event::after{background:#fff}
 .cal-day.empty{pointer-events:none}
 
 .dash-table-wrapper{
     background:var(--surface);
-    border-radius:16px;
+    border-radius:24px;
     box-shadow:var(--shadow);
-    border:1px solid var(--border);
+    border:1px solid rgba(224, 226, 224, 0.5);
     overflow:hidden;
     width:100%;
     margin-bottom:40px;
@@ -242,18 +250,16 @@ html,body{
     text-align:left;
 }
 .saas-table th{
-    padding:14px 20px;
-    font-size:11px;
-    font-weight:700;
+    padding:16px 24px;
+    font-size:12px;
+    font-weight:600;
     color:var(--text-muted);
-    text-transform:uppercase;
-    background:#FAFAFA;
-    border-bottom:1px solid var(--border);
-    letter-spacing:.5px;
+    background:var(--bg);
+    border-bottom:none;
 }
 .saas-table td{
-    padding:16px 20px;
-    font-size:13px;
+    padding:18px 24px;
+    font-size:14px;
     font-weight:500;
     border-bottom:1px solid var(--border);
     color:var(--text-main);
@@ -261,49 +267,52 @@ html,body{
     white-space:nowrap;
 }
 .saas-table tr:last-child td{border-bottom:none}
+
+/* Pill Badges for M3 */
 .badge{
-    padding:4px 10px;
-    border-radius:6px;
+    padding:6px 14px;
+    border-radius:9999px;
     font-size:11px;
     font-weight:700;
     text-transform:uppercase;
     display:inline-block;
     white-space:nowrap;
+    border:none;
 }
-.badge-pending{background:#FFF7ED;color:var(--warning);border:1px solid #FFEDD5}
-.badge-completed{background:#ECFDF5;color:var(--success);border:1px solid #D1FAE5}
-.badge-rescheduled{background:#F8FAFC;color:var(--secondary);border:1px solid #E2E8F0}
-.badge-cancelled{background:#FEF2F2;color:var(--danger);border:1px solid #FEE2E2}
+.badge-pending{background:#FFDCC1;color:#311700;}
+.badge-completed{background:#C4EECE;color:#072711;}
+.badge-rescheduled{background:#E0E2E0;color:#1F1F1F;}
+.badge-cancelled{background:#F9DEDC;color:#410E0B;}
 
-.balance-no-due{color:#64748B!important;font-weight:700}
-.balance-due{color:#EF4444!important;font-weight:700}
-.balance-excess{color:#10B981!important;font-weight:700}
+.balance-no-due{color:var(--text-muted)!important;font-weight:700}
+.balance-due{color:var(--danger)!important;font-weight:700}
+.balance-excess{color:var(--success)!important;font-weight:700}
 
 .dash-error{
     display:none;
-    background:#FEF2F2;
-    border:1px solid #FCA5A5;
-    color:var(--danger);
-    padding:12px;
-    border-radius:8px;
+    background:#F9DEDC;
+    border:none;
+    color:#410E0B;
+    padding:14px 16px;
+    border-radius:12px;
     font-size:13px;
     font-weight:600;
-    margin-bottom:20px;
+    margin-bottom:24px;
     align-items:center;
-    gap:8px;
+    gap:10px;
 }
 
 #calc-popup-container{
     display:none;
     position:fixed;
-    bottom:20px;
-    right:20px;
+    bottom:24px;
+    right:24px;
     width:320px;
     height:480px;
-    background:#fff;
-    border-radius:12px;
-    box-shadow:0 10px 40px rgba(0,0,0,.25);
-    border:1px solid var(--border);
+    background:var(--surface);
+    border-radius:24px;
+    box-shadow:0 8px 32px rgba(0,0,0,.15);
+    border:1px solid rgba(224, 226, 224, 0.5);
     z-index:10000;
     resize:both;
     overflow:hidden;
@@ -312,9 +321,9 @@ html,body{
     min-height:350px;
 }
 #calc-popup-header{
-    background:var(--surface);
+    background:var(--bg);
     color:var(--text-main);
-    padding:12px 16px;
+    padding:14px 20px;
     display:flex;
     justify-content:space-between;
     align-items:center;
@@ -336,7 +345,7 @@ html,body{
     }
     #sidebar-container.open{transform:translateX(0)}
     #bottomnav-container{display:block}
-    #main-content{padding:16px;padding-bottom:90px}
+    #main-content{padding:20px;padding-bottom:90px}
     #calc-popup-container{
         top:50%;
         left:50%;
@@ -347,8 +356,8 @@ html,body{
         width:min(92vw,360px);
         height:min(76dvh,560px);
     }
-    .dash-top-row{grid-template-columns:1fr;gap:12px}
-    .dash-card{padding:16px;border-radius:12px}
+    .dash-top-row{grid-template-columns:1fr;gap:16px}
+    .dash-card{padding:20px;}
 }
 </style>
 </head>
@@ -370,19 +379,34 @@ html,body{
                     <span id="dash-error-text">Database connection failed.</span>
                 </div>
 
-                <h2 style="font-size:22px;margin-bottom:4px;font-weight:700">
-                    <span style="color:var(--text-main)">Welcome,</span>
-                    <span style="color:var(--primary)">Stra Care</span>
-                </h2>
+                <!-- Updated Header Section -->
+                <div style="margin-bottom: 32px;">
+                    <h2 style="font-size:28px;margin-bottom:6px;font-weight:700;letter-spacing:-0.5px;">
+                        <span style="color:var(--text-main)">Welcome Back to</span>
+                        <span style="color:var(--primary)">COREBIQ</span>
+                    </h2>
+                    
+                    <p style="color:var(--text-muted);font-size:15px;font-weight:500;margin-bottom:20px;">
+                        Here is your Business Overview Today.
+                    </p>
 
-                <h3 style="font-size:15px;font-weight:600;color:var(--secondary);margin-bottom:8px;display:flex;align-items:center;gap:6px">
-                    <span class="material-symbols-rounded" style="font-size:18px">storefront</span>
-                    <span id="dash-branch-text">Loading...</span>
-                </h3>
-
-                <p style="color:var(--text-muted);font-size:13px;font-weight:500;margin-bottom:24px">
-                    Clinic Administration Overview.
-                </p>
+                    <!-- Inner Card / Pill -->
+                    <div style="display:inline-flex; flex-wrap:wrap; gap:16px; background:var(--surface); padding:12px 24px; border-radius:9999px; box-shadow:0 1px 3px rgba(0,0,0,0.04); border:1px solid rgba(224, 226, 224, 0.5); align-items:center;">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <span class="material-symbols-rounded" style="color:var(--primary);font-size:22px;">storefront</span>
+                            <span style="font-size:13px;font-weight:600;color:var(--text-muted)">Access:</span>
+                            <span id="dash-branch-text" style="font-size:14px;font-weight:700;color:var(--text-main)">Loading...</span>
+                        </div>
+                        
+                        <div style="width:1px;height:24px;background:var(--border); display:block;"></div>
+                        
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <span class="material-symbols-rounded" style="color:var(--primary);font-size:22px;">business</span>
+                            <span style="font-size:13px;font-weight:600;color:var(--text-muted)">Company:</span>
+                            <span style="font-size:14px;font-weight:700;color:var(--text-main)">Stra Care</span>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="dash-top-row">
 
@@ -416,7 +440,7 @@ html,body{
                         <div class="mini-stats-grid">
                             <div class="mini-stat">
                                 <div class="mini-stat-label">
-                                    <div class="dot" style="background:var(--warning)"></div> Pending
+                                    <div class="dot" style="background:#FB923C"></div> Pending
                                 </div>
                                 <div class="mini-stat-val" id="dashPending">0</div>
                             </div>
@@ -448,7 +472,7 @@ html,body{
                         <div class="card-title">
                             Calendar
                             <span class="material-symbols-rounded"
-                                  style="color:var(--primary);cursor:pointer;font-size:20px;background:#FAFAFA;padding:4px;border-radius:6px;border:1px solid var(--border)"
+                                  style="color:var(--primary);cursor:pointer;font-size:22px;background:var(--primary-light);padding:6px;border-radius:50%;"
                                   onclick="window.setCalToToday()"
                                   title="Go to Today">today</span>
                         </div>
@@ -465,16 +489,17 @@ html,body{
                 </div>
 
                 <div class="dash-table-wrapper">
-                    <div style="padding:16px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:#FAFAFA;gap:12px">
-                        <h4 style="font-size:14px;font-weight:700;margin:0;color:var(--text-main)">
+                    <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--surface);gap:12px">
+                        <h4 style="font-size:15px;font-weight:700;margin:0;color:var(--text-main);letter-spacing:-0.3px;">
                             Schedule for:
                             <span id="dashListTitle" style="color:var(--primary)">Today</span>
                         </h4>
 
-                        <button style="background:var(--surface);border:1px solid var(--border);padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:var(--text-main);display:flex;align-items:center;gap:6px"
+                        <button style="background:var(--primary-light);border:none;padding:10px 18px;border-radius:9999px;font-size:13px;font-weight:600;cursor:pointer;color:var(--primary);display:flex;align-items:center;gap:6px;transition:0.2s;"
+                                onmouseover="this.style.background='#D3E3FD'" onmouseout="this.style.background='var(--primary-light)'"
                                 onclick="window.switchView('view-appointments',null)">
                             View Full Module
-                            <span class="material-symbols-rounded" style="font-size:16px">arrow_forward</span>
+                            <span class="material-symbols-rounded" style="font-size:18px">arrow_forward</span>
                         </button>
                     </div>
 
@@ -491,7 +516,7 @@ html,body{
                             </thead>
                             <tbody id="dashAptTableBody">
                                 <tr>
-                                    <td colspan="5" style="text-align:center;padding:30px;font-size:13px;color:var(--text-muted);display:block;width:100%">
+                                    <td colspan="5" style="text-align:center;padding:40px;font-size:14px;color:var(--text-muted);display:block;width:100%">
                                         Loading live schedule...
                                     </td>
                                 </tr>
@@ -532,12 +557,12 @@ html,body{
     <!-- Calculator popup -->
     <div id="calc-popup-container">
         <div id="calc-popup-header">
-            <span style="font-weight:700;font-size:14px;display:flex;align-items:center;gap:8px">
-                <span class="material-symbols-rounded" style="font-size:20px;color:var(--primary)">calculate</span>
+            <span style="font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px">
+                <span class="material-symbols-rounded" style="font-size:22px;color:var(--primary)">calculate</span>
                 Calculator
             </span>
             <span class="material-symbols-rounded"
-                  style="cursor:pointer;font-size:20px"
+                  style="cursor:pointer;font-size:22px"
                   onclick="window.toggleCalculator()">close</span>
         </div>
 
