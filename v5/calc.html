@@ -2,196 +2,104 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculator Module</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>COREBIQ Calc - Minimalist UI</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#007bb5', // Dark Sky Blue
-                        'primary-hover': '#006a9c',
-                        'google-surface': '#ffffff',
-                        'google-bg': '#f8f9fa',
-                        'google-btn': '#f1f3f4',
-                        'google-btn-hover': '#e8eaed',
-                        'google-text': '#202124',
-                        'google-text-secondary': '#5f6368',
-                        'google-border': '#dadce0',
-                    },
-                    fontFamily: {
-                        sans: ['"Google Sans"', 'Roboto', 'Arial', 'sans-serif'],
-                    },
-                    boxShadow: {
-                        'google': '0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15)',
-                    }
-                }
-            }
-        }
-    </script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         body {
-            /* Subtle background to showcase the module */
-            background-color: #e8eaed; 
-            -webkit-font-smoothing: antialiased;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
+            background-color: #f3f4f6; /* Light gray background for contrast against the app */
             margin: 0;
-        }
-
-        /* Module container specifically designed to look good in iframes/popups */
-        .calc-module {
-            width: 100%;
-            max-width: 320px;
-            background-color: #ffffff;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            /* Google Material Elevation 3 equivalent */
-            box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 2px 6px 2px rgba(60,64,67,0.15);
-        }
-
-        .calc-display {
-            padding: 24px 24px 12px 24px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            word-wrap: break-word;
-            word-break: break-all;
-        }
-
-        .previous-operand {
-            color: #5f6368;
-            font-size: 0.875rem; /* 14px */
-            min-height: 20px; /* Prevent layout shift */
-            margin-bottom: 4px;
-        }
-
-        .current-operand {
-            color: #202124;
-            font-size: 2.5rem; /* 40px */
-            font-weight: 400;
-            line-height: 1.2;
-            letter-spacing: -0.5px;
-        }
-
-        .calc-keypad {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            padding: 0 16px 16px 16px;
-        }
-
-        .btn {
-            border: none;
-            outline: none;
-            background-color: #f8f9fa;
-            color: #202124;
-            font-size: 1.125rem; /* 18px */
-            font-weight: 500;
-            border-radius: 8px;
-            height: 48px;
-            cursor: pointer;
-            transition: background-color 0.1s ease, transform 0.1s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Google Sans', Roboto, sans-serif;
+            font-family: 'Poppins', sans-serif;
             user-select: none;
+            -webkit-user-select: none;
         }
 
-        .btn:hover {
-            background-color: #f1f3f4;
+        /* Prevent double-tap zoom on mobile */
+        button { 
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .btn:active {
-            background-color: #e8eaed;
-            transform: scale(0.96);
-        }
-
-        .btn.operator {
-            background-color: #f1f3f4;
-            color: #007bb5; /* Dark Sky Blue accent */
-            font-size: 1.25rem;
-        }
-
-        .btn.operator:hover {
-            background-color: #e8eaed;
-        }
-
-        .btn.action {
-            background-color: #f1f3f4;
-            color: #5f6368;
-        }
-
-        .btn.action:hover {
-            background-color: #e8eaed;
-        }
-
-        .btn.equals {
-            background-color: #007bb5; /* Dark Sky Blue */
-            color: #ffffff;
-        }
-
-        .btn.equals:hover {
-            background-color: #006a9c;
-        }
+        /* Hide scrollbar for the calculation display */
+        ::-webkit-scrollbar { display: none; }
         
-        .btn.equals:active {
-            background-color: #005883;
+        .h-dvh { height: 100dvh; }
+
+        /* Custom soft shadow transitioning from dark to white */
+        .shadow-overlap {
+            box-shadow: 0 -25px 25px -10px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Button click effect */
+        .btn-tap {
+            transition: background-color 0.15s ease;
+        }
+        .btn-tap:active {
+            background-color: rgba(0,0,0,0.05);
+            border-radius: 50px;
         }
     </style>
 </head>
-<body>
+<body class="flex items-center justify-center min-h-screen sm:p-6 text-black">
 
-    <div class="calc-module">
-        <div class="calc-display">
-            <div class="previous-operand" id="previous-operand"></div>
-            <div class="current-operand" id="current-operand">0</div>
-        </div>
+    <!-- App Container -->
+    <div class="w-full h-dvh sm:h-auto sm:min-h-[750px] sm:max-w-[400px] bg-[#2e2e2e] sm:rounded-[2.5rem] flex flex-col relative overflow-hidden shadow-2xl border-4 border-[#2e2e2e]">
         
-        <div class="calc-keypad">
-            <!-- Row 1 -->
-            <!-- Swapped to use data-attributes instead of inline onclick handlers -->
-            <button class="btn action" data-action="clear">AC</button>
-            <button class="btn action" data-action="delete">DEL</button>
-            <button class="btn action" data-action="percent">%</button>
-            <button class="btn operator" data-operation="÷">÷</button>
-            
-            <!-- Row 2 -->
-            <button class="btn" data-number="7">7</button>
-            <button class="btn" data-number="8">8</button>
-            <button class="btn" data-number="9">9</button>
-            <button class="btn operator" data-operation="×">×</button>
-            
-            <!-- Row 3 -->
-            <button class="btn" data-number="4">4</button>
-            <button class="btn" data-number="5">5</button>
-            <button class="btn" data-number="6">6</button>
-            <button class="btn operator" data-operation="−">−</button>
-            
-            <!-- Row 4 -->
-            <button class="btn" data-number="1">1</button>
-            <button class="btn" data-number="2">2</button>
-            <button class="btn" data-number="3">3</button>
-            <button class="btn operator" data-operation="+">+</button>
-            
-            <!-- Row 5 -->
-            <button class="btn col-span-2" style="grid-column: span 2;" data-number="0">0</button>
-            <button class="btn" data-number=".">.</button>
-            <button class="btn equals" data-action="compute">=</button>
+        <!-- Top Display Area -->
+        <div class="flex-1 flex flex-col justify-end p-8 text-right pb-10">
+            <!-- Branding -->
+            <div class="absolute top-6 left-6 text-white/30 text-xs font-semibold tracking-widest uppercase">
+                COREBIQ
+            </div>
+
+            <!-- History (Previous Operand) -->
+            <div id="previous-operand" class="text-gray-300 text-2xl h-8 mb-2 font-normal tracking-wide flex justify-end items-center overflow-hidden"></div>
+            <!-- Main Output (Current Operand) -->
+            <div id="current-operand" class="text-white text-6xl font-medium overflow-x-auto whitespace-nowrap tracking-tight">0</div>
+        </div>
+
+        <!-- Keypad Area (White section overlapping) -->
+        <div class="bg-white rounded-t-[2rem] sm:rounded-b-[2rem] pt-8 px-6 pb-10 sm:pb-8 shadow-overlap relative z-10 flex-shrink-0 h-[60%]">
+            <div class="grid grid-cols-4 grid-rows-5 gap-y-4 gap-x-2 h-full">
+                
+                <!-- Row 1 -->
+                <button onclick="calculator.clear()" class="btn-tap text-3xl font-medium text-black flex items-center justify-center">c</button>
+                <button onclick="calculator.chooseOperation('÷')" class="btn-tap text-4xl font-medium text-black flex items-center justify-center mb-1">÷</button>
+                <button onclick="calculator.chooseOperation('×')" class="btn-tap text-4xl font-medium text-black flex items-center justify-center mb-1">×</button>
+                <button onclick="calculator.delete()" class="btn-tap text-2xl font-medium text-black flex items-center justify-center">ce</button>
+                
+                <!-- Row 2 -->
+                <button onclick="calculator.appendNumber('7')" class="btn-tap text-3xl font-medium text-black flex items-center justify-center">7</button>
+                <button onclick="calculator.appendNumber('8')" class="btn-tap text-3xl font-medium text-black flex items-center justify-center">8</button>
+                <button onclick="calculator.appendNumber('9')" class="btn-tap text-3xl font-medium text-black flex items-center justify-center">9</button>
+                <button onclick="calculator.chooseOperation('-')" class="btn-tap text-4xl font-medium text-black flex items-center justify-center mb-1">−</button>
+                
+                <!-- Row 3 -->
+                <button onclick="calculator.appendNumber('4')" class="btn-tap text-3xl font-medium text-black flex items-center justify-center">4</button>
+                <button onclick="calculator.appendNumber('5')" class="btn-tap text-3xl font-medium text-black flex items-center justify-center">5</button>
+                <button onclick="calculator.appendNumber('6')" class="btn-tap text-3xl font-medium text-black flex items-center justify-center">6</button>
+                <button onclick="calculator.chooseOperation('+')" class="btn-tap text-4xl font-medium text-black flex items-center justify-center mb-1">+</button>
+                
+                <!-- Row 4 -->
+                <button onclick="calculator.appendNumber('1')" class="btn-tap text-3xl font-medium text-black flex items-center justify-center">1</button>
+                <button onclick="calculator.appendNumber('2')" class="btn-tap text-3xl font-medium text-black flex items-center justify-center">2</button>
+                <button onclick="calculator.appendNumber('3')" class="btn-tap text-3xl font-medium text-black flex items-center justify-center">3</button>
+                
+                <!-- Equal Button (Spans 2 rows) -->
+                <button onclick="calculator.compute()" class="row-span-2 bg-[#333333] hover:bg-[#1a1a1a] transition-colors text-white text-4xl font-medium flex items-center justify-center">
+                    =
+                </button>
+                
+                <!-- Row 5 -->
+                <button onclick="calculator.chooseOperation('%')" class="btn-tap text-3xl font-medium text-black flex items-center justify-center">%</button>
+                <button onclick="calculator.appendNumber('0')" class="btn-tap text-3xl font-medium text-black flex items-center justify-center">0</button>
+                <button onclick="calculator.appendNumber('.')" class="btn-tap text-3xl font-medium text-black flex items-center justify-center pb-2">.</button>
+            </div>
         </div>
     </div>
 
+    <!-- Application Logic -->
     <script>
         class Calculator {
             constructor(previousOperandTextElement, currentOperandTextElement) {
@@ -204,71 +112,44 @@
                 this.currentOperand = '0';
                 this.previousOperand = '';
                 this.operation = undefined;
-                this.readyToReset = false;
+                this.updateDisplay();
             }
 
             delete() {
-                if (this.currentOperand === 'Error') {
-                    this.clear();
-                    return;
-                }
                 if (this.currentOperand === '0') return;
-                
-                if (this.currentOperand.length === 1 || (this.currentOperand.length === 2 && this.currentOperand.startsWith('-'))) {
-                    this.currentOperand = '0';
-                    return;
-                }
                 this.currentOperand = this.currentOperand.toString().slice(0, -1);
-            }
-
-            percent() {
-                if (this.currentOperand === 'Error' || this.currentOperand === '') return;
-                const current = parseFloat(this.currentOperand);
-                if (isNaN(current)) return;
-                // Treat percent as an immediate divide by 100 for the current entry
-                this.currentOperand = (current / 100).toString();
-                this.readyToReset = true;
+                if (this.currentOperand === '') this.currentOperand = '0';
+                this.updateDisplay();
             }
 
             appendNumber(number) {
-                if (this.currentOperand === 'Error') this.clear();
-
-                if (this.readyToReset) {
-                    this.currentOperand = number === '.' ? '0.' : number;
-                    this.readyToReset = false;
-                    return;
-                }
-                
                 if (number === '.' && this.currentOperand.includes('.')) return;
-                
-                // Prevent leading zeros unless it's a decimal
                 if (this.currentOperand === '0' && number !== '.') {
-                    this.currentOperand = number;
+                    this.currentOperand = number.toString();
                 } else {
-                    // Limit max length to prevent overflowing the display ungracefully
-                    if(this.currentOperand.length < 15) {
-                         this.currentOperand = this.currentOperand.toString() + number.toString();
+                    if(this.currentOperand.length < 12) {
+                        this.currentOperand = this.currentOperand.toString() + number.toString();
                     }
                 }
+                this.updateDisplay();
             }
 
             chooseOperation(operation) {
-                if (this.currentOperand === 'Error') this.clear();
-                if (this.currentOperand === '' && this.previousOperand === '') return;
-                
-                // If we press an operator right after computing, or changing mind on operator
-                if (this.currentOperand === '') {
-                    this.operation = operation;
+                if (operation === '%') {
+                    if (this.currentOperand === '0') return;
+                    this.currentOperand = (parseFloat(this.currentOperand) / 100).toString();
+                    this.updateDisplay();
                     return;
                 }
 
+                if (this.currentOperand === '0' && this.previousOperand === '' && operation !== '-') return;
                 if (this.previousOperand !== '') {
                     this.compute();
                 }
-                
                 this.operation = operation;
                 this.previousOperand = this.currentOperand;
-                this.currentOperand = '';
+                this.currentOperand = '0';
+                this.updateDisplay();
             }
 
             compute() {
@@ -277,44 +158,30 @@
                 const current = parseFloat(this.currentOperand);
                 
                 if (isNaN(prev) || isNaN(current)) return;
-
+                
                 switch (this.operation) {
-                    case '+':
-                        computation = prev + current;
-                        break;
-                    case '−':
-                        computation = prev - current;
-                        break;
-                    case '×':
-                        computation = prev * current;
-                        break;
+                    case '+': computation = prev + current; break;
+                    case '-': computation = prev - current; break;
+                    case '×': computation = prev * current; break;
                     case '÷':
                         if (current === 0) {
-                            this.currentOperand = "Error";
-                            this.previousOperand = '';
-                            this.operation = undefined;
-                            this.readyToReset = true;
+                            alert("Cannot divide by zero");
+                            this.clear();
                             return;
                         }
                         computation = prev / current;
                         break;
-                    default:
-                        return;
+                    default: return;
                 }
-
-                // Handle floating point precision issues (e.g., 0.1 + 0.2)
-                computation = Math.round(computation * 1000000000) / 1000000000;
                 
-                this.currentOperand = computation.toString();
+                // Fix floating point precision
+                this.currentOperand = Math.round(computation * 10000000000) / 10000000000;
                 this.operation = undefined;
                 this.previousOperand = '';
-                this.readyToReset = true;
+                this.updateDisplay();
             }
 
             getDisplayNumber(number) {
-                if (number === "Error") return number;
-                if (number === '-' || number === '') return number;
-                
                 const stringNumber = number.toString();
                 const integerDigits = parseFloat(stringNumber.split('.')[0]);
                 const decimalDigits = stringNumber.split('.')[1];
@@ -323,9 +190,8 @@
                 if (isNaN(integerDigits)) {
                     integerDisplay = '0';
                 } else {
-                    integerDisplay = integerDigits.toLocaleString('en', {
-                        maximumFractionDigits: 0
-                    });
+                    // Includes comma separation for thousands (e.g. 1,862)
+                    integerDisplay = integerDigits.toLocaleString('en', { maximumFractionDigits: 0 });
                 }
                 
                 if (decimalDigits != null) {
@@ -338,8 +204,7 @@
             updateDisplay() {
                 this.currentOperandTextElement.innerText = this.getDisplayNumber(this.currentOperand);
                 if (this.operation != null) {
-                    this.previousOperandTextElement.innerText = 
-                        `${this.getDisplayNumber(this.previousOperand)} ${this.operation}`;
+                    this.previousOperandTextElement.innerText = `${this.getDisplayNumber(this.previousOperand)} ${this.operation}`;
                 } else {
                     this.previousOperandTextElement.innerText = '';
                 }
@@ -349,71 +214,18 @@
         const previousOperandTextElement = document.getElementById('previous-operand');
         const currentOperandTextElement = document.getElementById('current-operand');
         const calculator = new Calculator(previousOperandTextElement, currentOperandTextElement);
-
-        // Map buttons by their data attributes
-        document.querySelectorAll('[data-number]').forEach(button => {
-            button.addEventListener('click', () => {
-                calculator.appendNumber(button.dataset.number);
-                calculator.updateDisplay();
-            });
-        });
-
-        document.querySelectorAll('[data-operation]').forEach(button => {
-            button.addEventListener('click', () => {
-                calculator.chooseOperation(button.dataset.operation);
-                calculator.updateDisplay();
-            });
-        });
-
-        // Action Buttons Map
-        const actions = {
-            'clear': () => calculator.clear(),
-            'delete': () => calculator.delete(),
-            'percent': () => calculator.percent(),
-            'compute': () => calculator.compute()
-        };
-
-        document.querySelectorAll('[data-action]').forEach(button => {
-            button.addEventListener('click', () => {
-                const action = button.dataset.action;
-                if (actions[action]) {
-                    actions[action]();
-                    calculator.updateDisplay();
-                }
-            });
-        });
-
-        // Keyboard Support
-        document.addEventListener('keydown', function(event) {
-            let key = event.key;
-            
-            if (/[0-9.]/.test(key)) {
-                calculator.appendNumber(key);
-                calculator.updateDisplay();
-            } else if (key === '+' || key === '-') {
-                calculator.chooseOperation(key === '-' ? '−' : '+');
-                calculator.updateDisplay();
-            } else if (key === '*' || key === 'x') {
-                calculator.chooseOperation('×');
-                calculator.updateDisplay();
-            } else if (key === '/') {
-                event.preventDefault(); 
-                calculator.chooseOperation('÷');
-                calculator.updateDisplay();
-            } else if (key === 'Enter' || key === '=') {
-                event.preventDefault();
-                calculator.compute();
-                calculator.updateDisplay();
-            } else if (key === 'Backspace') {
-                calculator.delete();
-                calculator.updateDisplay();
-            } else if (key === 'Escape') {
-                calculator.clear();
-                calculator.updateDisplay();
-            } else if (key === '%') {
-                calculator.percent();
-                calculator.updateDisplay();
-            }
+        
+        // Keyboard mapping for desktop usage
+        document.addEventListener('keydown', e => {
+            if (e.key >= 0 && e.key <= 9 || e.key === '.') calculator.appendNumber(e.key);
+            if (e.key === '=' || e.key === 'Enter') { e.preventDefault(); calculator.compute(); }
+            if (e.key === 'Backspace') calculator.delete();
+            if (e.key === 'Escape' || e.key === 'c' || e.key === 'C') calculator.clear();
+            if (e.key === '+') calculator.chooseOperation('+');
+            if (e.key === '-') calculator.chooseOperation('-');
+            if (e.key === '*') calculator.chooseOperation('×');
+            if (e.key === '/') calculator.chooseOperation('÷');
+            if (e.key === '%') calculator.chooseOperation('%');
         });
     </script>
 </body>
