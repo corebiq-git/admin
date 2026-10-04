@@ -1,32 +1,101 @@
 <style>
     .bottom-nav { 
-        display: flex; justify-content: space-around; background: var(--surface); 
-        border-top: 1px solid var(--border); padding: 10px 0; 
-        padding-bottom: calc(10px + env(safe-area-inset-bottom)); 
-        position: fixed; bottom: 0; width: 100%; z-index: 900; 
+        display: flex; 
+        justify-content: space-evenly; 
+        align-items: center; 
+        /* M3 uses a distinct Surface Container color rather than a top border */
+        background: var(--surface-container, #F3F4F9); 
+        height: 80px; /* Standard M3 component height */
+        padding-bottom: env(safe-area-inset-bottom); 
+        position: fixed; 
+        bottom: 0; 
+        width: 100%; 
+        z-index: 900; 
+        box-shadow: 0 -1px 3px rgba(0,0,0,0.05); /* Subtle elevation */
     }
+
     .bottom-nav-item { 
-        display: flex; flex-direction: column; align-items: center; 
-        color: var(--text-muted); text-decoration: none; 
-        font-size: 10px; font-weight: 600; cursor: pointer; 
-        transition: color 0.2s ease;
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        justify-content: center;
+        color: var(--text-muted, #44474E); 
+        text-decoration: none; 
+        cursor: pointer; 
+        min-width: 64px;
+        height: 100%;
+        -webkit-tap-highlight-color: transparent;
     }
-    .bottom-nav-item:hover { color: var(--text-main); }
-    .bottom-nav-item.active { color: var(--primary); }
-    .bottom-nav-icon { font-size: 24px; margin-bottom: 4px; }
+    
+    .nav-indicator {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 64px;
+        height: 32px;
+        border-radius: 16px; /* M3 Signature Pill Shape */
+        margin-bottom: 4px;
+        transition: background-color 0.2s cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    .bottom-nav-item:hover .nav-indicator { 
+        background: rgba(var(--text-main-rgb, 28, 27, 31), 0.08); /* State layer on hover */
+    }
+    
+    .bottom-nav-icon { 
+        font-size: 24px; 
+        /* Default to outlined icons in M3 */
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        transition: font-variation-settings 0.2s;
+    }
+
+    .bottom-nav-label {
+        font-size: 12px; 
+        font-weight: 500; /* M3 label-medium typography */
+        letter-spacing: 0.5px;
+        transition: color 0.2s;
+    }
+
+    /* M3 Active States */
+    .bottom-nav-item.active { 
+        color: var(--text-main, #1C1B1F); 
+    }
+    
+    .bottom-nav-item.active .nav-indicator { 
+        /* Active pill typically uses Primary/Secondary Container colors */
+        background: var(--primary-container, #C2E7FF); 
+        color: var(--on-primary-container, #001D35);
+    }
+    
+    .bottom-nav-item.active .bottom-nav-icon {
+        /* Switch to filled icon dynamically when active */
+        font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
 </style>
 
 <div class="bottom-nav">
     <div class="bottom-nav-item active" onclick="window.switchView('view-dashboard', this)">
-        <span class="material-symbols-rounded bottom-nav-icon">dashboard</span> Home
+        <div class="nav-indicator">
+            <span class="material-symbols-rounded bottom-nav-icon">dashboard</span>
+        </div>
+        <span class="bottom-nav-label">Home</span>
     </div>
     <div class="bottom-nav-item" onclick="window.switchView('view-patients', this)">
-        <span class="material-symbols-rounded bottom-nav-icon">group</span> Patients
+        <div class="nav-indicator">
+            <span class="material-symbols-rounded bottom-nav-icon">group</span>
+        </div>
+        <span class="bottom-nav-label">Patients</span>
     </div>
     <div class="bottom-nav-item" onclick="window.switchView('view-appointments', this)">
-        <span class="material-symbols-rounded bottom-nav-icon">calendar_month</span> Schedule
+        <div class="nav-indicator">
+            <span class="material-symbols-rounded bottom-nav-icon">calendar_month</span>
+        </div>
+        <span class="bottom-nav-label">Schedule</span>
     </div>
     <div class="bottom-nav-item" onclick="window.toggleSidebar()">
-        <span class="material-symbols-rounded bottom-nav-icon">menu</span> Menu
+        <div class="nav-indicator">
+            <span class="material-symbols-rounded bottom-nav-icon">menu</span>
+        </div>
+        <span class="bottom-nav-label">Menu</span>
     </div>
 </div>
