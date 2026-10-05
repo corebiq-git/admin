@@ -4,422 +4,198 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
 <title>COREBIQ | APPOINTMENT</title>
-<!-- Using Outfit as it closely mimics Google Sans (Gemini's font) -->
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0">
 </head>
-<body style="margin: 0; background-color: #f0f4f9; display: flex; justify-content: center; padding: 20px;">
-<div class="module-container" id="appointment-module">
+<body style="margin:0;background:#f0f4f9;display:flex;justify-content:center;padding:20px">
+<div id="appointment-module">
 <style>
-:root{
-  /* Material 3 / Gemini Colors */
-  --primary: #0b57d0;
-  --primary-light: #d3e3fd;
-  --bg: #f0f4f9;
-  --surface: #ffffff;
-  --surface-variant: #e1e5ea;
-  --text: #1f1f1f;
-  --muted: #444746;
-  --border: #c4c7c5;
-  --border-light: #e0e0e0;
-  --success: #146c2e;
-  --success-bg: #e6f4ea;
-  --danger: #b3261e;
-  --danger-bg: #f9dedc;
-  --warning: #b3261e;
-  --shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
-  --shadow-modal: 0 24px 38px 3px rgba(0,0,0,0.14);
-}
-#appointment-module{font-family:'Google Sans', 'Outfit', 'Inter', sans-serif;width:100%;max-width:1120px;color:var(--text)}
-#appointment-module *{box-sizing:border-box}
-.material-symbols-rounded{font-size:20px;vertical-align:middle}
-.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px}
-.title h2{font-size:28px;line-height:1.2;margin:0;font-weight:400;color:var(--text)}.title p{font-size:14px;color:var(--muted);margin:4px 0 0;font-weight:500}
-.btn{border:1px solid var(--border);background:transparent;color:var(--text);height:40px;padding:0 20px;border-radius:100px;font-size:14px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:all 0.2s ease}
-.btn:hover{background:var(--surface-variant)}
-.btn.primary{background:var(--primary);border:none;color:#fff}.btn.primary:hover{background:#0842a0;box-shadow:0 1px 3px rgba(0,0,0,0.1)}
-.btn.danger{color:var(--danger);border-color:var(--danger-bg);background:var(--danger-bg)}.btn.blue{color:var(--primary);border-color:var(--primary-light);background:var(--primary-light)}.btn.small{height:36px;padding:0 16px;font-size:13px}
-.new-btn{height:44px;padding:0 20px;border:0;border-radius:100px;background:var(--primary);color:#fff;font-weight:500;font-size:14px;display:inline-flex;align-items:center;gap:8px;cursor:pointer;transition:all 0.2s}
-.new-btn:hover{background:#0842a0;box-shadow:0 1px 3px rgba(0,0,0,0.1)}
-.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
-.kpi{background:var(--surface);border:1px solid var(--border-light);border-radius:24px;padding:20px;box-shadow:var(--shadow)}
-.kpi .label{font-size:13px;color:var(--muted);font-weight:500}.kpi .num{font-size:32px;font-weight:400;margin-top:4px}
-.kpi.today .num{color:var(--primary)}.kpi.done .num{color:var(--success)}.kpi.pending .num{color:#b26a00}
-.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:24px;box-shadow:var(--shadow);overflow:visible;margin-bottom:16px}
-.panel-head{padding:16px 20px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.panel-title{font-size:18px;font-weight:500}
-.toolbar{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
-.tool{position:relative}
-.icon-btn{width:40px;height:40px;border:none;border-radius:50%;background:transparent;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:background 0.2s}
-.icon-btn:hover{background:var(--surface-variant);color:var(--text)}
-.icon-btn.active{background:var(--primary-light);color:#041e49}
-.dropdown{display:none;position:absolute;right:0;top:45px;min-width:220px;background:var(--surface);border:1px solid var(--border-light);border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);padding:8px;z-index:5000}
-.tool.open .dropdown{display:block}.drop-title{font-size:12px;color:var(--muted);font-weight:500;padding:8px 12px}.drop-item{width:100%;border:0;background:transparent;text-align:left;padding:10px 12px;border-radius:8px;font-size:14px;display:flex;gap:10px;align-items:center;cursor:pointer;color:var(--text);transition:background 0.2s}.drop-item:hover{background:var(--bg)}.drop-item.active{background:var(--primary-light);color:#041e49;font-weight:500}
-.searchbar{display:none;padding:12px 20px;border-bottom:1px solid var(--border-light);background:var(--surface)}.searchbar.show{display:flex}.searchbox{display:flex;align-items:center;gap:8px;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:4px 16px;transition:border-color 0.2s}.searchbox:focus-within{border-color:var(--primary)}.searchbox input{height:40px;width:100%;border:0;outline:0;font-size:14px;background:transparent}
-.filters{display:none;padding:12px 20px;border-bottom:1px solid var(--border-light);background:var(--surface);gap:12px;flex-wrap:wrap;align-items:center}.filters.show{display:flex}
-.form-input{width:100%;padding:12px 16px;border-radius:8px;border:1px solid var(--border);font-size:14px;color:var(--text);background:var(--surface);outline:none;transition:all 0.2s;font-family:inherit}.form-input:focus{border:2px solid var(--primary);padding:11px 15px}
-.filter-input{width:auto;min-width:140px;height:40px;padding:8px 12px}
-.bulkbar{display:none;background:var(--primary-light);padding:12px 20px;border-bottom:1px solid var(--border-light);align-items:center;gap:12px;flex-wrap:wrap;border-radius: 24px 24px 0 0;}.bulkbar.show{display:flex}.bulkbar strong{font-size:14px;color:#041e49;font-weight:500}
-.table-wrap{overflow-x:auto}.table{width:100%;min-width:930px;border-collapse:collapse}.table th{font-size:13px;color:var(--muted);font-weight:500;text-align:left;padding:16px 20px;background:var(--surface);border-bottom:1px solid var(--border-light);white-space:nowrap}.table td{font-size:14px;padding:16px 20px;border-bottom:1px solid var(--border-light);vertical-align:top}.table tr:last-child td{border-bottom:0}.patient-name{font-weight:500;font-size:15px;color:var(--text)}.sub{font-size:13px;color:var(--muted);margin-top:4px}.actions{display:flex;gap:4px;justify-content:flex-end}.act{width:36px;height:36px;border:none;background:transparent;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:background 0.2s}.act:hover{background:var(--surface-variant);color:var(--text)}.act.note{color:#6b538c}.act.inv{color:#00639b}.act.edit{color:var(--muted)}
-.no-due{color:var(--muted);font-weight:500}.excess{color:var(--success);font-weight:500}.due{color:var(--danger);font-weight:500}
-.badge{display:inline-flex;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:500;text-transform:capitalize}.pending{background:#fff3e0;color:#b26a00}.reported{background:var(--primary-light);color:#041e49}.completed{background:var(--success-bg);color:var(--success)}.rescheduled{background:var(--surface-variant);color:var(--text)}.cancelled{background:var(--danger-bg);color:var(--danger)}.cat{background:var(--surface-variant);color:var(--text);border:none}
-.cards{display:none;padding:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}.cards.show{display:grid}.apt-card{border:1px solid var(--border-light);border-radius:24px;padding:16px;background:var(--surface);box-shadow:var(--shadow)}.card-top{display:flex;justify-content:space-between;gap:8px}.card-patient{display:flex;gap:12px}.card-check{padding-top:2px}.card-line{font-size:13px;color:var(--muted);margin-top:8px}.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border-light)}.card-actions{display:flex;gap:4px;margin-top:16px}
-.empty{text-align:center;padding:48px 20px;color:var(--muted);font-size:14px}
-.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:10000;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(2px)}.modal.show{display:flex}.modal-box{background:var(--surface);width:min(900px,100%);max-height:90vh;overflow:auto;border-radius:28px;box-shadow:var(--shadow-modal)}.modal-head{position:sticky;top:0;z-index:2;background:var(--surface);padding:24px 24px 16px;display:flex;justify-content:space-between;align-items:center}.modal-head h3{font-size:24px;font-weight:400;margin:0}.modal-body{padding:0 24px 24px}.close{width:40px;height:40px;border:none;border-radius:50%;background:transparent;cursor:pointer;color:var(--muted);transition:background 0.2s}.close:hover{background:var(--surface-variant)}
-.section{border:1px solid var(--border-light);border-radius:24px;margin-bottom:16px;padding:20px}.section h4{font-size:14px;color:var(--primary);margin:0 0 16px;font-weight:500}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.grid.three{grid-template-columns:repeat(3,1fr)}.field label{display:block;font-size:13px;color:var(--text);font-weight:500;margin-bottom:8px}.span2{grid-column:1/-1}.location-row{display:grid;grid-template-columns:auto 1fr auto;gap:8px}.money-box{background:var(--bg);border-radius:16px;padding:16px}.form-actions{display:flex;justify-content:flex-end;gap:12px;padding-top:16px}.readonly{background:var(--bg)!important;border-color:transparent!important;font-weight:500}
-.notes-content{padding:20px;line-height:1.6;white-space:pre-wrap;font-size:14px;min-height:150px;background:var(--bg);border:none;border-radius:16px}
-.confirm-box{max-width:400px;text-align:center;padding:16px;}.confirm-box .modal-head{justify-content:center;padding:32px 24px 8px}.confirm-box .close{position:absolute;right:16px;top:16px}.confirm-message{font-size:15px;line-height:1.5;color:var(--muted);padding:8px 24px 32px}.confirm-box .form-actions{justify-content:center;padding-bottom:16px;}
-@media(max-width:700px){.topbar{flex-direction:column;align-items:flex-start}.title h2{font-size:24px}.new-btn{width:100%;justify-content:center}.kpis{grid-template-columns:1fr;gap:12px}.kpi{padding:16px}.kpi .num{font-size:28px}.grid,.grid.three{grid-template-columns:1fr}.span2{grid-column:auto}.modal{padding:12px}.modal-box{max-height:96vh}.toolbar{width:100%}.panel-head{align-items:flex-start}.panel-title{width:100%}}
-@media print{#appointment-module .no-print,#appointment-module .toolbar,#appointment-module .new-btn,.kpis{display:none!important}.panel{box-shadow:none;border:0}.table{min-width:100%}}
+:root{--primary:#0b57d0;--primary-light:#d3e3fd;--bg:#f0f4f9;--surface:#fff;--surface-variant:#e1e5ea;--text:#1f1f1f;--muted:#444746;--border:#c4c7c5;--border-light:#e0e0e0;--success:#146c2e;--success-bg:#e6f4ea;--danger:#b3261e;--danger-bg:#f9dedc;--shadow:0 1px 2px rgba(0,0,0,.05);--shadow-modal:0 24px 38px 3px rgba(0,0,0,.14)}
+#appointment-module{font-family:'Google Sans','Outfit','Inter',sans-serif;width:100%;max-width:1120px;color:var(--text)}#appointment-module *{box-sizing:border-box}.material-symbols-rounded{font-size:20px;vertical-align:middle}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px}.title h2{font-size:28px;line-height:1.2;margin:0;font-weight:400}.title p{font-size:14px;color:var(--muted);margin:4px 0 0;font-weight:500}
+.btn,.new-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:inherit}.btn{border:1px solid var(--border);background:transparent;color:var(--text);height:40px;padding:0 20px;border-radius:100px;font-size:14px;font-weight:500}.btn.primary,.new-btn{background:var(--primary);border:0;color:#fff}.btn.danger{color:var(--danger);background:var(--danger-bg)}.btn.blue{color:var(--primary);background:var(--primary-light)}.btn.small{height:36px;padding:0 16px;font-size:13px}.new-btn{height:44px;padding:0 20px;font-weight:500;font-size:14px}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}.kpi{background:var(--surface);border:1px solid var(--border-light);border-radius:24px;padding:20px;box-shadow:var(--shadow)}.kpi .label{font-size:13px;color:var(--muted);font-weight:500}.kpi .num{font-size:32px;margin-top:4px}.kpi.today .num{color:var(--primary)}.kpi.done .num{color:var(--success)}.kpi.pending .num{color:#b26a00}
+.panel{background:var(--surface);border:1px solid var(--border-light);border-radius:24px;box-shadow:var(--shadow);overflow:visible;margin-bottom:16px}.panel-head{padding:16px 20px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.panel-title{font-size:18px;font-weight:500}.toolbar{display:flex;align-items:center;gap:4px;flex-wrap:wrap}.tool{position:relative}.icon-btn,.act,.close{border:0;background:transparent;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}.icon-btn{width:40px;height:40px;border-radius:50%;color:var(--muted)}.icon-btn.active{background:var(--primary-light);color:#041e49}.dropdown{display:none;position:absolute;right:0;top:45px;min-width:220px;background:#fff;border:1px solid var(--border-light);border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.1);padding:8px;z-index:5000}.tool.open .dropdown{display:block}.drop-title{font-size:12px;color:var(--muted);padding:8px 12px}.drop-item{width:100%;border:0;background:transparent;text-align:left;padding:10px 12px;border-radius:8px;font-size:14px;display:flex;gap:10px;align-items:center;cursor:pointer}.drop-item:hover,.drop-item.active{background:var(--primary-light)}
+.searchbar,.filters{display:none;padding:12px 20px;border-bottom:1px solid var(--border-light);background:#fff}.searchbar.show,.filters.show{display:flex}.searchbox{display:flex;align-items:center;gap:8px;width:100%;border:1px solid var(--border);border-radius:100px;padding:4px 16px}.searchbox input{height:40px;width:100%;border:0;outline:0;font-size:14px}.filters{gap:12px;flex-wrap:wrap;align-items:center}.form-input{width:100%;padding:12px 16px;border-radius:8px;border:1px solid var(--border);font-size:14px;color:var(--text);background:#fff;outline:none;font-family:inherit}.form-input:focus{border:2px solid var(--primary);padding:11px 15px}.filter-input{width:auto;min-width:140px;height:40px;padding:8px 12px}
+.bulkbar{display:none;background:var(--primary-light);padding:12px 20px;align-items:center;gap:12px;flex-wrap:wrap}.bulkbar.show{display:flex}.bulkbar strong{font-size:14px;color:#041e49}.table-wrap{overflow-x:auto}.table{width:100%;min-width:930px;border-collapse:collapse}.table th{font-size:13px;color:var(--muted);font-weight:500;text-align:left;padding:16px 20px;border-bottom:1px solid var(--border-light);white-space:nowrap}.table td{font-size:14px;padding:16px 20px;border-bottom:1px solid var(--border-light);vertical-align:top}.patient-name{font-weight:500;font-size:15px}.sub{font-size:13px;color:var(--muted);margin-top:4px}.actions{display:flex;gap:4px;justify-content:flex-end}.act{width:36px;height:36px;border-radius:50%;color:var(--muted)}.no-due{color:var(--muted);font-weight:500}.excess{color:var(--success);font-weight:500}.due{color:var(--danger);font-weight:500}.badge{display:inline-flex;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:500;text-transform:capitalize}.pending{background:#fff3e0;color:#b26a00}.reported{background:var(--primary-light);color:#041e49}.completed{background:var(--success-bg);color:var(--success)}.rescheduled{background:var(--surface-variant)}.cancelled{background:var(--danger-bg);color:var(--danger)}.cat{background:var(--surface-variant)}.cards{display:none;padding:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}.cards.show{display:grid}.apt-card{border:1px solid var(--border-light);border-radius:24px;padding:16px}.card-top,.card-patient{display:flex;gap:12px}.card-top{justify-content:space-between}.card-line{font-size:13px;color:var(--muted);margin-top:8px}.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border-light)}.card-actions{display:flex;gap:4px;margin-top:16px}.empty{text-align:center;padding:48px 20px;color:var(--muted);font-size:14px}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:10000;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(2px)}.modal.show{display:flex}.modal-box{background:#fff;width:min(900px,100%);max-height:90vh;overflow:auto;border-radius:28px;box-shadow:var(--shadow-modal)}.modal-head{position:sticky;top:0;z-index:2;background:#fff;padding:24px 24px 16px;display:flex;justify-content:space-between;align-items:center}.modal-head h3{font-size:24px;font-weight:400;margin:0}.modal-body{padding:0 24px 24px}.close{width:40px;height:40px;border-radius:50%;color:var(--muted)}.section{border:1px solid var(--border-light);border-radius:24px;margin-bottom:16px;padding:20px}.section h4{font-size:14px;color:var(--primary);margin:0 0 16px;font-weight:500}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.grid.three{grid-template-columns:repeat(3,1fr)}.field label{display:block;font-size:13px;font-weight:500;margin-bottom:8px}.span2{grid-column:1/-1}.location-row{display:grid;grid-template-columns:auto 1fr auto;gap:8px}.money-box{background:var(--bg);border-radius:16px;padding:16px}.form-actions{display:flex;justify-content:flex-end;gap:12px;padding-top:16px}.readonly{background:var(--bg)!important;border-color:transparent!important;font-weight:500}.notes-content{padding:20px;line-height:1.6;white-space:pre-wrap;font-size:14px;min-height:150px;background:var(--bg);border-radius:16px}.confirm-box{max-width:400px;text-align:center}.confirm-message{font-size:15px;line-height:1.5;color:var(--muted);padding:8px 24px 32px}
+@media(max-width:700px){body{padding:12px!important}.topbar{flex-direction:column;align-items:flex-start}.title h2{font-size:24px}.new-btn{width:100%}.kpis{grid-template-columns:1fr;gap:12px}.grid,.grid.three{grid-template-columns:1fr}.span2{grid-column:auto}.modal{padding:12px}.toolbar{width:100%}.panel-head{align-items:flex-start}.panel-title{width:100%}}
+@media print{.no-print,.new-btn,.kpis{display:none!important}.panel{box-shadow:none;border:0}.table{min-width:100%}}
 </style>
 
-<div class="topbar">
-  <div class="title"><h2>Appointments & Scheduling</h2><p id="todayLabel"></p></div>
-  <button class="new-btn" onclick="window.openAppointmentForm()"><span class="material-symbols-rounded">add</span><span>New Appointment</span></button>
-</div>
-
-<div class="kpis">
-  <div class="kpi today"><div class="label">Today's Appointment</div><div class="num" id="kpiToday">0</div></div>
-  <div class="kpi done"><div class="label">Completed</div><div class="num" id="kpiCompleted">0</div></div>
-  <div class="kpi pending"><div class="label">Pending</div><div class="num" id="kpiPending">0</div></div>
-</div>
+<div class="topbar"><div class="title"><h2>Appointments & Scheduling</h2><p id="todayLabel"></p></div><button class="new-btn" onclick="openAppointmentForm()"><span class="material-symbols-rounded">add</span>New Appointment</button></div>
+<div class="kpis"><div class="kpi today"><div class="label">Today's Appointment</div><div class="num" id="kpiToday">0</div></div><div class="kpi done"><div class="label">Completed</div><div class="num" id="kpiCompleted">0</div></div><div class="kpi pending"><div class="label">Pending</div><div class="num" id="kpiPending">0</div></div></div>
 
 <div class="panel">
-  <div class="panel-head">
-    <div class="panel-title">Schedule Directory</div>
-    <div class="toolbar no-print">
-      <div class="tool" id="searchTool">
-        <button class="icon-btn" title="Search" onclick="window.toggleTool('searchTool')"><span class="material-symbols-rounded">search</span></button>
-      </div>
-      <div class="tool" id="viewTool">
-        <button class="icon-btn" title="View Type" onclick="window.toggleTool('viewTool')"><span class="material-symbols-rounded">view_agenda</span></button>
-        <div class="dropdown"><div class="drop-title">View Type</div>
-          <button class="drop-item active" id="viewListBtn" onclick="window.setView('list')"><span class="material-symbols-rounded">view_list</span>List View</button>
-          <button class="drop-item" id="viewCardBtn" onclick="window.setView('card')"><span class="material-symbols-rounded">grid_view</span>Card View</button>
-          <button class="drop-item" onclick="window.openAppointmentForm()"><span class="material-symbols-rounded">edit_note</span>Form / New Appointment</button>
-        </div>
-      </div>
-      <div class="tool" id="sortTool">
-        <button class="icon-btn" title="Sort" onclick="window.toggleTool('sortTool')"><span class="material-symbols-rounded">sort</span></button>
-        <div class="dropdown"><div class="drop-title">Sort</div>
-          <button class="drop-item" onclick="window.setSort('dateDesc')">Date: Newest first</button>
-          <button class="drop-item" onclick="window.setSort('dateAsc')">Date: Oldest first</button>
-          <button class="drop-item" onclick="window.setSort('nameAsc')">Patient: A–Z</button>
-          <button class="drop-item" onclick="window.setSort('doctorAsc')">Therapist: A–Z</button>
-          <button class="drop-item" onclick="window.setSort('balanceDesc')">Balance: High–Low</button>
-          <button class="drop-item" onclick="window.setSort('balanceAsc')">Balance: Low–High</button>
-        </div>
-      </div>
-      <div class="tool" id="filterTool">
-        <button class="icon-btn" title="Filter" onclick="window.toggleTool('filterTool')"><span class="material-symbols-rounded">filter_list</span></button>
-        <div class="dropdown"><div class="drop-title">Filter</div>
-          <button class="drop-item" onclick="window.showFilters()"><span class="material-symbols-rounded">tune</span>Date / Status / Branch</button>
-          <button class="drop-item" onclick="window.setFilterToday()"><span class="material-symbols-rounded">today</span>Today</button>
-          <button class="drop-item" onclick="window.clearFilters()"><span class="material-symbols-rounded">filter_alt_off</span>Clear Filters</button>
-        </div>
-      </div>
-      <div class="tool" id="importTool">
-        <button class="icon-btn" title="Import Appointment Data" onclick="window.toggleTool('importTool')"><span class="material-symbols-rounded">upload_file</span></button>
-        <div class="dropdown"><div class="drop-title">Appointment Data</div>
-          <button class="drop-item" onclick="document.getElementById('aptCsvInput').click()"><span class="material-symbols-rounded">upload</span>Import CSV</button>
-          <button class="drop-item" onclick="window.downloadAppointmentSampleCSV()"><span class="material-symbols-rounded">download</span>Sample Format CSV</button>
-        </div>
-      </div>
-      <div class="tool">
-        <button class="icon-btn" title="Export CSV" onclick="window.exportAppointmentsCSV()"><span class="material-symbols-rounded">file_download</span></button>
-      </div>
-      <div class="tool">
-        <button class="icon-btn" title="More Actions" onclick="window.toggleTool('moreTool')"><span class="material-symbols-rounded">more_vert</span></button>
-        <div class="dropdown" id="moreTool"><div class="drop-title">Actions</div>
-          <button class="drop-item" onclick="window.openSelectedNew()"><span class="material-symbols-rounded">content_copy</span>New from Selected</button>
-          <button class="drop-item" onclick="window.executeBulkReschedule()"><span class="material-symbols-rounded">event_repeat</span>Move Selected to Date</button>
-          <button class="drop-item" onclick="window.executeBulkDelete()"><span class="material-symbols-rounded">delete</span>Bulk Delete</button>
-          <button class="drop-item" onclick="window.exportAptPDF()"><span class="material-symbols-rounded">picture_as_pdf</span>Print / PDF</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="searchbar no-print" id="searchBar"><div class="searchbox"><span class="material-symbols-rounded">search</span><input id="aptSearchInput" placeholder="Search patient, mobile, therapist, branch..." oninput="window.filterTable()"><button class="close" style="width:32px;height:32px" onclick="document.getElementById('aptSearchInput').value='';window.filterTable()"><span class="material-symbols-rounded" style="font-size:18px">close</span></button></div></div>
-  <div class="filters no-print" id="filtersBar">
-    <input type="date" id="filterDateFrom" class="form-input filter-input" onchange="window.filterTable()">
-    <span style="font-size:13px;color:var(--muted)">to</span>
-    <input type="date" id="filterDateTo" class="form-input filter-input" onchange="window.filterTable()">
-    <button class="btn small" onclick="window.setFilterToday()">Today</button>
-    <select id="filterStatus" class="form-input filter-input" onchange="window.filterTable()"><option value="">All Statuses</option><option>Pending</option><option>Reported</option><option>Completed</option><option>Rescheduled</option><option>Cancelled</option></select>
-    <select id="filterCategory" class="form-input filter-input" onchange="window.filterTable()"><option value="">All Categories</option><option>Normal</option><option>Regular</option><option>Both</option></select>
-    <select id="filterPayment" class="form-input filter-input" onchange="window.filterTable()"><option value="">All Payments</option><option value="pending">Balance Pending</option><option value="paid">Fully Paid</option></select>
-    <select id="filterBranch" class="form-input filter-input" onchange="window.filterTable()"><option value="">All Branches</option></select>
-    <button class="icon-btn" style="width:40px;height:40px" title="Clear" onclick="window.clearFilters()"><span class="material-symbols-rounded">close</span></button>
-  </div>
-  <div class="bulkbar no-print" id="bulkBar"><strong><span id="selectedCount">0</span> selected</strong><button class="btn small primary" onclick="window.openSelectedNew()">New from Selected</button><button class="btn small blue" onclick="window.showBulkDate()">Move to Date</button><button class="btn small danger" onclick="window.executeBulkDelete()">Delete</button><button class="btn small" onclick="window.clearSelection()">Clear</button><span id="bulkDateArea" style="display:none"><input type="date" id="bulkDateInput" class="form-input" style="width:auto;height:36px"><button class="btn small primary" onclick="window.confirmBulkReschedule()">Confirm</button></span></div>
-  <input id="aptCsvInput" type="file" accept=".csv,text/csv" style="display:none" onchange="window.importAppointmentsCSV(this.files[0])">
-  <div class="table-wrap" id="listView"><table class="table"><thead><tr><th class="no-print"><input type="checkbox" id="selectAll" onclick="window.toggleAllCheckboxes(this)"></th><th>Date & Time</th><th>Patient Details</th><th>Branch / Therapist</th><th>Therapy / Financials</th><th>Status</th><th class="no-print">Actions</th></tr></thead><tbody id="aptTableBody"></tbody></table></div>
-  <div class="cards" id="cardView"></div>
+<div class="panel-head"><div class="panel-title">Schedule Directory</div><div class="toolbar no-print">
+<div class="tool" id="searchTool"><button class="icon-btn" onclick="toggleTool('searchTool')"><span class="material-symbols-rounded">search</span></button></div>
+<div class="tool" id="viewTool"><button class="icon-btn" onclick="toggleTool('viewTool')"><span class="material-symbols-rounded">view_agenda</span></button><div class="dropdown"><div class="drop-title">View Type</div><button class="drop-item active" id="viewListBtn" onclick="setView('list')">List View</button><button class="drop-item" id="viewCardBtn" onclick="setView('card')">Card View</button><button class="drop-item" onclick="openAppointmentForm()">Form / New Appointment</button></div></div>
+<div class="tool" id="sortTool"><button class="icon-btn" onclick="toggleTool('sortTool')"><span class="material-symbols-rounded">sort</span></button><div class="dropdown"><div class="drop-title">Sort</div><button class="drop-item" onclick="setSort('dateDesc')">Date: Newest first</button><button class="drop-item" onclick="setSort('dateAsc')">Date: Oldest first</button><button class="drop-item" onclick="setSort('nameAsc')">Patient: A–Z</button><button class="drop-item" onclick="setSort('doctorAsc')">Therapist: A–Z</button><button class="drop-item" onclick="setSort('balanceDesc')">Balance: High–Low</button><button class="drop-item" onclick="setSort('balanceAsc')">Balance: Low–High</button></div></div>
+<div class="tool" id="filterTool"><button class="icon-btn" onclick="toggleTool('filterTool')"><span class="material-symbols-rounded">filter_list</span></button><div class="dropdown"><div class="drop-title">Filter</div><button class="drop-item" onclick="showFilters()">Date / Status / Branch</button><button class="drop-item" onclick="setFilterToday()">Today</button><button class="drop-item" onclick="clearFilters()">Clear Filters</button></div></div>
+<div class="tool"><button class="icon-btn" title="Export CSV" onclick="exportAppointmentsCSV()"><span class="material-symbols-rounded">file_download</span></button></div>
+<div class="tool" id="moreTool"><button class="icon-btn" onclick="toggleTool('moreTool')"><span class="material-symbols-rounded">more_vert</span></button><div class="dropdown"><div class="drop-title">Actions</div><button class="drop-item" onclick="openSelectedNew()">New from Selected</button><button class="drop-item" onclick="executeBulkReschedule()">Move Selected to Date</button><button class="drop-item" onclick="executeBulkDelete()">Bulk Delete</button><button class="drop-item" onclick="exportAptPDF()">Print / PDF</button></div></div>
+</div></div>
+
+<div class="searchbar no-print" id="searchBar"><div class="searchbox"><span class="material-symbols-rounded">search</span><input id="aptSearchInput" placeholder="Search patient, mobile, therapist, branch..." oninput="filterTable()"><button class="close" onclick="document.getElementById('aptSearchInput').value='';filterTable()">×</button></div></div>
+<div class="filters no-print" id="filtersBar"><input type="date" id="filterDateFrom" class="form-input filter-input" onchange="filterTable()"><span>to</span><input type="date" id="filterDateTo" class="form-input filter-input" onchange="filterTable()"><button class="btn small" onclick="setFilterToday()">Today</button><select id="filterStatus" class="form-input filter-input" onchange="filterTable()"><option value="">All Statuses</option><option>Pending</option><option>Reported</option><option>Completed</option><option>Rescheduled</option><option>Cancelled</option></select><select id="filterCategory" class="form-input filter-input" onchange="filterTable()"><option value="">All Categories</option><option>Normal</option><option>Regular</option><option>Both</option></select><select id="filterPayment" class="form-input filter-input" onchange="filterTable()"><option value="">All Payments</option><option value="pending">Balance Pending</option><option value="paid">Fully Paid</option></select><select id="filterBranch" class="form-input filter-input" onchange="filterTable()"><option value="">All Branches</option></select><button class="icon-btn" onclick="clearFilters()">×</button></div>
+<div class="bulkbar no-print" id="bulkBar"><strong><span id="selectedCount">0</span> selected</strong><button class="btn small primary" onclick="openSelectedNew()">New from Selected</button><button class="btn small blue" onclick="showBulkDate()">Move to Date</button><button class="btn small danger" onclick="executeBulkDelete()">Delete</button><button class="btn small" onclick="clearSelection()">Clear</button><span id="bulkDateArea" style="display:none"><input type="date" id="bulkDateInput" class="form-input" style="width:auto;height:36px"><button class="btn small primary" onclick="confirmBulkReschedule()">Confirm</button></span></div>
+<div class="table-wrap" id="listView"><table class="table"><thead><tr><th><input type="checkbox" id="selectAll" onclick="toggleAllCheckboxes(this)"></th><th>Date & Time</th><th>Patient Details</th><th>Branch / Therapist</th><th>Therapy / Financials</th><th>Status</th><th>Actions</th></tr></thead><tbody id="aptTableBody"></tbody></table></div><div class="cards" id="cardView"></div>
 </div>
 
-<div class="modal" id="aptModal">
-  <div class="modal-box">
-    <div class="modal-head"><h3 id="formTitle">New Appointment</h3><button class="close" onclick="window.closeAppointmentForm()"><span class="material-symbols-rounded">close</span></button></div>
-    <div class="modal-body">
-      <form id="add-appointment-form" onsubmit="event.preventDefault();window.saveAppointment()">
-      <input type="hidden" id="aptDocId">
-      <div class="section"><h4>1. Patient Details</h4>
-        <div class="grid">
-          <div class="field span2"><label>Search Patient</label><input list="patients-datalist" id="aptPatientSearch" class="form-input" placeholder="Search by patient name or mobile" onchange="window.handlePatientSelect()" autocomplete="off"><datalist id="patients-datalist"></datalist></div>
-          <div class="field"><label>Patient Mobile *</label><input type="tel" id="aptMobile" class="form-input" maxlength="10" placeholder="10-digit number" required></div>
-          <div class="field"><label>Patient Name *</label><input id="aptName" class="form-input" placeholder="Full Name" required></div>
-          <div class="field"><label>Age</label><input type="number" id="aptAge" class="form-input" min="1" max="120"></div>
-          <div class="field"><label>Gender</label><select id="aptGender" class="form-input"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></div>
-          <div class="field"><label>Patient Category *</label><select id="aptCategory" class="form-input" required><option>Normal</option><option>Regular</option><option>Both</option></select></div>
-          <div class="field"><label>Location</label><div class="location-row"><button type="button" class="btn" onclick="window.getCurrentLocation(this)"><span class="material-symbols-rounded">my_location</span></button><input id="aptLocation" class="form-input" placeholder="Address or Maps URL"><button type="button" class="btn" onclick="window.openLocationMap()"><span class="material-symbols-rounded">map</span></button></div></div>
-          <div class="field span2"><label>Patient Medical History / Admin Notes</label><textarea id="aptPatientNotes" class="form-input" rows="2" placeholder="Pre-existing conditions, allergies, patient background..."></textarea></div>
-        </div>
-      </div>
-      <div class="section"><h4>2. Appointment & Therapy Details</h4>
-        <div class="grid three">
-          <div class="field"><label>Branch *</label><select id="aptBranch" class="form-input" required><option value="">Loading...</option></select></div>
-          <div class="field"><label>Scheduled Date *</label><input type="date" id="aptDate" class="form-input" required></div>
-          <div class="field"><label>Scheduled Time *</label><input type="time" id="aptTime" class="form-input" required></div>
-          <div class="field"><label>Previous Visit Date</label><input type="date" id="aptPreviousDate" class="form-input"></div>
-          <div class="field"><label>Previous Visit Time</label><input type="time" id="aptPreviousTime" class="form-input"></div>
-          <div class="field"><label>Duration of Therapy</label><input id="aptDuration" class="form-input" placeholder="30 minutes / 2 weeks"></div>
-          <div class="field"><label>Sessions / Day</label><input type="number" id="aptSessionsPerDay" class="form-input" min="1" step="1"></div>
-          <div class="field"><label>Doctor / Therapist *</label><input list="therapists-datalist" id="aptTherapist" class="form-input" placeholder="Search / Select Therapist" required autocomplete="off"><datalist id="therapists-datalist"></datalist></div>
-          <div class="field"><label>Status *</label><select id="aptStatus" class="form-input" onchange="window.toggleReschedule(this)" required><option>Pending</option><option>Reported</option><option>Completed</option><option>Rescheduled</option><option>Cancelled</option></select></div>
-          <div class="field" id="reschedule-container" style="display:none"><label style="color:var(--danger)">New Reschedule Date</label><input type="date" id="aptRescheduleDate" class="form-input"></div>
-          <div class="field span2"><label>Diagnosis Report / Administrative Notes</label><textarea id="aptNotes" class="form-input" rows="3" placeholder="Diagnosis, symptoms, treatment findings, remarks..."></textarea></div>
-        </div>
-      </div>
-      <div class="section"><h4>3. Payment Details</h4>
-        <div class="grid three">
-          <div class="field"><label>Payment Mode</label><select id="aptPaymentMode" class="form-input"><option>Cash</option><option>UPI</option><option>Card</option><option>Bank Transfer</option><option>Mixed</option><option>Credit</option></select></div>
-          <div class="field"><label>Payment Reference / UTR</label><input id="aptPaymentReference" class="form-input"></div>
-          <div class="field"><label>Payment Remarks</label><input id="aptPaymentRemarks" class="form-input"></div>
-        </div>
-        <div class="grid three" style="margin-top:16px">
-          <div class="money-box field"><label>Total Fee (₹)</label><input type="number" id="aptFee" class="form-input" step="0.01" oninput="window.calcBalance()"></div>
-          <div class="money-box field"><label>Prev. Dues (OP) (₹)</label><input type="number" id="aptPrevDues" class="form-input readonly" readonly></div>
-          <div class="money-box field"><label>Advance Paid (₹)</label><input type="number" id="aptAdvance" class="form-input" step="0.01" oninput="window.calcBalance()"></div>
-          <div class="money-box field"><label>Net Balance</label><input type="text" id="aptBalance" class="form-input readonly" readonly><div id="aptBalanceState" style="font-size:13px;margin-top:8px;font-weight:500"></div></div>
-        </div>
-      </div>
-      <div class="form-actions"><button type="button" class="btn" onclick="window.resetAptForm()">Clear Form</button><button type="submit" class="btn primary" id="saveAptBtn">Save Appointment</button></div>
-      </form>
-    </div>
-  </div>
-</div>
+<div class="modal" id="aptModal"><div class="modal-box"><div class="modal-head"><h3 id="formTitle">New Appointment</h3><button class="close" onclick="closeAppointmentForm()">×</button></div><div class="modal-body"><form id="add-appointment-form" onsubmit="event.preventDefault();saveAppointment()"><input type="hidden" id="aptDocId">
+<div class="section"><h4>1. Patient Details</h4><div class="grid"><div class="field span2"><label>Search Patient</label><input list="patients-datalist" id="aptPatientSearch" class="form-input" placeholder="Search by patient name or mobile" onchange="handlePatientSelect()"><datalist id="patients-datalist"></datalist></div><div class="field"><label>Patient Mobile *</label><input type="tel" id="aptMobile" class="form-input" maxlength="10" required></div><div class="field"><label>Patient Name *</label><input id="aptName" class="form-input" required></div><div class="field"><label>Age</label><input type="number" id="aptAge" class="form-input" min="1" max="120"></div><div class="field"><label>Gender</label><select id="aptGender" class="form-input"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></div><div class="field"><label>Patient Category *</label><select id="aptCategory" class="form-input" required><option>Normal</option><option>Regular</option><option>Both</option></select></div><div class="field"><label>Location</label><input id="aptLocation" class="form-input" placeholder="Address or Maps URL"></div><div class="field span2"><label>Patient Medical History / Admin Notes</label><textarea id="aptPatientNotes" class="form-input" rows="2"></textarea></div></div></div>
+<div class="section"><h4>2. Appointment & Therapy Details</h4><div class="grid three"><div class="field"><label>Branch *</label><select id="aptBranch" class="form-input" required><option value="">Loading...</option></select></div><div class="field"><label>Scheduled Date *</label><input type="date" id="aptDate" class="form-input" required></div><div class="field"><label>Scheduled Time *</label><input type="time" id="aptTime" class="form-input" required></div><div class="field"><label>Previous Visit Date</label><input type="date" id="aptPreviousDate" class="form-input"></div><div class="field"><label>Previous Visit Time</label><input type="time" id="aptPreviousTime" class="form-input"></div><div class="field"><label>Duration of Therapy</label><input id="aptDuration" class="form-input"></div><div class="field"><label>Sessions / Day</label><input type="number" id="aptSessionsPerDay" class="form-input" min="1"></div><div class="field"><label>Doctor / Therapist *</label><input list="therapists-datalist" id="aptTherapist" class="form-input" required><datalist id="therapists-datalist"></datalist></div><div class="field"><label>Status *</label><select id="aptStatus" class="form-input" onchange="toggleReschedule(this)"><option>Pending</option><option>Reported</option><option>Completed</option><option>Rescheduled</option><option>Cancelled</option></select></div><div class="field" id="reschedule-container" style="display:none"><label>New Reschedule Date</label><input type="date" id="aptRescheduleDate" class="form-input"></div><div class="field span2"><label>Diagnosis Report / Administrative Notes</label><textarea id="aptNotes" class="form-input" rows="3"></textarea></div></div></div>
+<div class="section"><h4>3. Payment Details</h4><div class="grid three"><div class="field"><label>Payment Mode</label><select id="aptPaymentMode" class="form-input"><option>Cash</option><option>UPI</option><option>Card</option><option>Bank Transfer</option><option>Mixed</option><option>Credit</option></select></div><div class="field"><label>Payment Reference / UTR</label><input id="aptPaymentReference" class="form-input"></div><div class="field"><label>Payment Remarks</label><input id="aptPaymentRemarks" class="form-input"></div></div><div class="grid three" style="margin-top:16px"><div class="money-box field"><label>Total Fee (₹)</label><input type="number" id="aptFee" class="form-input" step=".01" oninput="calcBalance()"></div><div class="money-box field"><label>Prev. Dues (OP) (₹)</label><input type="number" id="aptPrevDues" class="form-input readonly" readonly></div><div class="money-box field"><label>Advance Paid (₹)</label><input type="number" id="aptAdvance" class="form-input" step=".01" oninput="calcBalance()"></div><div class="money-box field"><label>Net Balance</label><input type="text" id="aptBalance" class="form-input readonly" readonly><div id="aptBalanceState" class="no-due"></div></div></div></div>
+<div class="form-actions"><button type="button" class="btn" onclick="resetAptForm()">Clear Form</button><button type="submit" class="btn primary" id="saveAptBtn">Save Appointment</button></div></form></div></div></div>
 
-<div class="modal" id="notesModal"><div class="modal-box" style="max-width:620px"><div class="modal-head"><h3>Patient Notes & Diagnosis</h3><button class="close" onclick="window.closeModal('notesModal')"><span class="material-symbols-rounded">close</span></button></div><div class="modal-body" id="printNotesArea"><h3 id="modalPatientName" style="margin:0 0 8px;font-weight:500"></h3><div id="modalPatientMeta" class="sub" style="margin-bottom:16px"></div><div id="modalPatientNotesText" class="notes-content"></div><div class="form-actions no-print" style="margin-top:16px"><button class="btn primary" onclick="window.printModalNotes()"><span class="material-symbols-rounded">print</span>Print Notes</button></div></div></div></div>
-
-<div class="modal" id="confirmModal"><div class="modal-box confirm-box"><div class="modal-head"><h3 id="confirmTitle">Confirm</h3><button class="close" onclick="window.closeModal('confirmModal')"><span class="material-symbols-rounded">close</span></button></div><div class="confirm-message" id="confirmMessage"></div><div class="form-actions"><button class="btn" onclick="window.closeModal('confirmModal')">Cancel</button><button class="btn primary" id="confirmOk">Confirm</button></div></div></div>
+<div class="modal" id="notesModal"><div class="modal-box" style="max-width:620px"><div class="modal-head"><h3>Patient Notes & Diagnosis</h3><button class="close" onclick="closeModal('notesModal')">×</button></div><div class="modal-body"><h3 id="modalPatientName"></h3><div id="modalPatientMeta" class="sub"></div><div id="modalPatientNotesText" class="notes-content"></div><div class="form-actions no-print"><button class="btn primary" onclick="printModalNotes()">Print Notes</button></div></div></div></div>
+<div class="modal" id="confirmModal"><div class="modal-box confirm-box"><div class="modal-head"><h3 id="confirmTitle">Confirm</h3><button class="close" onclick="closeModal('confirmModal')">×</button></div><div class="confirm-message" id="confirmMessage"></div><div class="form-actions"><button class="btn" onclick="closeModal('confirmModal')">Cancel</button><button class="btn primary" id="confirmOk">Confirm</button></div></div></div>
 
 <script type="module">
-import { auth, db } from './firebase-config.js';
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-import { collection, addDoc, query, where, getDocs, updateDoc, doc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import {auth,db} from './firebase-config.js';
+import {onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+import {collection,addDoc,query,where,getDocs,updateDoc,doc,deleteDoc,getDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-window.appointmentsDataCache={}; window.allPatientsCache={}; window.allBranchesString='';
-let allAppointments=[]; let viewMode='list'; let sortMode='dateDesc'; let confirmHandler=null;
+let allAppointments=[], sortMode='dateDesc', viewMode='list', confirmHandler=null;
+window.currentUser=null; window.appointmentsDataCache={}; window.allPatientsCache={};
 
+const $=id=>document.getElementById(id);
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-const money=v=>(parseFloat(v)||0).toFixed(2);
-function balanceDisplay(v){
-  const n=Number(v)||0;
-  if(Math.abs(n)<0.005) return {text:'No Due',cls:'no-due'};
-  if(n<0) return {text:`Excess ₹${money(Math.abs(n))}`,cls:'excess'};
-  return {text:`Due ₹${money(n)}`,cls:'due'};
-}
 const todayISO=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
-window.formatIndianDate=dateStr=>{if(!dateStr)return'';const p=String(dateStr).split('-');return p.length===3?`${p[2]}-${p[1]}-${p[0]}`:dateStr};
+const money=v=>(Number(v)||0).toFixed(2);
+const indian=d=>{if(!d)return'';const p=String(d).split('-');return p.length===3?`${p[2]}-${p[1]}-${p[0]}`:d};
+const roleAdmin=()=>!window.currentUser||String(window.currentUser.role||'').toLowerCase()==='admin';
 
-/* MODIFIED: Past dates are now fully allowed. Function neutralized to always return false */
-function isPastDateTime(ds,ts){ return false; }
+function balance(v){const n=Number(v)||0;if(Math.abs(n)<.005)return{text:'No Due',cls:'no-due'};if(n<0)return{text:`Excess ₹${money(Math.abs(n))}`,cls:'excess'};return{text:`Due ₹${money(n)}`,cls:'due'}}
 
-/* MODIFIED: Removed the "min" restriction to allow selection of past dates */
-function setMinBookingDate(){
-  ['aptDate','bulkDateInput','aptRescheduleDate'].forEach(id=>{
-    const e=document.getElementById(id);
-    if(e) e.removeAttribute('min'); 
-  });
+window.toggleTool=id=>{document.querySelectorAll('.tool.open').forEach(x=>x.classList.remove('open'));$(id)?.classList.toggle('open')};
+document.addEventListener('click',e=>{if(!e.target.closest('.tool'))document.querySelectorAll('.tool.open').forEach(x=>x.classList.remove('open'))});
+window.closeModal=id=>$(id)?.classList.remove('show');
+
+async function loadUserProfile(user){
+  window.currentUser={uid:user.uid,email:user.email||'',role:'admin',branch:''};
+  try{
+    const candidates=[query(collection(db,'users'),where('uid','==',user.uid)),query(collection(db,'users'),where('email','==',user.email||''))];
+    for(const q of candidates){const s=await getDocs(q);if(!s.empty){window.currentUser={...window.currentUser,...s.docs[0].data()};break}}
+  }catch(e){console.warn('User profile lookup failed:',e)}
 }
 
-function closeTools(){document.querySelectorAll('.tool.open').forEach(x=>x.classList.remove('open'))}
-window.toggleTool=id=>{const e=document.getElementById(id);if(!e)return;const was=e.classList.contains('open');closeTools();if(!was)e.classList.add('open')};
-document.addEventListener('click',e=>{if(!e.target.closest('.tool'))closeTools()});
-window.closeModal=id=>document.getElementById(id)?.classList.remove('show');
-
-onAuthStateChanged(auth,user=>{
-  if(!user){document.getElementById('appointment-module').innerHTML='<div style="padding:50px;text-align:center;color:#b3261e">Access denied. Please log in.</div>';return}
-  window.loadPatientsForApt(); window.loadBranchesForApt(); window.loadTherapistsForApt();
-  setMinBookingDate();
-  document.getElementById('todayLabel').textContent='Today: '+window.formatIndianDate(todayISO());
-  window.resetAptForm();
-  window.loadAppointments().then(window.setFilterToday);
+onAuthStateChanged(auth,async user=>{
+  if(!user){$('appointment-module').innerHTML='<div style="padding:50px;text-align:center;color:#b3261e">Access denied. Please log in.</div>';return}
+  try{
+    await loadUserProfile(user);
+    $('todayLabel').textContent='Today: '+indian(todayISO());
+    resetAptForm();
+    await Promise.all([loadPatientsForApt(),loadBranchesForApt(),loadTherapistsForApt()]);
+    await loadAppointments();
+    setFilterToday();
+  }catch(e){console.error(e);$('aptTableBody').innerHTML='<tr><td colspan="7" class="empty" style="color:#b3261e">Unable to initialize appointments. Check Firebase configuration and Firestore rules.</td></tr>'}
 });
 
-window.loadPatientsForApt=async()=>{
-  const dl=document.getElementById('patients-datalist'); if(!dl)return;
-  try{let q=query(collection(db,'patients'));if(window.currentUser&&window.currentUser.role!=='admin')q=query(collection(db,'patients'),where('branch','==',window.currentUser.branch));
-    const s=await getDocs(q);let h='';window.allPatientsCache={};
-    s.forEach(d=>{const p=d.data();if(p.name&&p.mobile){window.allPatientsCache[p.mobile]=p;h+=`<option value="${esc(p.mobile)}" label="${esc(p.name)} (${esc(p.mobile)})"></option><option value="${esc(p.name)} (${esc(p.mobile)})"></option>`}});
-    dl.innerHTML=h;
-  }catch(e){console.error(e)}
-};
-window.loadBranchesForApt=async()=>{
-  const a=document.getElementById('aptBranch'),f=document.getElementById('filterBranch');
-  if(window.currentUser&&window.currentUser.role!=='admin'){const b=window.currentUser.branch;a.innerHTML=`<option value="${esc(b)}">${esc(b)}</option>`;f.innerHTML=`<option value="${esc(b)}">${esc(b)}</option>`;a.disabled=true;window.allBranchesString=b;return}
-  try{const s=await getDocs(collection(db,'branches'));let l=[];s.forEach(d=>{if(d.data().name)l.push(d.data().name)});l.sort();window.allBranchesString=l.join(' | ');a.innerHTML='<option value="">Select Branch</option>'+l.map(x=>`<option>${esc(x)}</option>`).join('');f.innerHTML='<option value="">All Branches</option>'+l.map(x=>`<option>${esc(x)}</option>`).join('')}catch(e){console.error(e)}
-};
-window.loadTherapistsForApt=async()=>{
-  const dl=document.getElementById('therapists-datalist');if(!dl)return;
-  try{let q=query(collection(db,'therapists'));if(window.currentUser&&window.currentUser.role!=='admin')q=query(collection(db,'therapists'),where('branch','==',window.currentUser.branch));const s=await getDocs(q);let l=[];s.forEach(d=>{if(d.data().name)l.push(d.data().name)});dl.innerHTML=l.sort().map(x=>`<option value="${esc(x)}"></option>`).join('')}catch(e){console.error(e)}
-};
+async function loadPatientsForApt(){
+  const dl=$('patients-datalist');if(!dl)return;
+  try{
+    let q=collection(db,'patients');
+    if(!roleAdmin()&&window.currentUser.branch)q=query(q,where('branch','==',window.currentUser.branch));
+    const s=await getDocs(q);window.allPatientsCache={};
+    dl.innerHTML='';
+    s.forEach(x=>{const p=x.data();if(p.mobile){window.allPatientsCache[String(p.mobile)]=p;const o=document.createElement('option');o.value=p.mobile;o.label=p.name||p.mobile;dl.appendChild(o)}});
+  }catch(e){console.error('Patients:',e)}
+}
+async function loadBranchesForApt(){
+  const a=$('aptBranch'),f=$('filterBranch');if(!a)return;
+  if(!roleAdmin()&&window.currentUser.branch){a.innerHTML=`<option value="${esc(window.currentUser.branch)}">${esc(window.currentUser.branch)}</option>`;a.disabled=true;f.innerHTML=a.innerHTML;return}
+  try{const s=await getDocs(collection(db,'branches'));const l=[];s.forEach(x=>{const n=x.data().name||x.data().branchName;if(n)l.push(n)});l.sort();a.disabled=false;a.innerHTML='<option value="">Select Branch</option>'+l.map(n=>`<option>${esc(n)}</option>`).join('');f.innerHTML='<option value="">All Branches</option>'+l.map(n=>`<option>${esc(n)}</option>`).join('')}catch(e){console.error('Branches:',e)}
+}
+async function loadTherapistsForApt(){
+  const dl=$('therapists-datalist');if(!dl)return;
+  try{let q=collection(db,'therapists');if(!roleAdmin()&&window.currentUser.branch)q=query(q,where('branch','==',window.currentUser.branch));const s=await getDocs(q);dl.innerHTML='';s.forEach(x=>{const n=x.data().name;if(n){const o=document.createElement('option');o.value=n;dl.appendChild(o)}})}catch(e){console.error('Therapists:',e)}
+}
+
 window.handlePatientSelect=async()=>{
-  let raw=document.getElementById('aptPatientSearch').value.trim(),mobile=raw;if(!window.allPatientsCache[mobile]){const m=raw.match(/(\d{10})/);if(m)mobile=m[1]}const p=window.allPatientsCache[mobile];if(!p)return;
-  document.getElementById('aptPatientSearch').value=p.name||'';
-  const ids=['aptName','aptMobile','aptAge','aptGender','aptLocation','aptPatientNotes'],keys=['name','mobile','age','gender','location','notes'];ids.forEach((id,i)=>document.getElementById(id).value=p[keys[i]]||'');
-  document.getElementById('aptCategory').value=p.category||'Normal';if(p.branch&&!document.getElementById('aptBranch').disabled)document.getElementById('aptBranch').value=p.branch;
-  let due=0,current=document.getElementById('aptDocId').value;try{let q=query(collection(db,'appointments'),where('mobile','==',p.mobile));if(window.currentUser&&window.currentUser.role!=='admin')q=query(collection(db,'appointments'),where('mobile','==',p.mobile),where('branch','==',window.currentUser.branch));(await getDocs(q)).forEach(d=>{if(d.id!==current)due+=parseFloat(d.data().balance)||0});document.getElementById('aptPrevDues').value=due.toFixed(2);window.calcBalance()}catch(e){console.error(e)}
+  let raw=$('aptPatientSearch').value.trim(), mobile=raw.match(/\d{10}/)?.[0]||raw;
+  const p=window.allPatientsCache[mobile];if(!p)return;
+  $('aptPatientSearch').value=p.name||mobile;
+  const map={aptName:'name',aptMobile:'mobile',aptAge:'age',aptGender:'gender',aptLocation:'location',aptPatientNotes:'notes',aptCategory:'category'};
+  Object.entries(map).forEach(([id,k])=>$(id).value=p[k]??$(id).value);
+  if(p.branch&&!$('aptBranch').disabled)$('aptBranch').value=p.branch;
+  await calculatePreviousDues(mobile);
 };
-window.calcBalance=()=>{
-  const f=parseFloat(document.getElementById('aptFee').value)||0;
-  const a=parseFloat(document.getElementById('aptAdvance').value)||0;
-  const p=parseFloat(document.getElementById('aptPrevDues').value)||0;
-  const n=f+p-a;
-  const state=balanceDisplay(n);
-  const input=document.getElementById('aptBalance');
-  const label=document.getElementById('aptBalanceState');
-  input.value=Math.abs(n)<0.005?'0.00':money(n);
-  input.style.color=n<0?'#146c2e':n>0?'#b3261e':'#444746';
-  label.textContent=state.text;
-  label.className=state.cls;
-};
-window.toggleReschedule=s=>{const c=document.getElementById('reschedule-container');c.style.display=s.value==='Rescheduled'?'block':'none';if(s.value!=='Rescheduled')document.getElementById('aptRescheduleDate').value=''};
-window.openLocationMap=()=>{const l=document.getElementById('aptLocation').value;if(!l)return alert('Please enter an address or map link first.');window.open(l.startsWith('http')?l:'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(l),'_blank')};
-window.getCurrentLocation=btn=>{if(!navigator.geolocation)return alert('Geolocation is not supported.');const old=btn.innerHTML;btn.innerHTML='<span class="material-symbols-rounded">sync</span>';navigator.geolocation.getCurrentPosition(p=>{document.getElementById('aptLocation').value=`https://www.google.com/maps?q=${p.coords.latitude},${p.coords.longitude}`;btn.innerHTML=old},()=>{alert('Unable to get location.');btn.innerHTML=old})};
+async function calculatePreviousDues(mobile){
+  let due=0;
+  try{let q=query(collection(db,'appointments'),where('mobile','==',mobile));if(!roleAdmin()&&window.currentUser.branch)q=query(collection(db,'appointments'),where('mobile','==',mobile),where('branch','==',window.currentUser.branch));const s=await getDocs(q),current=$('aptDocId').value;s.forEach(x=>{if(x.id!==current)due+=Number(x.data().balance)||0});$('aptPrevDues').value=money(due);calcBalance()}catch(e){console.error('Previous dues:',e)}
+}
+window.calcBalance=()=>{const n=(Number($('aptFee').value)||0)+(Number($('aptPrevDues').value)||0)-(Number($('aptAdvance').value)||0);$('aptBalance').value=money(n);const b=balance(n);$('aptBalanceState').textContent=b.text;$('aptBalanceState').className=b.cls};
 
 window.resetAptForm=()=>{
-  document.getElementById('add-appointment-form').reset();document.getElementById('aptDocId').value='';document.getElementById('aptPatientSearch').value='';
-  document.getElementById('aptCategory').value='Normal';document.getElementById('aptStatus').value='Pending';document.getElementById('aptPaymentMode').value='Cash';
-  document.getElementById('aptPrevDues').value='0.00';document.getElementById('aptBalance').value='0.00';document.getElementById('aptBalanceState').textContent='No Due';document.getElementById('aptBalanceState').className='no-due';document.getElementById('saveAptBtn').textContent='Save Appointment';document.getElementById('formTitle').textContent='New Appointment';
-  document.getElementById('aptDate').value=todayISO();document.getElementById('aptRescheduleDate').value='';document.getElementById('reschedule-container').style.display='none';setMinBookingDate();
-  if(window.currentUser&&window.currentUser.role!=='admin')document.getElementById('aptBranch').value=window.currentUser.branch;
+  $('add-appointment-form').reset();$('aptDocId').value='';$('aptCategory').value='Normal';$('aptStatus').value='Pending';$('aptPaymentMode').value='Cash';$('aptPrevDues').value='0.00';$('aptBalance').value='0.00';$('aptBalanceState').textContent='No Due';$('aptBalanceState').className='no-due';$('aptDate').value=todayISO();$('saveAptBtn').textContent='Save Appointment';$('formTitle').textContent='New Appointment';$('reschedule-container').style.display='none';
+  if(!roleAdmin()&&window.currentUser.branch)$('aptBranch').value=window.currentUser.branch;
 };
-window.openAppointmentForm=()=>{closeTools();window.resetAptForm();document.getElementById('aptModal').classList.add('show');setTimeout(()=>document.getElementById('aptMobile').focus(),80)};
-window.closeAppointmentForm=()=>document.getElementById('aptModal').classList.remove('show');
+window.openAppointmentForm=()=>{$('aptModal').classList.add('show');resetAptForm();setTimeout(()=>$('aptMobile').focus(),50)};
+window.closeAppointmentForm=()=>$('aptModal').classList.remove('show');
+window.toggleReschedule=s=>{$('reschedule-container').style.display=s.value==='Rescheduled'?'block':'none'};
 
 window.loadAppointments=async()=>{
-  const tb=document.getElementById('aptTableBody');tb.innerHTML='<tr><td colspan="7" class="empty">Loading appointments...</td></tr>';
-  try{let q=window.currentUser&&window.currentUser.role!=='admin'?query(collection(db,'appointments'),where('branch','==',window.currentUser.branch)):query(collection(db,'appointments'));
-    const snap=await getDocs(q);allAppointments=[];window.appointmentsDataCache={};snap.forEach(d=>{const x={id:d.id,data:d.data()};allAppointments.push(x);window.appointmentsDataCache[d.id]=d.data()});
-    updateKPIs();renderAppointments();return allAppointments;
-  }catch(e){console.error(e);tb.innerHTML='<tr><td colspan="7" class="empty" style="color:var(--danger)">Error loading appointments. Check Firestore rules.</td></tr>'}
-};
-function updateKPIs(){
-  const t=todayISO(),tod=allAppointments.filter(x=>x.data.date===t),done=tod.filter(x=>String(x.data.status||'').toLowerCase()==='completed').length,pending=tod.filter(x=>String(x.data.status||'').toLowerCase()==='pending').length;
-  document.getElementById('kpiToday').textContent=tod.length;document.getElementById('kpiCompleted').textContent=done;document.getElementById('kpiPending').textContent=pending;
-}
-function filteredAppointments(){
-  const fr=document.getElementById('filterDateFrom').value,to=document.getElementById('filterDateTo').value,st=document.getElementById('filterStatus').value.toLowerCase(),cat=document.getElementById('filterCategory').value.toLowerCase(),pay=document.getElementById('filterPayment').value,br=document.getElementById('filterBranch').value.toLowerCase(),term=document.getElementById('aptSearchInput').value.toLowerCase().trim();
-  let a=allAppointments.filter(x=>{const d=x.data,b=(d.branch||'').toLowerCase(),s=(d.status||'Pending').toLowerCase(),c=(d.category||'Normal').toLowerCase(),bal=parseFloat(d.balance)||0,text=`${d.name||''} ${d.mobile||''} ${d.therapist||''} ${d.branch||''} ${d.date||''}`.toLowerCase();return(!fr||d.date>=fr)&&(!to||d.date<=to)&&(!st||s===st)&&(!cat||c===cat)&&(!br||b===br)&&(!term||text.includes(term))&&(!pay||(pay==='pending'&&bal>0)||(pay==='paid'&&bal<=0))});
-  a.sort((x,y)=>{const A=x.data,B=y.data;switch(sortMode){case'nameAsc':return String(A.name||'').localeCompare(String(B.name||''));case'doctorAsc':return String(A.therapist||'').localeCompare(String(B.therapist||''));case'balanceDesc':return (parseFloat(B.balance)||0)-(parseFloat(A.balance)||0);case'balanceAsc':return (parseFloat(A.balance)||0)-(parseFloat(B.balance)||0);case'dateAsc':return String(A.date||'').localeCompare(String(B.date||''))||String(A.time||'').localeCompare(String(B.time||''));default:return String(B.date||'').localeCompare(String(A.date||''))||String(B.time||'').localeCompare(String(A.time||''))}});
-  return a;
-}
-function actionHTML(id){
-  return `<div class="actions"><button class="act note" title="View Notes" onclick="window.viewNotes('${id}')"><span class="material-symbols-rounded">sticky_note_2</span></button><button class="act inv" title="Invoice" onclick="window.printInvoice('${id}')"><span class="material-symbols-rounded">description</span></button><button class="act edit" title="Edit" onclick="window.editAppointment('${id}')"><span class="material-symbols-rounded">edit</span></button></div>`;
-}
-function renderAppointments(){
-  const list=filteredAppointments(),tb=document.getElementById('aptTableBody'),cards=document.getElementById('cardView');tb.innerHTML='';cards.innerHTML='';
-  if(!list.length){tb.innerHTML='<tr><td colspan="7" class="empty">No appointments match the current filters.</td></tr>';cards.innerHTML='<div class="empty" style="grid-column:1/-1">No appointments match the current filters.</div>';updateSelectionBar();return}
-  const map={Completed:'completed',Reported:'reported',Rescheduled:'rescheduled',Cancelled:'cancelled',Pending:'pending'};
-  list.forEach(x=>{
-    const d=x.data,id=x.id,st=d.status||'Pending',ind=window.formatIndianDate(d.date),bal=money(d.balance),wa=encodeURIComponent(`Hello ${d.name||''}, your appointment is booked for ${ind} at ${d.time||''}.`),loc=d.location?`<a class="act" target="_blank" href="${esc(d.location.startsWith('http')?d.location:'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(d.location))}"><span class="material-symbols-rounded">map</span></a>`:'';
-    const tr=document.createElement('tr');tr.className='apt-row';tr.dataset.id=id;tr.innerHTML=`<td class="no-print"><input type="checkbox" class="apt-checkbox" value="${id}" onchange="window.updateSelectionBar()"></td><td><strong>${ind}</strong><div class="sub">${esc(d.time||'')}</div>${d.previousDate?`<div class="sub">Prev: ${window.formatIndianDate(d.previousDate)}${esc(d.previousTime||'')}</div>`:''}</td><td><div class="patient-name">${esc(d.name||'')}</div><div class="sub">${esc(d.mobile||'')} ${d.age?`• ${esc(d.age)} Yrs`:''}${d.gender?' • '+esc(d.gender):''}</div><span class="badge cat" style="margin-top:8px">${esc(d.category||'Normal')}</span><div class="no-print" style="display:flex;gap:4px;margin-top:12px"><a class="act" href="tel:${esc(d.mobile)}"><span class="material-symbols-rounded">call</span></a><a class="act" target="_blank" href="https://wa.me/91${esc(d.mobile)}?text=${wa}"><span class="material-symbols-rounded" style="color:var(--success)">chat</span></a>${loc}</div></td><td><strong>${esc(d.branch||'')}</strong><div class="sub">${esc(d.therapist||'')}</div></td><td><strong>${esc(d.duration||'--')}</strong><div class="sub">Sessions/Day: ${esc(d.sessionsPerDay||'--')}</div><div class="sub" style="color:var(--success)">Fee ₹${money(d.fee)} • Adv ₹${money(d.advance)}</div><div class="sub ${balanceDisplay(d.balance).cls}">${balanceDisplay(d.balance).text}</div></td><td><span class="badge ${map[st]||'pending'}">${esc(st)}</span>${d.notes?`<div class="sub" style="max-width:220px;white-space:normal;margin-top:8px">${esc(d.notes)}</div>`:''}</td><td class="no-print">${actionHTML(id)}</td>`;
-    tb.appendChild(tr);
-    const card=document.createElement('div');card.className='apt-card';card.dataset.id=id;card.innerHTML=`<div class="card-top"><div class="card-patient"><div class="card-check"><input type="checkbox" class="apt-checkbox" value="${id}" onchange="window.updateSelectionBar()"></div><div><div class="patient-name">${esc(d.name||'')}</div><div class="sub">${esc(d.mobile||'')}</div></div></div><span class="badge ${map[st]||'pending'}">${esc(st)}</span></div><div class="card-line"><b>${ind}</b> • ${esc(d.time||'')}</div><div class="card-grid"><div><div class="sub">Branch</div><b>${esc(d.branch||'')}</b></div><div><div class="sub">Therapist</div><b>${esc(d.therapist||'--')}</b></div><div><div class="sub">Fee</div><b>₹${money(d.fee)}</b></div><div><div class="sub">Balance</div><b class="${balanceDisplay(d.balance).cls}">${balanceDisplay(d.balance).text}</b></div></div><div class="card-actions">${actionHTML(id)}</div>`;
-    cards.appendChild(card);
-  });
-  updateSelectionBar();
-}
-window.filterTable=renderAppointments;
-window.setFilterToday=()=>{const s=todayISO();document.getElementById('filterDateFrom').value=s;document.getElementById('filterDateTo').value=s;renderAppointments()};
-window.clearFilters=()=>{document.getElementById('filterDateFrom').value='';document.getElementById('filterDateTo').value='';document.getElementById('filterStatus').value='';document.getElementById('filterCategory').value='';document.getElementById('filterPayment').value='';if(!window.currentUser||window.currentUser.role==='admin')document.getElementById('filterBranch').value='';document.getElementById('aptSearchInput').value='';window.setFilterToday()};
-window.showFilters=()=>{closeTools();document.getElementById('filtersBar').classList.add('show')};
-window.setView=m=>{viewMode=m;document.getElementById('listView').style.display=m==='list'?'block':'none';document.getElementById('cardView').classList.toggle('show',m==='card');document.getElementById('viewListBtn').classList.toggle('active',m==='list');document.getElementById('viewCardBtn').classList.toggle('active',m==='card');closeTools()};
-window.setSort=m=>{sortMode=m;renderAppointments();closeTools()};
-window.updateSelectionBar=()=>{
-  const ids=[...document.querySelectorAll('.apt-checkbox:checked')].map(x=>x.value);document.getElementById('selectedCount').textContent=new Set(ids).size;document.getElementById('bulkBar').classList.toggle('show',ids.length>0);
-};
-window.clearSelection=()=>{document.querySelectorAll('.apt-checkbox').forEach(x=>x.checked=false);document.getElementById('selectAll').checked=false;window.updateSelectionBar()};
-window.toggleAllCheckboxes=m=>{document.querySelectorAll('.apt-row .apt-checkbox,.apt-card .apt-checkbox').forEach(x=>x.checked=m.checked);window.updateSelectionBar()};
-function selectedIds(){return [...new Set([...document.querySelectorAll('.apt-checkbox:checked')].map(x=>x.value))]}
-window.openSelectedNew=()=>{
-  const ids=selectedIds();if(!ids.length)return alert('Please select at least one appointment first.');
-  const d=window.appointmentsDataCache[ids[0]];if(!d)return;
-  showConfirm('Create New Appointment','Create a new appointment using the first selected appointment as the patient/template?','Continue',()=>{window.editAppointmentData(d,null,true)});
-};
-window.editAppointmentData=async(d,id=null,isNew=false)=>{
-  const fields={aptDocId:id||'',aptMobile:d.mobile||'',aptName:d.name||'',aptAge:d.age||'',aptGender:d.gender||'',aptCategory:d.category||'Normal',aptLocation:d.location||'',aptPatientNotes:d.patientNotes||'',aptBranch:d.branch||'',aptDate:isNew?todayISO():(d.date||''),aptTime:isNew?'':(d.time||''),aptPreviousDate:d.previousDate||'',aptPreviousTime:d.previousTime||'',aptDuration:d.duration||'',aptSessionsPerDay:d.sessionsPerDay||'',aptTherapist:d.therapist||'',aptStatus:isNew?'Pending':(d.status||'Pending'),aptFee:d.fee??'',aptAdvance:isNew?'':(d.advance??''),aptNotes:d.notes||'',aptPaymentMode:d.paymentMode||'Cash',aptPaymentReference:isNew?'':(d.paymentReference||''),aptPaymentRemarks:isNew?'':(d.paymentRemarks||'')};
-  Object.entries(fields).forEach(([k,v])=>document.getElementById(k).value=v);
-  document.getElementById('aptPatientSearch').value=d.name||'';document.getElementById('saveAptBtn').textContent=isNew?'Save Appointment':'Update Appointment';document.getElementById('formTitle').textContent=isNew?'New Appointment from Selected':'Edit Appointment';
-  let due=0;try{let q=query(collection(db,'appointments'),where('mobile','==',d.mobile));if(window.currentUser&&window.currentUser.role!=='admin')q=query(collection(db,'appointments'),where('mobile','==',d.mobile),where('branch','==',window.currentUser.branch));(await getDocs(q)).forEach(x=>{if(x.id!==id)due+=parseFloat(x.data().balance)||0});document.getElementById('aptPrevDues').value=due.toFixed(2)}catch(e){document.getElementById('aptPrevDues').value='0.00'}window.calcBalance();window.toggleReschedule(document.getElementById('aptStatus'));setMinBookingDate();document.getElementById('aptModal').classList.add('show');
-};
-window.editAppointment=id=>{const d=window.appointmentsDataCache[id];if(d)window.editAppointmentData(d,id,false)};
-window.saveAppointment=async()=>{
-  const btn=document.getElementById('saveAptBtn'),id=document.getElementById('aptDocId').value,get=x=>document.getElementById(x).value.trim(),fee=parseFloat(get('aptFee'))||0,advance=parseFloat(get('aptAdvance'))||0,prev=parseFloat(get('aptPrevDues'))||0;
-  let status=get('aptStatus'),date=get('aptDate'),notes=get('aptNotes'),res=get('aptRescheduleDate');const req=['aptMobile','aptName','aptBranch','aptDate','aptTime','aptTherapist','aptCategory'];if(req.some(x=>!get(x)))return alert('Please fill all required (*) fields.');
-  
-  if(status==='Rescheduled'){if(!res)return alert('Please pick a new reschedule date.');notes=notes.replace(/\[Moved from: .*?\]/g,'').trim()+(notes.trim()?'\n':'')+`[Moved from: ${window.formatIndianDate(date)}]`;date=res}
-  
-  const payload={mobile:get('aptMobile'),name:get('aptName'),age:get('aptAge'),gender:get('aptGender'),category:get('aptCategory'),location:get('aptLocation'),patientNotes:get('aptPatientNotes'),branch:get('aptBranch'),date,time:get('aptTime'),previousDate:get('aptPreviousDate'),previousTime:get('aptPreviousTime'),duration:get('aptDuration'),sessionsPerDay:get('aptSessionsPerDay'),therapist:get('aptTherapist'),status,fee,advance,balance:fee+prev-advance,prevDues:prev,notes,paymentMode:get('aptPaymentMode'),paymentReference:get('aptPaymentReference'),paymentRemarks:get('aptPaymentRemarks'),updatedAt:new Date()};
-  btn.disabled=true;btn.textContent='Saving...';
+  $('aptTableBody').innerHTML='<tr><td colspan="7" class="empty">Loading appointments...</td></tr>';
   try{
-    let pq=query(collection(db,'patients'),where('mobile','==',payload.mobile));if(window.currentUser&&window.currentUser.role!=='admin')pq=query(collection(db,'patients'),where('mobile','==',payload.mobile),where('branch','==',window.currentUser.branch));
-    const ps=await getDocs(pq),pdata={mobile:payload.mobile,name:payload.name,age:payload.age,gender:payload.gender,category:payload.category,location:payload.location,notes:payload.patientNotes,branch:payload.branch};
-    if(ps.empty)await addDoc(collection(db,'patients'),{patientId:'P'+Math.floor(Math.random()*90000+10000),...pdata,createdAt:new Date()});else await updateDoc(doc(db,'patients',ps.docs[0].id),pdata);
-    if(id){await updateDoc(doc(db,'appointments',id),payload);await window.syncTransactions(id,payload);alert('Appointment updated successfully!')}else{payload.createdAt=new Date();const n=await addDoc(collection(db,'appointments'),payload);await window.syncTransactions(n.id,payload);alert('New appointment saved successfully!')}
-    window.closeAppointmentForm();window.resetAptForm();await window.loadAppointments();window.setFilterToday();
-  }catch(e){console.error(e);alert('Failed to save appointment. Check your database permissions.')}finally{btn.disabled=false;btn.textContent=id?'Update Appointment':'Save Appointment'}
+    let q=collection(db,'appointments');if(!roleAdmin()&&window.currentUser.branch)q=query(q,where('branch','==',window.currentUser.branch));
+    const s=await getDocs(q);allAppointments=[];window.appointmentsDataCache={};s.forEach(x=>{const d=x.data();allAppointments.push({id:x.id,data:d});window.appointmentsDataCache[x.id]=d});updateKPIs();renderAppointments();return allAppointments;
+  }catch(e){console.error(e);$('aptTableBody').innerHTML='<tr><td colspan="7" class="empty" style="color:#b3261e">Error loading appointments. Check Firestore rules.</td></tr>'}
 };
-window.syncTransactions=async(aptId,payload)=>{
-  let q=query(collection(db,'transactions'),where('linkedAptId','==',aptId));if(window.currentUser&&window.currentUser.role!=='admin')q=query(collection(db,'transactions'),where('linkedAptId','==',aptId),where('branch','==',window.currentUser.branch));const s=await getDocs(q);let sale=null,receipt=null;s.forEach(d=>{if(d.data().type==='Sales')sale=d.id;if(d.data().type==='Receipt')receipt=d.id});const mode=payload.paymentMode||'Cash';
-  if(parseFloat(payload.fee)>0){const x={date:payload.date,type:'Sales',mobile:payload.mobile,name:payload.name,mode,ref:'Auto-Bill',cashIn:0,cashOut:parseFloat(payload.fee),notes:'Consultation / Therapy Billed',linkedAptId:aptId,updatedAt:new Date(),branch:payload.branch};sale?await updateDoc(doc(db,'transactions',sale),x):await addDoc(collection(db,'transactions'),{...x,txnId:'TRN'+Math.floor(Math.random()*900000+100000),createdAt:new Date()})}
-  if(parseFloat(payload.advance)>0){const x={date:payload.date,type:'Receipt',mobile:payload.mobile,name:payload.name,mode,ref:payload.paymentReference||'Auto-Advance',cashIn:parseFloat(payload.advance),cashOut:0,notes:payload.paymentRemarks||'Advance Received',linkedAptId:aptId,updatedAt:new Date(),branch:payload.branch};receipt?await updateDoc(doc(db,'transactions',receipt),x):await addDoc(collection(db,'transactions'),{...x,txnId:'TRN'+Math.floor(Math.random()*900000+100000),createdAt:new Date()})}
-};
-window.viewNotes=id=>{const d=window.appointmentsDataCache[id];if(!d)return;document.getElementById('modalPatientName').textContent=d.name||'';document.getElementById('modalPatientMeta').textContent=`Mobile: +91 ${d.mobile||''} | Scheduled: ${window.formatIndianDate(d.date)} ${d.time||''} | Doctor: ${d.therapist||'--'}`;let n='';if(d.patientNotes)n+=`[Medical History]\n${d.patientNotes}\n\n`;if(d.notes)n+=`[Diagnosis Report]\n${d.notes}`;document.getElementById('modalPatientNotesText').textContent=n||'No notes recorded for this patient.';document.getElementById('notesModal').classList.add('show')};
-window.printModalNotes=()=>{const c=document.getElementById('printNotesArea').innerHTML,w=window.open('','_blank');if(!w)return;w.document.write(`<html><head><title>Patient Report</title><style>body{font-family:Arial;padding:35px;line-height:1.6}h2{color:#155A90}</style></head><body><h2>Patient Report</h2>${c}<script>window.onload=()=>window.print()<\/script></body></html>`);w.document.close()};
-window.printInvoice=async id=>{
-  const d=window.appointmentsDataCache[id];if(!d)return alert('Appointment data not found.');const w=window.open('about:blank','_blank');if(!w)return alert('Please allow pop-ups to open the invoice.');
-  try{const snap=await getDoc(doc(db,'settings','company'));const company=snap.exists()?snap.data():{};sessionStorage.setItem('bizodit.invoicePayload',JSON.stringify({appointment:{...d,id,appointmentId:id,billDate:new Date().toISOString()},company}));w.location.href='temp-invoice.html'}catch(e){console.error(e);try{w.close()}catch(_){ }alert('Unable to open invoice. Check company profile / permissions.')}
-};
-window.executeBulkDelete=async()=>{
-  const ids=selectedIds();if(!ids.length)return alert('Please select appointments to delete.');for(const id of ids){const d=window.appointmentsDataCache[id];if(d&&d.status!=='Pending'&&d.status!=='Cancelled')return alert('You can only bulk delete Pending or Cancelled appointments.')}
-  showConfirm('Delete Appointments',`Permanently delete ${ids.length} selected appointment${ids.length>1?'s':''}?`,'Delete',async()=>{try{for(const id of ids)await deleteDoc(doc(db,'appointments',id));alert('Selected appointments deleted.');await window.loadAppointments();window.setFilterToday()}catch(e){console.error(e);alert('Error deleting appointments.')}})
-};
-window.showBulkDate=()=>{if(!selectedIds().length)return alert('Please select appointments first.');document.getElementById('bulkDateArea').style.display='inline-flex';document.getElementById('bulkDateInput').removeAttribute('min')};
-window.confirmBulkReschedule=async()=>{
-  const nd=document.getElementById('bulkDateInput').value,ids=selectedIds();if(!nd)return alert('Please select a date.');
-  showConfirm('Move Selected Appointments',`Create ${ids.length} new Pending appointment${ids.length>1?'s':''} on ${window.formatIndianDate(nd)}? The original records will remain.`,'Confirm',async()=>{try{for(const id of ids){const d=window.appointmentsDataCache[id];if(!d)continue;let notes=String(d.notes||'').replace(/\[Moved from: .*?\]/g,'').trim();notes+=(notes?'\n':'')+`[Moved from: ${window.formatIndianDate(d.date)}]`;await addDoc(collection(db,'appointments'),{...d,date:nd,status:'Pending',notes,createdAt:new Date(),updatedAt:new Date()})}alert('Selected appointments copied to '+window.formatIndianDate(nd)+'.');document.getElementById('bulkDateArea').style.display='none';document.getElementById('bulkDateInput').value='';window.clearSelection();await window.loadAppointments();window.setFilterToday()}catch(e){console.error(e);alert('Failed to move selected appointments.')}})
-};
-window.executeBulkReschedule=()=>window.showBulkDate();
-function showConfirm(title,message,ok,fn){document.getElementById('confirmTitle').textContent=title;document.getElementById('confirmMessage').textContent=message;document.getElementById('confirmOk').textContent=ok;confirmHandler=fn;document.getElementById('confirmModal').classList.add('show');document.getElementById('confirmOk').onclick=async()=>{const f=confirmHandler;window.closeModal('confirmModal');confirmHandler=null;if(f)await f()}}
+function updateKPIs(){const t=todayISO(),tod=allAppointments.filter(x=>x.data.date===t);$('kpiToday').textContent=tod.length;$('kpiCompleted').textContent=tod.filter(x=>String(x.data.status||'').toLowerCase()==='completed').length;$('kpiPending').textContent=tod.filter(x=>String(x.data.status||'').toLowerCase()==='pending').length}
 
-const CSV_HEADERS=['mobile','name','age','gender','category','location','patientNotes','branch','date','time','previousDate','previousTime','duration','sessionsPerDay','therapist','status','fee','advance','prevDues','notes','paymentMode','paymentReference','paymentRemarks'];
-function csvCell(v){const s=String(v??'');return /[",\n\r]/.test(s)?`"${s.replace(/"/g,'""')}"`:s}
-window.downloadAppointmentSampleCSV=()=>{const row=['9744902555','Sample Patient','40','Male','Normal','','Medical/admin notes','Branch Name',todayISO(),'10:30','','','30 minutes','1','Therapist Name','Pending','1000','500','0','Appointment notes','UPI','REFERENCE123',''];const blob=new Blob([[CSV_HEADERS,row].map(r=>r.map(csvCell).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='appointments-sample.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
-function parseCSV(text){const rows=[];let row=[],cell='',q=false;text=String(text||'').replace(/^\uFEFF/,'');for(let i=0;i<text.length;i++){const c=text[i];if(q){if(c==='"'){if(text[i+1]==='"'){cell+='"';i++}else q=false}else cell+=c}else{if(c==='"')q=true;else if(c===','){row.push(cell);cell=''}else if(c==='\n'){row.push(cell);rows.push(row);row=[];cell=''}else if(c!=='\r')cell+=c}}if(cell!==''||row.length){row.push(cell);rows.push(row)}return rows.filter(r=>r.some(v=>String(v).trim()!==''))}
-const norm=v=>String(v||'').trim().toLowerCase().replace(/[\s_\-\/]+/g,'');
-window.importAppointmentsCSV=async file=>{
-  if(!file)return;try{const rows=parseCSV(await file.text());if(rows.length<2)throw Error('CSV contains no appointment rows.');const hm={};rows[0].forEach((h,i)=>hm[norm(h)]=i);const req=['mobile','name','branch','date','time','therapist'];const miss=req.filter(k=>hm[norm(k)]===undefined);if(miss.length)throw Error('Missing required columns: '+miss.join(', '));
-    let ok=0,fail=[];for(let ri=1;ri<rows.length;ri++){try{const r={};CSV_HEADERS.forEach(k=>r[k]=hm[norm(k)]===undefined?'':String(rows[ri][hm[norm(k)]]??'').trim());const mobile=r.mobile.replace(/\D/g,'');if(!/^\d{10}$/.test(mobile))throw Error('Mobile must be 10 digits');if(!r.name||!r.branch||!/^\d{4}-\d{2}-\d{2}$/.test(r.date)\vert{}\vert{}!/^\d{2}:\d{2}$/.test(r.time)||!r.therapist)throw Error('Required value missing or invalid date/time');if(!window.currentUser||window.currentUser.role!=='admin'){if(r.branch!==window.currentUser.branch)throw Error('Branch mismatch')}const fee=parseFloat(r.fee)||0,adv=parseFloat(r.advance)||0,prev=parseFloat(r.prevDues)||0,payload={mobile,name:r.name,age:r.age,gender:r.gender,category:r.category||'Normal',location:r.location,patientNotes:r.patientNotes,branch:r.branch,date:r.date,time:r.time,previousDate:r.previousDate,previousTime:r.previousTime,duration:r.duration,sessionsPerDay:r.sessionsPerDay,therapist:r.therapist,status:r.status||'Pending',fee,advance:adv,balance:fee+prev-adv,prevDues:prev,notes:r.notes,paymentMode:r.paymentMode||'Cash',paymentReference:r.paymentReference,paymentRemarks:r.paymentRemarks,createdAt:new Date(),updatedAt:new Date()};let pq=query(collection(db,'patients'),where('mobile','==',mobile));if(window.currentUser&&window.currentUser.role!=='admin')pq=query(collection(db,'patients'),where('mobile','==',mobile),where('branch','==',window.currentUser.branch));const ps=await getDocs(pq),pdata={mobile,name:r.name,age:r.age,gender:r.gender,category:payload.category,location:r.location,notes:r.patientNotes,branch:r.branch};if(ps.empty)await addDoc(collection(db,'patients'),{patientId:'P'+Math.floor(Math.random()*90000+10000),...pdata,createdAt:new Date()});else await updateDoc(doc(db,'patients',ps.docs[0].id),pdata);const n=await addDoc(collection(db,'appointments'),payload);try{await window.syncTransactions(n.id,payload)}catch(tx){console.error(tx)}ok++}catch(e){fail.push(`Row ${ri+1}: ${e.message}`)}}alert(`CSV import complete.\n\nImported: ${ok}\nFailed: ${fail.length}${fail.length?'\n\n'+fail.slice(0,15).join('\n'):''}`);if(ok)await window.loadAppointments();window.setFilterToday()}catch(e){console.error(e);alert('CSV import failed: '+e.message)}finally{document.getElementById('aptCsvInput').value=''}};
-window.exportAppointmentsCSV=()=>{const list=filteredAppointments();const rows=[CSV_HEADERS,...list.map(x=>{const d=x.data;return CSV_HEADERS.map(k=>d[k]??'')})];const csv=rows.map(r=>r.map(csvCell).join(',')).join('\r\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`appointments-${todayISO()}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+function filtered(){
+ const fr=$('filterDateFrom').value,to=$('filterDateTo').value,st=$('filterStatus').value.toLowerCase(),cat=$('filterCategory').value.toLowerCase(),pay=$('filterPayment').value,br=$('filterBranch').value.toLowerCase(),term=$('aptSearchInput').value.toLowerCase().trim();
+ let a=allAppointments.filter(x=>{const d=x.data,s=String(d.status||'Pending').toLowerCase(),c=String(d.category||'Normal').toLowerCase(),b=String(d.branch||'').toLowerCase(),bal=Number(d.balance)||0,text=`${d.name||''} ${d.mobile||''} ${d.therapist||''} ${d.branch||''}`.toLowerCase();return(!fr||d.date>=fr)&&(!to||d.date<=to)&&(!st||s===st)&&(!cat||c===cat)&&(!br||b===br)&&(!term||text.includes(term))&&(!pay||(pay==='pending'&&bal>0)||(pay==='paid'&&bal<=0))});
+ a.sort((x,y)=>{const A=x.data,B=y.data;switch(sortMode){case'nameAsc':return String(A.name||'').localeCompare(B.name||'');case'doctorAsc':return String(A.therapist||'').localeCompare(B.therapist||'');case'balanceDesc':return(Number(B.balance)||0)-(Number(A.balance)||0);case'balanceAsc':return(Number(A.balance)||0)-(Number(B.balance)||0);case'dateAsc':return `${A.date||''} ${A.time||''}`.localeCompare(`${B.date||''} ${B.time||''}`);default:return `${B.date||''} ${B.time||''}`.localeCompare(`${A.date||''} ${A.time||''}`)}});return a
+}
+function actions(id){return `<div class="actions"><button class="act" title="Notes" onclick="viewNotes('${id}')">📝</button><button class="act" title="Invoice" onclick="printInvoice('${id}')">🧾</button><button class="act" title="Edit" onclick="editAppointment('${id}')">✎</button></div>`}
+function renderAppointments(){
+ const list=filtered(),tb=$('aptTableBody'),cards=$('cardView');tb.innerHTML='';cards.innerHTML='';
+ if(!list.length){tb.innerHTML='<tr><td colspan="7" class="empty">No appointments match the current filters.</td></tr>';cards.innerHTML='<div class="empty">No appointments match the current filters.</div>';return}
+ const cls={Pending:'pending',Reported:'reported',Completed:'completed',Rescheduled:'rescheduled',Cancelled:'cancelled'};
+ list.forEach(x=>{const d=x.data,id=x.id,b=balance(d.balance),st=d.status||'Pending';const tr=document.createElement('tr');tr.innerHTML=`<td><input type="checkbox" class="apt-checkbox" value="${id}" onchange="updateSelectionBar()"></td><td><b>${indian(d.date)}</b><div class="sub">${esc(d.time||'')}</div></td><td><div class="patient-name">${esc(d.name||'')}</div><div class="sub">${esc(d.mobile||'')} ${d.age?`• ${esc(d.age)} Yrs`:''}</div><span class="badge cat">${esc(d.category||'Normal')}</span></td><td><b>${esc(d.branch||'')}</b><div class="sub">${esc(d.therapist||'')}</div></td><td><b>${esc(d.duration||'--')}</b><div class="sub">Fee ₹${money(d.fee)} • Adv ₹${money(d.advance)}</div><div class="${b.cls}">${b.text}</div></td><td><span class="badge ${cls[st]||'pending'}">${esc(st)}</span></td><td>${actions(id)}</td>`;tb.appendChild(tr);const c=document.createElement('div');c.className='apt-card';c.innerHTML=`<div class="card-top"><div class="card-patient"><input type="checkbox" class="apt-checkbox" value="${id}" onchange="updateSelectionBar()"><div><div class="patient-name">${esc(d.name||'')}</div><div class="sub">${esc(d.mobile||'')}</div></div></div><span class="badge ${cls[st]||'pending'}">${esc(st)}</span></div><div class="card-line"><b>${indian(d.date)}</b> • ${esc(d.time||'')}</div><div class="card-grid"><div>Branch<br><b>${esc(d.branch||'')}</b></div><div>Therapist<br><b>${esc(d.therapist||'')}</b></div><div>Fee<br><b>₹${money(d.fee)}</b></div><div>Balance<br><b class="${b.cls}">${b.text}</b></div></div><div class="card-actions">${actions(id)}</div>`;cards.appendChild(c)})
+}
+window.filterTable=renderAppointments;window.setFilterToday=()=>{$('filterDateFrom').value=todayISO();$('filterDateTo').value=todayISO();renderAppointments()};window.clearFilters=()=>{$('filterDateFrom').value='';$('filterDateTo').value='';$('filterStatus').value='';$('filterCategory').value='';$('filterPayment').value='';$('filterBranch').value='';$('aptSearchInput').value='';setFilterToday()};window.showFilters=()=>{$('filtersBar').classList.add('show');document.querySelectorAll('.tool.open').forEach(x=>x.classList.remove('open'))};window.setView=m=>{viewMode=m;$('listView').style.display=m==='list'?'block':'none';$('cardView').classList.toggle('show',m==='card');$('viewListBtn').classList.toggle('active',m==='list');$('viewCardBtn').classList.toggle('active',m==='card')};window.setSort=m=>{sortMode=m;renderAppointments()};
+
+window.updateSelectionBar=()=>{const n=new Set([...document.querySelectorAll('.apt-checkbox:checked')].map(x=>x.value)).size;$('selectedCount').textContent=n;$('bulkBar').classList.toggle('show',n>0)};window.clearSelection=()=>{document.querySelectorAll('.apt-checkbox').forEach(x=>x.checked=false);$('selectAll').checked=false;updateSelectionBar()};window.toggleAllCheckboxes=m=>{document.querySelectorAll('.apt-checkbox').forEach(x=>x.checked=m.checked);updateSelectionBar()};const selectedIds=()=>[...new Set([...document.querySelectorAll('.apt-checkbox:checked')].map(x=>x.value))];
+
+window.saveAppointment=async()=>{
+ const id=$('aptDocId').value.trim(),get=i=>$(i).value.trim(),status=get('aptStatus');const required=['aptMobile','aptName','aptBranch','aptDate','aptTime','aptTherapist','aptCategory'];if(required.some(i=>!get(i)))return alert('Please fill all required (*) fields.');
+ let date=get('aptDate'),notes=get('aptNotes'),res=$('aptRescheduleDate').value;if(status==='Rescheduled'){if(!res)return alert('Please select a reschedule date.');notes+=(notes?'\\n':'')+`[Moved from: ${indian(date)}]`;date=res}
+ const fee=Number(get('aptFee'))||0,advance=Number(get('aptAdvance'))||0,prev=Number(get('aptPrevDues'))||0;
+ const payload={mobile:get('aptMobile'),name:get('aptName'),age:get('aptAge'),gender:get('aptGender'),category:get('aptCategory'),location:get('aptLocation'),patientNotes:get('aptPatientNotes'),branch:get('aptBranch'),date,time:get('aptTime'),previousDate:get('aptPreviousDate'),previousTime:get('aptPreviousTime'),duration:get('aptDuration'),sessionsPerDay:get('aptSessionsPerDay'),therapist:get('aptTherapist'),status,fee,advance,balance:fee+prev-advance,prevDues:prev,notes,paymentMode:get('aptPaymentMode'),paymentReference:get('aptPaymentReference'),paymentRemarks:get('aptPaymentRemarks'),updatedAt:serverTimestamp()};
+ const btn=$('saveAptBtn');btn.disabled=true;btn.textContent='Saving...';
+ try{
+   let pq=query(collection(db,'patients'),where('mobile','==',payload.mobile));if(!roleAdmin()&&window.currentUser.branch)pq=query(collection(db,'patients'),where('mobile','==',payload.mobile),where('branch','==',window.currentUser.branch));
+   const ps=await getDocs(pq),pdata={mobile:payload.mobile,name:payload.name,age:payload.age,gender:payload.gender,category:payload.category,location:payload.location,notes:payload.patientNotes,branch:payload.branch};
+   if(ps.empty)await addDoc(collection(db,'patients'),{patientId:'P'+Date.now().toString().slice(-6),...pdata,createdAt:serverTimestamp()});else await updateDoc(doc(db,'patients',ps.docs[0].id),pdata);
+   if(id)await updateDoc(doc(db,'appointments',id),payload);else{payload.createdAt=serverTimestamp();const n=await addDoc(collection(db,'appointments'),payload);await syncTransactions(n.id,payload)}
+   alert(id?'Appointment updated successfully!':'New appointment saved successfully!');closeAppointmentForm();await loadAppointments();setFilterToday();
+ }catch(e){console.error(e);alert(`Failed to save appointment.\\n\\n${e.message||e}`)}finally{btn.disabled=false;btn.textContent=id?'Update Appointment':'Save Appointment'}
+};
+
+async function syncTransactions(id,p){
+ try{
+  let q=query(collection(db,'transactions'),where('linkedAptId','==',id));if(!roleAdmin()&&window.currentUser.branch)q=query(collection(db,'transactions'),where('linkedAptId','==',id),where('branch','==',window.currentUser.branch));const s=await getDocs(q);let sale=null,receipt=null;s.forEach(x=>{if(x.data().type==='Sales')sale=x.id;if(x.data().type==='Receipt')receipt=x.id});
+  if(p.fee>0){const x={date:p.date,type:'Sales',mobile:p.mobile,name:p.name,mode:p.paymentMode||'Cash',ref:'Auto-Bill',cashIn:0,cashOut:p.fee,notes:'Consultation / Therapy Billed',linkedAptId:id,branch:p.branch,updatedAt:serverTimestamp()};sale?await updateDoc(doc(db,'transactions',sale),x):await addDoc(collection(db,'transactions'),{...x,txnId:'TRN'+Date.now(),createdAt:serverTimestamp()})}
+  if(p.advance>0){const x={date:p.date,type:'Receipt',mobile:p.mobile,name:p.name,mode:p.paymentMode||'Cash',ref:p.paymentReference||'Auto-Advance',cashIn:p.advance,cashOut:0,notes:p.paymentRemarks||'Advance Received',linkedAptId:id,branch:p.branch,updatedAt:serverTimestamp()};receipt?await updateDoc(doc(db,'transactions',receipt),x):await addDoc(collection(db,'transactions'),{...x,txnId:'TRN'+Date.now(),createdAt:serverTimestamp()})}
+ }catch(e){console.error('Transaction sync failed:',e)}
+}
+
+window.editAppointment=id=>{const d=window.appointmentsDataCache[id];if(!d)return;Object.entries({aptDocId:id,aptMobile:d.mobile,aptName:d.name,aptAge:d.age,aptGender:d.gender,aptCategory:d.category||'Normal',aptLocation:d.location,aptPatientNotes:d.patientNotes,aptBranch:d.branch,aptDate:d.date,aptTime:d.time,aptPreviousDate:d.previousDate,aptPreviousTime:d.previousTime,aptDuration:d.duration,aptSessionsPerDay:d.sessionsPerDay,aptTherapist:d.therapist,aptStatus:d.status||'Pending',aptFee:d.fee,aptAdvance:d.advance,aptNotes:d.notes,aptPaymentMode:d.paymentMode||'Cash',aptPaymentReference:d.paymentReference,aptPaymentRemarks:d.paymentRemarks}).forEach(([k,v])=>$(k).value=v??'');$('formTitle').textContent='Edit Appointment';$('saveAptBtn').textContent='Update Appointment';$('aptModal').classList.add('show');calculatePreviousDues(d.mobile);toggleReschedule($('aptStatus'))};
+
+window.viewNotes=id=>{const d=window.appointmentsDataCache[id];if(!d)return;$('modalPatientName').textContent=d.name||'';$('modalPatientMeta').textContent=`Mobile: ${d.mobile||''} | ${indian(d.date)} ${d.time||''} | ${d.therapist||''}`;$('modalPatientNotesText').textContent=`${d.patientNotes?`[Medical History]\\n${d.patientNotes}\\n\\n`:''}${d.notes?`[Diagnosis Report]\\n${d.notes}`:'No notes recorded.'}`;$('notesModal').classList.add('show')};
+window.printModalNotes=()=>{const w=window.open('','_blank');if(!w)return;w.document.write(`<html><body style="font-family:Arial;padding:30px">${$('modalPatientNotesText').outerHTML}</body></html>`);w.document.close();w.print()};
+window.printInvoice=async id=>{const d=window.appointmentsDataCache[id];if(!d)return;const w=window.open('about:blank','_blank');try{const s=await getDoc(doc(db,'settings','company'));sessionStorage.setItem('bizodit.invoicePayload',JSON.stringify({appointment:{...d,id},company:s.exists()?s.data():{}}));w.location.href='temp-invoice.html'}catch(e){w.close();alert('Unable to open invoice: '+e.message)}};
+window.exportAppointmentsCSV=()=>{const headers=['mobile','name','age','gender','category','branch','date','time','therapist','status','fee','advance','balance','notes'];const rows=[headers,...filtered().map(x=>headers.map(k=>x.data[k]??''))];const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\\r\\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`appointments-${todayISO()}.csv`;a.click()};
 window.exportAptPDF=()=>window.print();
-window.openBulkReschedule=window.executeBulkReschedule;
 
-document.getElementById('aptModal').addEventListener('click',e=>{if(e.target.id==='aptModal')window.closeAppointmentForm()});
-document.getElementById('notesModal').addEventListener('click',e=>{if(e.target.id==='notesModal')window.closeModal('notesModal')});
-document.getElementById('confirmModal').addEventListener('click',e=>{if(e.target.id==='confirmModal')window.closeModal('confirmModal')});
+window.openSelectedNew=()=>{const ids=selectedIds();if(!ids.length)return alert('Please select at least one appointment first.');const d=window.appointmentsDataCache[ids[0]];if(!d)return;Object.entries(d).forEach(([k,v])=>{const map={mobile:'aptMobile',name:'aptName',age:'aptAge',gender:'aptGender',category:'aptCategory',location:'aptLocation',patientNotes:'aptPatientNotes',branch:'aptBranch',therapist:'aptTherapist',fee:'aptFee',duration:'aptDuration',sessionsPerDay:'aptSessionsPerDay',notes:'aptNotes'};if(map[k]&&$(map[k]))$(map[k]).value=v??''});$('aptDocId').value='';$('aptDate').value=todayISO();$('aptTime').value='';$('aptStatus').value='Pending';$('aptAdvance').value='';$('formTitle').textContent='New Appointment from Selected';$('saveAptBtn').textContent='Save Appointment';$('aptModal').classList.add('show')};
+window.executeBulkDelete=async()=>{const ids=selectedIds();if(!ids.length)return alert('Please select appointments.');if(!confirm(`Delete ${ids.length} selected appointment(s)?`))return;try{for(const id of ids)await deleteDoc(doc(db,'appointments',id));await loadAppointments();setFilterToday()}catch(e){alert('Delete failed: '+e.message)}};
+window.showBulkDate=()=>{if(!selectedIds().length)return alert('Please select appointments.');$('bulkDateArea').style.display='inline-flex'};
+window.executeBulkReschedule=window.showBulkDate;
+window.confirmBulkReschedule=async()=>{const date=$('bulkDateInput').value,ids=selectedIds();if(!date)return alert('Select a date.');try{for(const id of ids){const d=window.appointmentsDataCache[id];await addDoc(collection(db,'appointments'),{...d,date,status:'Pending',notes:(d.notes||'')+`\\n[Moved from: ${indian(d.date)}]`,createdAt:serverTimestamp(),updatedAt:serverTimestamp()})}clearSelection();$('bulkDateArea').style.display='none';await loadAppointments();setFilterToday()}catch(e){alert('Reschedule failed: '+e.message)}};
+
 </script>
-</div>
-</body>
-</html>
+</div></body></html>
