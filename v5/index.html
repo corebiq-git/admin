@@ -126,6 +126,91 @@ html, body {
 }
 
 /* =========================================================
+   WELCOME CARD (M3 KPI / GEMINI STYLE)
+   ========================================================= */
+.welcome-card {
+    background: linear-gradient(135deg, var(--surface-container), var(--primary-container));
+    border: none !important;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 32px !important;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 24px;
+    border-radius: var(--radius-lg);
+    box-shadow: none;
+}
+.welcome-content {
+    position: relative;
+    z-index: 2;
+}
+.welcome-title {
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: -0.5px;
+    color: var(--text-main);
+    margin-bottom: 8px;
+}
+.welcome-subtitle {
+    color: var(--text-muted);
+    font-size: 15px;
+    margin-bottom: 24px;
+}
+.welcome-badges {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.welcome-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface);
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--outline-variant);
+    box-shadow: var(--shadow-sm);
+}
+.welcome-badge .material-symbols-rounded {
+    color: var(--primary);
+    font-size: 24px;
+    font-variation-settings: 'FILL' 1;
+}
+.badge-text {
+    display: flex;
+    flex-direction: column;
+}
+.badge-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+}
+.badge-val {
+    font-size: 14px;
+    color: var(--text-main);
+    font-weight: 600;
+    text-transform: capitalize;
+}
+.welcome-illust {
+    position: absolute;
+    right: -20px;
+    bottom: -30px;
+    z-index: 1;
+    pointer-events: none;
+}
+.welcome-illust .material-symbols-rounded {
+    font-size: 180px;
+    color: var(--surface);
+    opacity: 0.6;
+    transform: rotate(-15deg);
+    font-variation-settings: 'FILL' 1;
+}
+
+/* =========================================================
    DASHBOARD CARDS (M3)
    ========================================================= */
 .dash-top-row {
@@ -162,11 +247,11 @@ html, body {
 
 /* Financial / Stat Containers */
 .fin-stat-container {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 16px;
     flex: 1;
-    justify-content: center;
+    align-items: stretch;
 }
 
 .fin-stat {
@@ -175,31 +260,38 @@ html, body {
     background: var(--surface-container);
     border: none;
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
 }
 
 .fin-stat.alert { background: var(--danger-container); }
 .fin-stat.success-box { background: var(--success-container); }
 
-.fin-stat-info { display: flex; flex-direction: column; }
+.fin-stat-header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: flex-start;
+}
+
+.fin-icon { font-size: 28px; }
+.fin-stat.alert .fin-icon { color: var(--danger); font-variation-settings: 'FILL' 1; }
+.fin-stat.success-box .fin-icon { color: var(--success); font-variation-settings: 'FILL' 1; }
+
+.fin-amount { font-size: 32px; font-weight: 600; line-height: 1; color: var(--text-main); }
+.fin-stat.alert .fin-amount { color: var(--on-danger-container); }
+.fin-stat.success-box .fin-amount { color: var(--on-success-container); }
 
 .fin-label {
     font-size: 13px;
     font-weight: 500;
     color: var(--text-muted);
-    margin-bottom: 4px;
 }
 .fin-stat.alert .fin-label { color: var(--on-danger-container); opacity: 0.8; }
 .fin-stat.success-box .fin-label { color: var(--on-success-container); opacity: 0.8; }
 
-.fin-amount { font-size: 32px; font-weight: 600; color: var(--text-main); line-height: 1; }
-.fin-stat.alert .fin-amount { color: var(--on-danger-container); }
-.fin-stat.success-box .fin-amount { color: var(--on-success-container); }
-
-.fin-icon { font-size: 32px; color: var(--text-muted); }
-.fin-stat.alert .fin-icon { color: var(--danger); font-variation-settings: 'FILL' 1; }
-.fin-stat.success-box .fin-icon { color: var(--success); font-variation-settings: 'FILL' 1; }
 
 /* Chart Area */
 .chart-container {
@@ -464,8 +556,21 @@ html, body {
         width: 90vw; max-width: 400px;
         height: min(76dvh, 560px);
     }
+    
+    .welcome-card { padding: 24px !important; margin-bottom: 20px; }
+    .welcome-title { font-size: 24px; }
+    .welcome-illust { right: -40px; bottom: -40px; }
+    .welcome-illust .material-symbols-rounded { font-size: 140px; }
+    .welcome-badges { flex-direction: column; gap: 12px; width: 100%; }
+    .welcome-badge { width: 100%; }
+    
     .dash-top-row { grid-template-columns: 1fr; gap: 16px; }
     .dash-card { padding: 20px; border-radius: var(--radius-md); }
+    
+    .fin-stat-container { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .fin-stat { padding: 16px; gap: 12px; }
+    .fin-amount { font-size: 24px; }
+    .fin-label { font-size: 12px; line-height: 1.2; }
 }
 
 /* =========================================================
@@ -645,20 +750,34 @@ html, body {
                     <span id="dash-error-text">Database connection failed.</span>
                 </div>
 
-                <div style="margin-bottom: 32px;">
-                    <h2 style="font-size: 28px; margin-bottom: 8px; font-weight: 500; letter-spacing: -0.5px;">
-                        <span style="color: var(--text-main)">Welcome,</span>
-                        <span style="color: var(--primary)">Stra Care</span>
-                    </h2>
-
-                    <h3 style="font-size: 15px; font-weight: 500; color: var(--text-muted); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
-                        <span class="material-symbols-rounded" style="font-size: 20px;">storefront</span>
-                        <span id="dash-branch-text">Loading...</span>
-                    </h3>
-
-                    <p style="color: var(--outline); font-size: 14px; font-weight: 400;">
-                        Clinic Administration Overview
-                    </p>
+                <!-- NEW: Welcome Section wrapped in Gemini M3 KPI Card -->
+                <div class="dash-card welcome-card">
+                    <div class="welcome-content">
+                        <h2 class="welcome-title">
+                            Welcome back to your <span style="color: var(--primary);">business Workspace.</span>
+                        </h2>
+                        <p class="welcome-subtitle">Clinic Administration Overview</p>
+            
+                        <div class="welcome-badges">
+                            <div class="welcome-badge">
+                                <span class="material-symbols-rounded">admin_panel_settings</span>
+                                <div class="badge-text">
+                                    <span class="badge-label">Role</span>
+                                    <span class="badge-val" id="dash-role-text">Loading...</span>
+                                </div>
+                            </div>
+                            <div class="welcome-badge">
+                                <span class="material-symbols-rounded">storefront</span>
+                                <div class="badge-text">
+                                    <span class="badge-label">Access Branch</span>
+                                    <span class="badge-val" id="dash-branch-text">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="welcome-illust">
+                        <span class="material-symbols-rounded">auto_awesome</span>
+                    </div>
                 </div>
 
                 <div class="dash-top-row">
@@ -667,19 +786,19 @@ html, body {
                         <div class="card-title">Today's Attendance</div>
                         <div class="fin-stat-container">
                             <div class="fin-stat success-box">
-                                <div class="fin-stat-info">
-                                    <div class="fin-label">Present / Half-Day</div>
+                                <div class="fin-stat-header">
+                                    <span class="material-symbols-rounded fin-icon">how_to_reg</span>
                                     <div class="fin-amount" id="dashPresent">0</div>
                                 </div>
-                                <span class="material-symbols-rounded fin-icon">how_to_reg</span>
+                                <div class="fin-label">Present / Half-Day</div>
                             </div>
 
                             <div class="fin-stat alert">
-                                <div class="fin-stat-info">
-                                    <div class="fin-label">On Leave / Absent</div>
+                                <div class="fin-stat-header">
+                                    <span class="material-symbols-rounded fin-icon">event_busy</span>
                                     <div class="fin-amount" id="dashAbsent">0</div>
                                 </div>
-                                <span class="material-symbols-rounded fin-icon">event_busy</span>
+                                <div class="fin-label">On Leave / Absent</div>
                             </div>
                         </div>
                     </div>
@@ -693,28 +812,28 @@ html, body {
                         <div class="mini-stats-grid">
                             <div class="mini-stat">
                                 <div class="mini-stat-label">
-                                    <div class="dot" style="background: #FB923C;"></div> Pending
+                                    <div class="dot" style="background: #B36B00;"></div> Pending
                                 </div>
                                 <div class="mini-stat-val" id="dashPending">0</div>
                             </div>
 
                             <div class="mini-stat">
                                 <div class="mini-stat-label">
-                                    <div class="dot" style="background: #10B981;"></div> Completed
+                                    <div class="dot" style="background: #146C2E;"></div> Completed
                                 </div>
                                 <div class="mini-stat-val" id="dashCompleted">0</div>
                             </div>
 
                             <div class="mini-stat">
                                 <div class="mini-stat-label">
-                                    <div class="dot" style="background: #64748B;"></div> Moved
+                                    <div class="dot" style="background: #444746;"></div> Moved
                                 </div>
                                 <div class="mini-stat-val" id="dashRescheduled">0</div>
                             </div>
 
                             <div class="mini-stat">
                                 <div class="mini-stat-label">
-                                    <div class="dot" style="background: #EF4444;"></div> Cancelled
+                                    <div class="dot" style="background: #B3261E;"></div> Cancelled
                                 </div>
                                 <div class="mini-stat-val" id="dashCancelled">0</div>
                             </div>
@@ -944,10 +1063,15 @@ onAuthStateChanged(auth, async (user) => {
         if (branchTextElement) {
             if (window.currentUser.role === 'admin') {
                 branchTextElement.innerText = "Master Access (All Branches)";
-                branchTextElement.style.color = "var(--primary)";
             } else {
                 branchTextElement.innerText = window.currentUser.branch;
             }
+        }
+        
+        const roleTextElement = document.getElementById('dash-role-text');
+        if (roleTextElement) {
+            const roleStr = window.currentUser.role || 'user';
+            roleTextElement.innerText = roleStr;
         }
 
         /* Sidebar is loaded separately; hide the Users item after it appears too. */
@@ -1317,7 +1441,7 @@ window.switchView = async function(targetId, navElement) {
 };
 
 /* -------------------------------------------------------
-   CHART
+   CHART (GEMINI AI / M3 STYLE)
 ------------------------------------------------------- */
 window.renderChart = function(
     pending,
@@ -1351,7 +1475,7 @@ window.renderChart = function(
         const bgColors =
             total === 0
                 ? ['#E1E4E2']
-                : ['#FB923C', '#10B981', '#64748B', '#EF4444'];
+                : ['#B36B00', '#146C2E', '#444746', '#B3261E']; // Refined M3 palette
 
         const labels =
             total === 0
@@ -1366,16 +1490,27 @@ window.renderChart = function(
                     data: dataValues,
                     backgroundColor: bgColors,
                     borderWidth: 0,
+                    borderRadius: 12, // Gemini style rounded arc ends
+                    spacing: 4,       // Gap between slices
                     hoverOffset: 4
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: '75%',
+                cutout: '80%', // Thinner elegant ring
                 plugins: {
                     legend: { display: false },
-                    tooltip: { enabled: total > 0 }
+                    tooltip: { 
+                        enabled: total > 0,
+                        backgroundColor: 'rgba(31, 31, 31, 0.95)',
+                        titleFont: { family: "'Outfit', 'Inter', sans-serif", size: 13, weight: '500' },
+                        bodyFont: { family: "'Outfit', 'Inter', sans-serif", size: 14, weight: '400' },
+                        padding: 12,
+                        cornerRadius: 8,
+                        boxPadding: 4,
+                        displayColors: true
+                    }
                 }
             }
         });
