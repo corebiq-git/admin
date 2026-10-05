@@ -1,190 +1,1049 @@
 <style>
-    /* =========================================================
-       PROGRESS CLOCK HEADER
-       ========================================================= */
+/* =========================================================
+   COREBIQ HEADER
+   ========================================================= */
 
-    .metric-round {
-        position: relative;
-        width: 50px;
-        height: 50px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+#core-header {
+    width: 100%;
+    height: 72px;
+    min-height: 72px;
+    background: #ffffff;
+    border-bottom: 1px solid #E0E2E0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    position: relative;
+    z-index: 900;
+}
+
+/* LEFT */
+
+.core-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.core-menu-btn {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #E0E2E0;
+    background: #F8F9FA;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #1F1F1F;
+    flex-shrink: 0;
+}
+
+.core-menu-btn:hover {
+    background: #E3EBFA;
+    color: #0B57D0;
+}
+
+.core-menu-btn .material-symbols-rounded {
+    font-size: 23px;
+}
+
+.core-brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+}
+
+.core-logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    object-fit: contain;
+}
+
+.core-brand-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.core-brand-name {
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    color: #1F1F1F;
+}
+
+.core-brand-sub {
+    font-size: 9px;
+    font-weight: 600;
+    color: #777;
+    text-transform: uppercase;
+    letter-spacing: .7px;
+}
+
+/* RIGHT */
+
+.core-header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* SEARCH */
+
+.search-container {
+    width: 192px;
+    height: 40px;
+    background: #FAFAFA;
+    border: 1px solid #E8E5E1;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    padding: 0 11px;
+    gap: 8px;
+}
+
+.search-container .material-symbols-rounded {
+    font-size: 20px;
+    color: #64748B;
+}
+
+.search-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #0F172A;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.search-input::placeholder {
+    color: #94A3B8;
+}
+
+/* MOBILE SEARCH BUTTON */
+
+.mobile-search-btn {
+    display: none;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #E8E5E1;
+    background: #FAFAFA;
+    border-radius: 9px;
+    align-items: center;
+    justify-content: center;
+    color: #0F172A;
+    cursor: pointer;
+}
+
+.mobile-search-btn .material-symbols-rounded {
+    font-size: 21px;
+}
+
+/* MOBILE SEARCH PANEL */
+
+.mobile-search-panel {
+    display: none;
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    top: calc(100% + 6px);
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: 0 8px 25px rgba(0,0,0,.10);
+    z-index: 9999;
+}
+
+.mobile-search-panel.open {
+    display: flex;
+}
+
+.mobile-search-inner {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 9px;
+    padding: 9px 11px;
+}
+
+.mobile-search-inner .material-symbols-rounded {
+    font-size: 20px;
+    color: #64748B;
+}
+
+.mobile-search-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #0F172A;
+    font-size: 13px;
+}
+
+/* CLOCK */
+
+.header-clock {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.metric-round {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.clock-svg {
+    position: absolute;
+    transform: rotate(-90deg);
+    width: 50px;
+    height: 50px;
+}
+
+.clock-svg circle {
+    fill: none;
+    stroke-width: 4;
+    stroke-linecap: round;
+}
+
+.bg-track {
+    stroke: #F0F0F0;
+}
+
+.progress-arc {
+    transition: stroke-dashoffset .5s cubic-bezier(.4,0,.2,1);
+}
+
+.center-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    text-align: center;
+    line-height: 1;
+}
+
+.main-val {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0A0A0A;
+    margin-bottom: 2px;
+}
+
+.sub-label {
+    font-size: 7px;
+    font-weight: 700;
+    color: #777;
+    text-transform: uppercase;
+}
+
+.blue-pair .progress-arc {
+    stroke: #2563EB;
+}
+
+.yellow-pair .progress-arc {
+    stroke: #FFC72C;
+}
+
+/* NOTIFICATION */
+
+.core-notification-btn {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #E8E5E1;
+    background: #FAFAFA;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.core-notification-btn .material-symbols-rounded {
+    font-size: 21px;
+}
+
+.bell-anim {
+    animation: ring 2s infinite;
+    transform-origin: top center;
+    color: #0062FF !important;
+}
+
+@keyframes ring {
+    0% { transform: rotate(0); }
+    10% { transform: rotate(15deg); }
+    20% { transform: rotate(-10deg); }
+    30% { transform: rotate(5deg); }
+    40% { transform: rotate(-5deg); }
+    50% { transform: rotate(0); }
+    100% { transform: rotate(0); }
+}
+
+/* USER */
+
+.core-user-box {
+    height: 40px;
+    padding: 0 10px;
+    border: 1px solid #E8E5E1;
+    background: #FAFAFA;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: default;
+}
+
+.core-user-avatar {
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+    background: #E3EBFA;
+    color: #0B57D0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.core-user-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 55px;
+}
+
+.core-user-name {
+    font-size: 11px;
+    font-weight: 700;
+    color: #1F1F1F;
+    max-width: 95px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.core-user-role {
+    font-size: 8px;
+    font-weight: 700;
+    color: #777;
+    text-transform: uppercase;
+}
+
+/* LOGOUT */
+
+.logout-btn {
+    margin-left: 0;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: #FEF2F2;
+    color: #EF4444;
+    border: 1px solid #FCA5A5;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.logout-btn .material-symbols-rounded {
+    font-size: 21px;
+}
+
+.logout-btn:hover {
+    background: #EF4444;
+    color: #FFFFFF;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media(max-width:900px) {
+
+    #core-header {
+        height: 64px;
+        min-height: 64px;
+        padding: 0 14px;
     }
 
-    .clock-svg {
-        transform: rotate(-90deg);
-        position: absolute;
-    }
-
-    .clock-svg circle {
-        fill: none;
-        stroke-width: 4;
-        stroke-linecap: round;
-    }
-
-    .bg-track {
-        stroke: #F0F0F0;
-    }
-
-    .progress-arc {
-        transition: stroke-dashoffset 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .center-text {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        z-index: 1;
-        text-align: center;
-        line-height: 1;
-    }
-
-    .main-val {
-        font-size: 13px;
-        font-weight: 700;
-        color: #0a0a0a;
-        margin-bottom: 2px;
-    }
-
-    .sub-label {
-        font-size: 7px;
-        font-weight: 700;
-        color: #777777;
-        text-transform: uppercase;
-    }
-
-    .blue-pair .progress-arc {
-        stroke: #2563EB;
-    }
-
-    .yellow-pair .progress-arc {
-        stroke: #FFC72C;
-    }
-
-    /* =========================================================
-       LOGOUT
-       ========================================================= */
-
-    .logout-btn {
-        margin-left: 12px;
-        padding: 6px 12px;
-        background: #FEF2F2;
-        color: #EF4444;
-        border: 1px solid #FCA5A5;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: 0.2s;
-    }
-
-    .logout-btn:hover {
-        background: #EF4444;
-        color: #FFFFFF;
-    }
-
-    /* =========================================================
-       NOTIFICATION
-       ========================================================= */
-
-    @keyframes ring {
-        0% { transform: rotate(0); }
-        10% { transform: rotate(15deg); }
-        20% { transform: rotate(-10deg); }
-        30% { transform: rotate(5deg); }
-        40% { transform: rotate(-5deg); }
-        50% { transform: rotate(0); }
-        100% { transform: rotate(0); }
-    }
-
-    .bell-anim {
-        animation: ring 2s infinite;
-        transform-origin: top center;
-        color: #0062FF !important;
-    }
-
-    /* =========================================================
-       MOBILE SEARCH
-       ========================================================= */
-
-    .mobile-search-btn {
+    .core-brand-sub {
         display: none;
-        width: 38px;
-        height: 38px;
-        border: 1px solid #E8E5E1;
-        background: #FAFAFA;
-        border-radius: 8px;
-        align-items: center;
-        justify-content: center;
-        color: #0F172A;
-        cursor: pointer;
     }
 
-    .mobile-search-btn .material-symbols-rounded {
-        font-size: 21px;
+    .core-brand-name {
+        font-size: 14px;
     }
 
-    .mobile-search-panel {
-        display: none;
-        position: absolute;
-        left: 12px;
-        right: 12px;
-        top: calc(100% + 6px);
-        background: #FFFFFF;
-        border: 1px solid #E2E8F0;
-        border-radius: 10px;
-        padding: 8px;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.10);
-        z-index: 9999;
+    .core-logo {
+        width: 34px;
+        height: 34px;
     }
-
-    .mobile-search-panel.open {
-        display: flex;
-    }
-
-    .mobile-search-inner {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: #F8FAFC;
-        border: 1px solid #E2E8F0;
-        border-radius: 8px;
-        padding: 9px 11px;
-    }
-
-    .mobile-search-inner .material-symbols-rounded {
-        font-size: 20px;
-        color: #64748B;
-    }
-
-    .mobile-search-input {
-        width: 100%;
-        border: none;
-        outline: none;
-        background: transparent;
-        color: #0F172A;
-        font-size: 13px;
-        font-weight: 500;
-    }
-
-    .mobile-search-input::placeholder {
-        color: #94A3B8;
-    }
-
-    /* =========================================================
-       DESKTOP SEARCH
-       ========================================================= */
 
     .search-container {
-        width: 192px;
-        background: #FAFAFA;
-        border: 1px solid #E8E5E1;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        padding: 8px 12px;
+        display: none;
     }
 
-    .
+    .mobile-search-btn {
+        display: flex;
+    }
+
+    .header-clock .metric-round:nth-child(3),
+    .header-clock .metric-round:nth-child(4) {
+        display: none;
+    }
+
+    .core-user-info {
+        display: none;
+    }
+
+    .core-user-box {
+        width: 40px;
+        padding: 0;
+        justify-content: center;
+    }
+
+    .logout-btn {
+        display: none;
+    }
+
+    .core-header-right {
+        gap: 6px;
+    }
+}
+
+@media(max-width:500px) {
+
+    #core-header {
+        padding: 0 10px;
+    }
+
+    .core-header-left {
+        gap: 8px;
+    }
+
+    .core-header-right {
+        gap: 5px;
+    }
+
+    .header-clock {
+        display: none;
+    }
+
+    .core-notification-btn {
+        display: none;
+    }
+}
+</style>
+
+
+<header id="core-header">
+
+    <!-- LEFT -->
+    <div class="core-header-left">
+
+        <button
+            type="button"
+            class="core-menu-btn"
+            onclick="window.toggleMenu()"
+            aria-label="Menu">
+
+            <span class="material-symbols-rounded">
+                menu
+            </span>
+
+        </button>
+
+
+        <div class="core-brand">
+
+            <img
+                src="assets/logo.png"
+                class="core-logo"
+                alt="COREBIQ">
+
+            <div class="core-brand-text">
+
+                <div class="core-brand-name">
+                    COREBIQ
+                </div>
+
+                <div class="core-brand-sub">
+                    Business Intelligence
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- RIGHT -->
+    <div class="core-header-right">
+
+
+        <!-- DESKTOP SEARCH -->
+
+        <div class="search-container">
+
+            <span class="material-symbols-rounded">
+                search
+            </span>
+
+            <input
+                id="desktopSearchInput"
+                class="search-input"
+                type="search"
+                placeholder="Search..."
+                autocomplete="off">
+
+        </div>
+
+
+        <!-- MOBILE SEARCH -->
+
+        <button
+            type="button"
+            class="mobile-search-btn"
+            onclick="window.toggleMobileSearch()">
+
+            <span class="material-symbols-rounded">
+                search
+            </span>
+
+        </button>
+
+
+        <!-- CLOCK -->
+
+        <div class="header-clock">
+
+
+            <!-- DATE -->
+
+            <div class="metric-round blue-pair">
+
+                <svg
+                    class="clock-svg"
+                    viewBox="0 0 50 50">
+
+                    <circle
+                        class="bg-track"
+                        cx="25"
+                        cy="25"
+                        r="21">
+
+                    </circle>
+
+                    <circle
+                        id="dd-arc"
+                        class="progress-arc"
+                        cx="25"
+                        cy="25"
+                        r="21"
+                        stroke-dasharray="131.95"
+                        stroke-dashoffset="131.95">
+
+                    </circle>
+
+                </svg>
+
+                <div class="center-text">
+
+                    <div
+                        id="dd-val"
+                        class="main-val">
+                        00
+                    </div>
+
+                    <div
+                        id="dd-context"
+                        class="sub-label">
+                        DAY
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- MONTH -->
+
+            <div class="metric-round blue-pair">
+
+                <svg
+                    class="clock-svg"
+                    viewBox="0 0 50 50">
+
+                    <circle
+                        class="bg-track"
+                        cx="25"
+                        cy="25"
+                        r="21">
+
+                    </circle>
+
+                    <circle
+                        id="mm-arc"
+                        class="progress-arc"
+                        cx="25"
+                        cy="25"
+                        r="21"
+                        stroke-dasharray="131.95"
+                        stroke-dashoffset="131.95">
+
+                    </circle>
+
+                </svg>
+
+                <div class="center-text">
+
+                    <div
+                        id="mm-val"
+                        class="main-val">
+                        JAN
+                    </div>
+
+                    <div
+                        id="mm-context"
+                        class="sub-label">
+                        2026
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- HOUR -->
+
+            <div class="metric-round yellow-pair">
+
+                <svg
+                    class="clock-svg"
+                    viewBox="0 0 50 50">
+
+                    <circle
+                        class="bg-track"
+                        cx="25"
+                        cy="25"
+                        r="21">
+
+                    </circle>
+
+                    <circle
+                        id="hh-arc"
+                        class="progress-arc"
+                        cx="25"
+                        cy="25"
+                        r="21"
+                        stroke-dasharray="131.95"
+                        stroke-dashoffset="131.95">
+
+                    </circle>
+
+                </svg>
+
+                <div class="center-text">
+
+                    <div
+                        id="hh-val"
+                        class="main-val">
+                        12
+                    </div>
+
+                    <div
+                        id="hh-context"
+                        class="sub-label">
+                        AM
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- MINUTE -->
+
+            <div class="metric-round yellow-pair">
+
+                <svg
+                    class="clock-svg"
+                    viewBox="0 0 50 50">
+
+                    <circle
+                        class="bg-track"
+                        cx="25"
+                        cy="25"
+                        r="21">
+
+                    </circle>
+
+                    <circle
+                        id="min-arc"
+                        class="progress-arc"
+                        cx="25"
+                        cy="25"
+                        r="21"
+                        stroke-dasharray="131.95"
+                        stroke-dashoffset="131.95">
+
+                    </circle>
+
+                </svg>
+
+                <div class="center-text">
+
+                    <div
+                        id="min-val"
+                        class="main-val">
+                        00
+                    </div>
+
+                    <div class="sub-label">
+                        MIN
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- NOTIFICATION -->
+
+        <button
+            type="button"
+            class="core-notification-btn"
+            onclick="window.switchView('view-updates',this)"
+            title="Updates">
+
+            <span class="material-symbols-rounded bell-anim">
+                notifications
+            </span>
+
+        </button>
+
+
+        <!-- USER -->
+
+        <div
+            class="core-user-box"
+            id="core-user-box">
+
+            <div
+                class="core-user-avatar"
+                id="core-user-avatar">
+                U
+            </div>
+
+            <div class="core-user-info">
+
+                <div
+                    class="core-user-name"
+                    id="core-user-name">
+                    User
+                </div>
+
+                <div
+                    class="core-user-role"
+                    id="core-user-role">
+                    User
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- LOGOUT -->
+
+        <button
+            type="button"
+            class="logout-btn"
+            onclick="window.handleLogout()"
+            title="Logout">
+
+            <span class="material-symbols-rounded">
+                logout
+            </span>
+
+        </button>
+
+
+    </div>
+
+
+    <!-- MOBILE SEARCH PANEL -->
+
+    <div
+        id="mobileSearchPanel"
+        class="mobile-search-panel">
+
+        <div class="mobile-search-inner">
+
+            <span class="material-symbols-rounded">
+                search
+            </span>
+
+            <input
+                id="mobileSearchInput"
+                class="mobile-search-input"
+                type="search"
+                placeholder="Search COREBIQ..."
+                autocomplete="off">
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<script>
+
+(function () {
+
+    /* =====================================================
+       MOBILE SEARCH
+       ===================================================== */
+
+    window.toggleMobileSearch = function () {
+
+        const panel =
+            document.getElementById('mobileSearchPanel');
+
+        if (!panel) return;
+
+        panel.classList.toggle('open');
+
+        if (panel.classList.contains('open')) {
+
+            setTimeout(function () {
+
+                const input =
+                    document.getElementById(
+                        'mobileSearchInput'
+                    );
+
+                if (input) input.focus();
+
+            }, 100);
+
+        }
+
+    };
+
+
+    /* =====================================================
+       USER DISPLAY
+       ===================================================== */
+
+    window.updateHeaderUser = function () {
+
+        const user =
+            window.currentUser;
+
+        if (!user) return;
+
+
+        const email =
+            user.email || '';
+
+
+        const name =
+            email
+                ? email.split('@')[0]
+                : 'User';
+
+
+        const avatar =
+            name
+                .charAt(0)
+                .toUpperCase();
+
+
+        const nameEl =
+            document.getElementById(
+                'core-user-name'
+            );
+
+        const roleEl =
+            document.getElementById(
+                'core-user-role'
+            );
+
+        const avatarEl =
+            document.getElementById(
+                'core-user-avatar'
+            );
+
+
+        if (nameEl) {
+
+            nameEl.innerText =
+                name;
+
+        }
+
+
+        if (roleEl) {
+
+            roleEl.innerText =
+                user.role ||
+                'user';
+
+        }
+
+
+        if (avatarEl) {
+
+            avatarEl.innerText =
+                avatar;
+
+        }
+
+    };
+
+
+    /* =====================================================
+       SEARCH
+       ===================================================== */
+
+    function performSearch(value) {
+
+        const search =
+            String(value || '')
+                .trim()
+                .toLowerCase();
+
+        if (!search) return;
+
+
+        /*
+         * Search currently loaded visible module.
+         * This intentionally does not touch Firebase.
+         */
+
+        const active =
+            document.querySelector(
+                '.view-section.active'
+            );
+
+        if (!active) return;
+
+
+        const text =
+            active.innerText
+                .toLowerCase();
+
+
+        if (!text.includes(search)) {
+
+            console.log(
+                'No result:',
+                search
+            );
+
+        }
+
+    }
+
+
+    const desktopSearch =
+        document.getElementById(
+            'desktopSearchInput'
+        );
+
+
+    if (desktopSearch) {
+
+        desktopSearch.addEventListener(
+            'keydown',
+            function (event) {
+
+                if (event.key === 'Enter') {
+
+                    performSearch(
+                        desktopSearch.value
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    const mobileSearch =
+        document.getElementById(
+            'mobileSearchInput'
+        );
+
+
+    if (mobileSearch) {
+
+        mobileSearch.addEventListener(
+            'keydown',
+            function (event) {
+
+                if (event.key === 'Enter') {
+
+                    performSearch(
+                        mobileSearch.value
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       UPDATE HEADER AFTER DASHBOARD AUTH
+       ===================================================== */
+
+    function waitForUser() {
+
+        if (window.currentUser) {
+
+            window.updateHeaderUser();
+
+            return;
+
+        }
+
+
+        setTimeout(
+            waitForUser,
+            250
+        );
+
+    }
+
+
+    waitForUser();
+
+})();
+
+</script>
