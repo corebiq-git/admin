@@ -1,6 +1,6 @@
 <style>
     /* =========================================================
-       SIDEBAR BASE
+       SIDEBAR BASE - GEMINI / MATERIAL 3 STYLE
        ========================================================= */
 
     .sidebar-inner-wrapper {
@@ -8,6 +8,8 @@
         flex-direction: column;
         min-height: 100%;
         height: 100%;
+        font-family: 'Outfit', 'Google Sans', 'Inter', sans-serif;
+        background: var(--surface, #FFFFFF);
     }
 
 
@@ -18,17 +20,16 @@
     .sidebar-header {
         position: sticky;
         top: 0;
-        background: var(--surface);
+        background: var(--surface, #FFFFFF);
         z-index: 10;
-        border-bottom: 1px solid var(--border);
-
-        padding: 16px 20px;
-
+        border-bottom: 1px solid var(--outline-variant, #E1E4E2);
+        
+        /* Aligning padding and height with the main header */
+        padding: 12px 24px; 
         display: flex;
         justify-content: center;
         align-items: center;
-
-        min-height: 76px;
+        min-height: 72px;
     }
 
     .sidebar-brand {
@@ -41,29 +42,37 @@
     .sidebar-logo {
         display: block;
         width: 100%;
-        max-width: 190px;
+        max-width: 170px;
         height: auto;
-        max-height: 52px;
+        max-height: 48px;
         object-fit: contain;
     }
 
     .close-menu {
-        background: none;
+        background: transparent;
         border: none;
         cursor: pointer;
-        color: var(--text-main);
+        color: var(--text-muted, #444746);
 
         display: flex;
         align-items: center;
         justify-content: center;
 
-        width: 36px;
-        height: 36px;
-        border-radius: 8px;
+        /* M3 Circular Icon Button */
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        transition: background-color 0.2s, color 0.2s;
+        -webkit-tap-highlight-color: transparent;
     }
 
     .close-menu:hover {
-        background: #F5F5F5;
+        background: var(--surface-container-high, #E3E7ED);
+        color: var(--text-main, #1F1F1F);
+    }
+
+    .close-menu .material-symbols-rounded {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
 
 
@@ -75,12 +84,12 @@
         flex: 1;
         overflow-y: auto;
 
-        padding-top: 14px;
-        padding-bottom: 20px;
+        padding-top: 16px;
+        padding-bottom: 24px;
 
         display: flex;
         flex-direction: column;
-        gap: 3px;
+        gap: 4px;
 
         scrollbar-width: thin;
     }
@@ -94,10 +103,10 @@
         display: flex;
         align-items: center;
 
+        /* M3 spacing and pill shape */
         width: calc(100% - 32px);
         margin: 0 16px;
-
-        padding: 11px 14px;
+        padding: 14px 18px;
 
         border: none;
         background: transparent;
@@ -107,35 +116,39 @@
 
         font-size: 14px;
         font-weight: 500;
+        color: var(--text-muted, #444746);
+        border-radius: 100px; /* Perfect M3 Pill */
 
-        color: var(--text-muted);
-
-        border-radius: 8px;
-
-        transition:
-            background 0.2s ease,
-            color 0.2s ease;
-
+        transition: background-color 0.2s cubic-bezier(0.2, 0, 0, 1), color 0.2s;
         font-family: inherit;
+        -webkit-tap-highlight-color: transparent;
     }
 
     .nav-link:hover {
-        background: #FAFAFA;
-        color: var(--text-main);
+        background: rgba(31, 31, 31, 0.08); /* Standard M3 state layer */
+        color: var(--text-main, #1F1F1F);
     }
 
     .nav-link.active {
-        background: var(--primary-light);
-        color: var(--primary);
+        /* Gemini Blue Active State */
+        background: var(--primary-container, #D3E3FD);
+        color: var(--on-primary-container, #041E49);
         font-weight: 600;
     }
 
     .nav-link .material-symbols-rounded {
-        font-size: 21px;
-        margin-right: 12px;
+        font-size: 24px;
+        margin-right: 14px;
         color: inherit;
-        transition: color 0.2s ease;
+        transition: font-variation-settings 0.2s;
         flex-shrink: 0;
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .nav-link.active .material-symbols-rounded {
+        /* Filled icon for active state */
+        font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        color: var(--primary, #0A56D1);
     }
 
 
@@ -145,10 +158,8 @@
 
     .nav-divider {
         height: 1px;
-        background: var(--border);
-
-        margin: 11px 24px;
-
+        background: var(--outline-variant, #E1E4E2);
+        margin: 12px 24px;
         flex-shrink: 0;
     }
 
@@ -159,21 +170,18 @@
 
     .menu-badge {
         margin-left: auto;
-
-        background: var(--primary);
-        color: white;
-
-        padding: 2px 8px;
-
-        border-radius: 20px;
-
-        font-size: 11px;
-        font-weight: 700;
+        background: var(--primary, #0A56D1);
+        color: #FFFFFF;
+        padding: 2px 10px;
+        border-radius: 100px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.2px;
     }
 
     .menu-badge.pending {
-        background: var(--warning);
-        color: #fff;
+        background: var(--warning, #B36B00);
+        color: #FFFFFF;
     }
 
 
@@ -182,46 +190,37 @@
        ========================================================= */
 
     .sidebar-footer {
-        padding: 18px 20px;
-
-        border-top: 1px solid var(--border);
-
+        padding: 20px 24px;
+        border-top: 1px solid var(--outline-variant, #E1E4E2);
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-
-        background: #FAFAFA;
-
+        background: var(--surface-container, #F0F4F9); /* Subtle M3 container background */
         margin-top: auto;
         flex-shrink: 0;
     }
 
     .footer-logo {
-        width: 82px;
+        width: 80px;
         height: auto;
-
-        margin-bottom: 6px;
-
+        margin-bottom: 8px;
         object-fit: contain;
+        opacity: 0.9;
     }
 
     .footer-app-name {
         font-size: 13px;
-        font-weight: 800;
-        color: var(--text-main);
-
-        margin-bottom: 2px;
-
+        font-weight: 600;
+        color: var(--text-main, #1F1F1F);
+        margin-bottom: 4px;
         text-align: center;
     }
 
     .footer-version {
         font-size: 11px;
-        font-weight: 600;
-
-        color: var(--text-muted);
-
+        font-weight: 500;
+        color: var(--text-muted, #444746);
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
@@ -232,17 +231,12 @@
        ========================================================= */
 
     @media (min-width: 769px) {
-
         .close-menu {
             display: none;
         }
 
         .sidebar-header {
             justify-content: center;
-        }
-
-        .sidebar-logo {
-            max-width: 175px;
         }
     }
 
@@ -252,12 +246,9 @@
        ========================================================= */
 
     @media (max-width: 768px) {
-
         .sidebar-header {
-            padding: 14px 16px;
-
-            min-height: 82px;
-
+            padding: 12px 16px;
+            min-height: 72px;
             justify-content: space-between;
         }
 
@@ -267,48 +258,35 @@
 
         .sidebar-logo {
             width: 100%;
-            max-width: 190px;
-            max-height: 55px;
+            max-width: 160px;
+            max-height: 48px;
         }
 
         .close-menu {
             display: flex;
-
-            width: 38px;
-            height: 38px;
-
+            width: 48px;
+            height: 48px;
             flex-shrink: 0;
+            margin-right: -8px; /* Optically align to right edge */
         }
 
         .close-menu .material-symbols-rounded {
-            font-size: 23px;
+            font-size: 24px;
         }
 
         .sidebar-nav {
             padding-top: 12px;
-            padding-bottom: 20px;
+            padding-bottom: 24px;
         }
 
         .nav-link {
             width: calc(100% - 24px);
             margin: 0 12px;
-
-            padding: 12px 14px;
-
-            font-size: 14px;
-        }
-
-        .nav-link .material-symbols-rounded {
-            font-size: 21px;
-            margin-right: 12px;
+            padding: 14px 16px;
         }
 
         .nav-divider {
-            margin: 10px 20px;
-        }
-
-        .sidebar-footer {
-            padding: 16px 20px;
+            margin: 12px 20px;
         }
     }
 </style>
