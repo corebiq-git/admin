@@ -18,13 +18,13 @@
    ========================================================= */
 :root {
   /* Core M3 Colors */
-  --primary: #0A56D1;          /* M3 Primary Blue */
+  --primary: #0A56D1;          
   --primary-hover: #0842A0;
   --primary-container: #D3E3FD;
   --on-primary-container: #041E49;
   
-  --surface: #FFFFFF;          /* Pure white for cards */
-  --surface-container: #F0F4F9;/* Gemini background */
+  --surface: #FFFFFF;          
+  --surface-container: #F0F4F9;
   --surface-container-high: #E3E7ED;
   
   --text-main: #1F1F1F;
@@ -112,6 +112,7 @@ html, body {
 #main-content {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden; /* Fix horizontal mobile scroll */
     padding: 24px 32px !important;
     -webkit-overflow-scrolling: touch;
     background: var(--surface-container);
@@ -218,6 +219,7 @@ html, body {
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 24px;
     margin-bottom: 24px;
+    min-width: 0;
 }
 
 .dash-card {
@@ -229,6 +231,7 @@ html, body {
     display: flex;
     flex-direction: column;
     transition: box-shadow 0.2s ease;
+    min-width: 0; /* Fixes grid blowout */
 }
 .dash-card:hover {
     box-shadow: var(--shadow-sm);
@@ -298,10 +301,16 @@ html, body {
     position: relative;
     height: 180px;
     width: 100%;
+    max-width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     margin-bottom: 24px;
+    min-width: 0; /* Prevents canvas from scaling infinitely in grid */
+}
+.chart-container canvas {
+    max-width: 100% !important;
+    max-height: 100% !important;
 }
 
 .mini-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -360,7 +369,10 @@ html, body {
     padding-bottom: 12px;
 }
 .cal-day {
-    padding: 10px 0;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: var(--radius-pill);
     font-size: 14px;
     font-weight: 500;
@@ -369,10 +381,6 @@ html, body {
     transition: all 0.2s ease;
     border: 1px solid transparent;
     position: relative;
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 .cal-day:hover { background: var(--surface-container-high); }
 .cal-day.active {
@@ -564,8 +572,8 @@ html, body {
     .welcome-badges { flex-direction: column; gap: 12px; width: 100%; }
     .welcome-badge { width: 100%; }
     
-    .dash-top-row { grid-template-columns: 1fr; gap: 16px; }
-    .dash-card { padding: 20px; border-radius: var(--radius-md); }
+    .dash-top-row { grid-template-columns: 1fr; gap: 16px; min-width: 0; }
+    .dash-card { padding: 20px; border-radius: var(--radius-md); min-width: 0; }
     
     .fin-stat-container { grid-template-columns: repeat(2, 1fr); gap: 12px; }
     .fin-stat { padding: 16px; gap: 12px; }
@@ -750,7 +758,6 @@ html, body {
                     <span id="dash-error-text">Database connection failed.</span>
                 </div>
 
-                <!-- NEW: Welcome Section wrapped in Gemini M3 KPI Card -->
                 <div class="dash-card welcome-card">
                     <div class="welcome-content">
                         <h2 class="welcome-title">
