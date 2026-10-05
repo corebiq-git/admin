@@ -3,15 +3,16 @@
         display: flex; 
         justify-content: space-evenly; 
         align-items: center; 
-        /* M3 uses a distinct Surface Container color rather than a top border */
-        background: var(--surface-container, #F3F4F9); 
-        height: 80px; /* Standard M3 component height */
+        /* Match the main dashboard's surface container */
+        background: var(--surface-container, #F0F4F9); 
+        height: 80px; 
         padding-bottom: env(safe-area-inset-bottom); 
         position: fixed; 
         bottom: 0; 
         width: 100%; 
         z-index: 900; 
-        box-shadow: 0 -1px 3px rgba(0,0,0,0.05); /* Subtle elevation */
+        box-shadow: 0 -1px 3px rgba(0,0,0,0.05); 
+        font-family: 'Outfit', 'Google Sans', 'Inter', sans-serif;
     }
 
     .bottom-nav-item { 
@@ -19,7 +20,7 @@
         flex-direction: column; 
         align-items: center; 
         justify-content: center;
-        color: var(--text-muted, #44474E); 
+        color: var(--text-muted, #444746); 
         text-decoration: none; 
         cursor: pointer; 
         min-width: 64px;
@@ -33,43 +34,45 @@
         justify-content: center;
         width: 64px;
         height: 32px;
-        border-radius: 16px; /* M3 Signature Pill Shape */
+        border-radius: 100px; /* Perfect M3 Pill */
         margin-bottom: 4px;
         transition: background-color 0.2s cubic-bezier(0.2, 0, 0, 1);
     }
 
     .bottom-nav-item:hover .nav-indicator { 
-        background: rgba(var(--text-main-rgb, 28, 27, 31), 0.08); /* State layer on hover */
+        background: rgba(31, 31, 31, 0.08); /* Standard M3 hover state layer */
     }
     
     .bottom-nav-icon { 
         font-size: 24px; 
-        /* Default to outlined icons in M3 */
         font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         transition: font-variation-settings 0.2s;
     }
 
     .bottom-nav-label {
         font-size: 12px; 
-        font-weight: 500; /* M3 label-medium typography */
+        font-weight: 500; 
         letter-spacing: 0.5px;
-        transition: color 0.2s;
+        transition: color 0.2s, font-weight 0.2s;
     }
 
     /* M3 Active States */
     .bottom-nav-item.active { 
-        color: var(--text-main, #1C1B1F); 
+        color: var(--text-main, #1F1F1F); 
     }
     
     .bottom-nav-item.active .nav-indicator { 
-        /* Active pill typically uses Primary/Secondary Container colors */
-        background: var(--primary-container, #C2E7FF); 
-        color: var(--on-primary-container, #001D35);
+        /* Using the exact Gemini blue primary container from your dashboard */
+        background: var(--primary-container, #D3E3FD); 
+        color: var(--on-primary-container, #041E49);
     }
     
     .bottom-nav-item.active .bottom-nav-icon {
-        /* Switch to filled icon dynamically when active */
         font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .bottom-nav-item.active .bottom-nav-label {
+        font-weight: 600;
     }
 </style>
 
