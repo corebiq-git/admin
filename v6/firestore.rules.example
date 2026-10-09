@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function profileExists() {
+      return signedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+    function profile() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    function role() { return profileExists() ? profile().role : 'none'; }
+    function isAdmin() { return profileExists() && role() == 'admin'; }
+    function isApproved() {
+      return profileExists() && role() in ['admin', 'branchManager', 'agent', 'finance', 'readOnly'];
+    }
+    function branchAllowed(data) {
+      return isAdmin() || (isApproved() && data.branchId != null
+        && (data.branchId == profile().branchId || data.branchId == 'BOTH'));
+    }
+    function financeCollection(name) { return name in ['invoices', 'payments', 'expenses']; }
+    function canReadRecord(name, data) {
+      return isAdmin() || (isApproved() && branchAllowed(data));
+    }
+    function canCreateOrUpdate(name, data) {
+      return isAdmin() || (isApproved() && branchAllowed(data) && (
+        role() == 'branchManager' ||
+        (role() == 'agent' && !financeCollection(name)) ||
+        (role() == 'finance' && financeCollection(name))
+      ));
+    }
+
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow create: if signedIn() && request.auth.uid == uid
+        && request.resource.data.uid == uid
+        && request.resource.data.role == 'pending'
+        && request.resource.data.keys().hasOnly(['uid','email','displayName','role','branchId','createdAt']);
+      allow update, delete: if isAdmin();
+    }
+
+    // Each business record must carry branchId = DUBAI, INDIA, or BOTH.
+    // Admin can access both branches. Branch roles are restricted server-side.
+    match /{collection}/{recordId} {
+      allow read: if collection != 'users' && canReadRecord(collection, resource.data);
+      allow create: if collection != 'users' && canCreateOrUpdate(collection, request.resource.data);
+      allow update: if collection != 'users'
+        && canReadRecord(collection, resource.data)
+        && canCreateOrUpdate(collection, request.resource.data);
+      allow delete: if collection != 'users' && isAdmin();
+    }
+  }
+}

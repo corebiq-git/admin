@@ -1,0 +1,9 @@
+{
+  "name": "Voyage Travel Management",
+  "short_name": "Voyage",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#0b57d0",
+  "description": "Travel operations management for Dubai and India branches"
+}

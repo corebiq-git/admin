@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f6f8fc">
+<title>Voyage | Travel Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<section id="authScreen" class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-brand"><div class="brand-logo">V</div><div><b>Voyage</b><small>Travel Management</small></div></div>
+    <div class="auth-kicker">DUBAI · INDIA</div>
+    <h1 id="authTitle">Welcome back</h1>
+    <p class="auth-copy" id="authCopy">Sign in to access your secure travel operations workspace.</p>
+    <form id="authForm" class="auth-form">
+      <div id="nameField" class="form-field" hidden><label for="authName">Full name</label><input id="authName" autocomplete="name" placeholder="Your name"></div>
+      <div class="form-field"><label for="authEmail">Work email</label><input id="authEmail" type="email" autocomplete="username" required placeholder="name@company.com"></div>
+      <div class="form-field"><label for="authPassword">Password</label><input id="authPassword" type="password" autocomplete="current-password" minlength="6" required placeholder="At least 6 characters"></div>
+      <div id="branchField" class="form-field" hidden><label for="authBranch">Primary branch</label><select id="authBranch"><option value="INDIA">India</option><option value="DUBAI">Dubai · UAE</option></select><div class="form-note">New accounts require admin approval before accessing company records.</div></div>
+      <button id="authSubmit" class="btn primary auth-submit" type="submit">Sign in</button>
+    </form>
+    <p id="authMessage" class="auth-message" role="status" aria-live="polite"></p>
+    <button id="authModeToggle" class="auth-toggle" type="button">Need an account? Create one</button>
+    <div class="auth-foot"><span class="material-symbols-rounded">shield_lock</span> Secure sign-in · Anonymous access disabled</div>
+  </div>
+</section>
+<div class="app-shell" id="appShell" hidden>
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><div class="brand-logo">V</div><div><b>Voyage</b><small>Travel operations</small></div></div>
+    <label class="field-label" for="activeBranch">ACTIVE BRANCH</label>
+    <select id="activeBranch" class="branch-select">
+      <option value="ALL">All branches</option><option value="DUBAI">Dubai · UAE</option><option value="INDIA">India</option>
+    </select>
+    <div class="nav-caption">WORKSPACE</div>
+    <nav id="sideNav" class="side-nav">
+      <button class="nav-item active" data-page="dashboard"><span class="material-symbols-rounded">space_dashboard</span>Dashboard</button>
+      <button class="nav-item" data-page="bookings"><span class="material-symbols-rounded">flight_takeoff</span>Bookings</button>
+      <button class="nav-item" data-page="flights"><span class="material-symbols-rounded">flight</span>Flights</button>
+      <button class="nav-item" data-page="hotels"><span class="material-symbols-rounded">hotel</span>Hotels</button>
+      <button class="nav-item" data-page="visa"><span class="material-symbols-rounded">contact_pass</span>Visa management</button>
+      <button class="nav-item" data-page="transport"><span class="material-symbols-rounded">airport_shuttle</span>Transport</button>
+      <button class="nav-item" data-page="customers"><span class="material-symbols-rounded">groups</span>Customers</button>
+      <button class="nav-item" data-page="travellers"><span class="material-symbols-rounded">luggage</span>Travellers</button>
+      <button class="nav-item" data-page="suppliers"><span class="material-symbols-rounded">business</span>Suppliers</button>
+    </nav>
+    <div class="nav-caption">FINANCE & ADMIN</div>
+    <nav class="side-nav">
+      <button class="nav-item" data-page="invoices"><span class="material-symbols-rounded">request_quote</span>Invoices</button>
+      <button class="nav-item" data-page="payments"><span class="material-symbols-rounded">payments</span>Payments</button>
+      <button class="nav-item" data-page="expenses"><span class="material-symbols-rounded">receipt_long</span>Expenses</button>
+      <button class="nav-item" data-page="employees"><span class="material-symbols-rounded">badge</span>Employees</button>
+      <button class="nav-item" data-page="reports"><span class="material-symbols-rounded">monitoring</span>Reports & analytics</button>
+      <button class="nav-item" data-page="settings"><span class="material-symbols-rounded">settings</span>Settings</button>
+    </nav>
+    <div class="sidebar-foot"><span class="material-symbols-rounded">verified_user</span><div><b>Secure workspace</b><small>Authenticated cloud records.</small></div></div>
+  </aside>
+  <main class="main-area">
+    <header class="topbar">
+      <button id="menuToggle" class="icon-button mobile-only" aria-label="Toggle menu"><span class="material-symbols-rounded">menu</span></button>
+      <div class="global-search"><span class="material-symbols-rounded">search</span><input id="globalSearch" placeholder="Search this module…" aria-label="Search records"></div>
+      <div class="topbar-right"><span class="live-badge"><i></i> Cloud workspace</span><button id="exportCurrent" class="icon-button" title="Export current module"><span class="material-symbols-rounded">download</span></button><div id="userAvatar" class="user-avatar">VO</div><button id="signOutButton" class="btn outline sm" title="Sign out">Sign out</button></div>
+    </header>
+    <div id="appContent" class="page-content"></div>
+  </main>
+</div>
+<nav id="mobileNav" class="mobile-nav">
+  <button data-page="dashboard" class="active"><span class="material-symbols-rounded">space_dashboard</span>Home</button>
+  <button data-page="bookings"><span class="material-symbols-rounded">flight_takeoff</span>Bookings</button>
+  <button data-page="customers"><span class="material-symbols-rounded">groups</span>Customers</button>
+  <button data-page="reports"><span class="material-symbols-rounded">monitoring</span>Reports</button>
+  <button data-page="more"><span class="material-symbols-rounded">apps</span>More</button>
+</nav>
+<div id="modalRoot"></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script>if("serviceWorker" in navigator && location.protocol.startsWith("http")) navigator.serviceWorker.register("./service-worker.js").catch(()=>{});</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
