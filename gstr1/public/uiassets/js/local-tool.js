@@ -304,8 +304,8 @@
     document.getElementById('export-json').addEventListener('click', function () {
         clearError();
         try {
-            if (!activeReturn || !activeReturn.invoices.length) {
-                throw new Error('Add at least one invoice before exporting.');
+            if (!activeReturn) {
+                throw new Error('Open or create a local return before exporting.');
             }
             var hasEntries = activeReturn.invoices.length ||
                 Object.keys(activeReturn.sections).some(function (section) {
