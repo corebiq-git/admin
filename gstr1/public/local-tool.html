@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#102b5c">
-  <meta name="description" content="Prepare and save GSTR-1 B2B invoices on this device.">
+  <meta name="description" content="Prepare and save selected GSTR-1 sections on this device.">
   <title>COREBIQ GSTR-1 Local Tool</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="uiassets/css/local-tool.css">
@@ -20,8 +20,8 @@
       <span>This tool saves data in this browser only. It does not send return data to a server or cloud. Data is not shared with your other devices. Export a JSON backup and keep it safe; clearing browser data can erase local returns.</span>
     </section>
     <section class="card">
-      <h1>GSTR-1 B2B invoices</h1>
-      <p class="intro">Create a local return, add registered-recipient invoices, and export a GSTR-1 JSON file. This first local version covers B2B invoice entry and JSON export; other return sections and imports are not included.</p>
+      <h1>GSTR-1 local return</h1>
+      <p class="intro">Enter only the enabled sections below. Return data stays in this browser on this device.</p>
       <form id="return-form">
         <div class="form-grid">
           <label>Supplier GSTIN
@@ -41,11 +41,22 @@
     <section id="workspace" class="card" hidden>
       <div class="section-heading">
         <div>
-          <h2>Add a B2B invoice</h2>
+          <h2>Return sections</h2>
           <p id="return-label" class="muted"></p>
         </div>
       </div>
-      <form id="invoice-form">
+      <nav id="section-tabs" class="section-tabs" aria-label="Enabled GSTR-1 sections">
+        <button type="button" class="section-tab active" data-section="b2b">B2B</button>
+        <button type="button" class="section-tab" data-section="b2cs">B2C small</button>
+        <button type="button" class="section-tab" data-section="nil">Exempted</button>
+        <button type="button" class="section-tab" data-section="cdnur">Credit / debit note — unregistered</button>
+        <button type="button" class="section-tab" data-section="ecom">E-commerce</button>
+        <button type="button" class="section-tab" data-section="doc">Documents</button>
+        <button type="button" class="section-tab" data-section="hsn">HSN B2B</button>
+      </nav>
+      <section id="b2b-panel" class="section-panel">
+        <h3>Add B2B invoice</h3>
+        <form id="invoice-form">
         <div class="form-grid">
           <label>Recipient GSTIN
             <input id="recipient" type="text" maxlength="15" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
@@ -64,6 +75,19 @@
           </label>
           <label>Taxable value (INR)
             <input id="taxable-value" type="number" min="0.01" step="0.01" inputmode="decimal" required>
+          </label>
+          <label>Quantity
+            <input id="quantity" type="number" min="0.001" step="0.001" inputmode="decimal" value="1" required>
+          </label>
+          <label>Unit of quantity (UQC)
+            <select id="uqc">
+              <option value="OTH">OTH - Others</option>
+              <option value="NOS">NOS - Numbers</option>
+              <option value="KGS">KGS - Kilograms</option>
+              <option value="LTR">LTR - Litres</option>
+              <option value="MTR">MTR - Metres</option>
+              <option value="PCS">PCS - Pieces</option>
+            </select>
           </label>
           <label>GST rate
             <select id="tax-rate">
@@ -94,13 +118,34 @@
         <div class="actions">
           <button class="button primary" type="submit">Save invoice on this device</button>
         </div>
-      </form>
+        </form>
+      </section>
+      <section id="local-section-panel" class="section-panel" hidden>
+        <h3 id="local-section-title"></h3>
+        <form id="local-entry-form"></form>
+        <div class="table-wrap section-table-wrap" id="section-table-wrap">
+          <table>
+            <thead id="section-table-head"></thead>
+            <tbody id="section-entry-list"></tbody>
+          </table>
+        </div>
+      </section>
+      <section id="hsn-panel" class="section-panel" hidden>
+        <h3>HSN summary — B2B invoices</h3>
+        <p class="muted">This summary is calculated from the HSN, rate, quantity, and tax details in saved B2B invoices.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>HSN</th><th>Description</th><th>UQC</th><th>Quantity</th><th>Taxable (INR)</th><th>Rate</th><th>IGST</th><th>CGST</th><th>SGST</th><th>CESS</th></tr></thead>
+            <tbody id="hsn-list"></tbody>
+          </table>
+        </div>
+      </section>
     </section>
 
     <section id="invoice-section" class="card" hidden>
       <div class="section-heading">
         <div>
-          <h2>Saved invoices</h2>
+          <h2>Saved B2B invoices</h2>
           <p id="invoice-count" class="muted"></p>
         </div>
         <button id="export-json" class="button primary" type="button">Export GSTR-1 JSON</button>
@@ -116,6 +161,10 @@
       <div class="actions">
         <button id="delete-return" class="button danger" type="button">Delete this local return</button>
       </div>
+    </section>
+    <section id="other-entries-section" class="card" hidden>
+      <h2>Saved section entries</h2>
+      <div id="other-entry-summary" class="summary-grid"></div>
     </section>
     <p id="app-error" class="error" role="alert" hidden></p>
   </main>

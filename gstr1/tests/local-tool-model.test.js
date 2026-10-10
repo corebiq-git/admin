@@ -18,7 +18,7 @@ function makeInvoice(overrides) {
         val: 1180,
         itms: [{
             num: 1,
-            itm_det: Object.assign({ hsn_sc: '123456' }, model.calculateTaxes(1000, 18, '29', '27', 'R'))
+            itm_det: Object.assign({ hsn_sc: '123456', qty: 2, uqc: 'NOS' }, model.calculateTaxes(1000, 18, '29', '27', 'R'))
         }]
     }, overrides || {});
 }
@@ -58,6 +58,8 @@ test('builds a valid GSTR-1 shape and groups invoices by recipient', function ()
     assert.equal(payload.b2b[0].inv.length, 2);
     assert.deepEqual(payload.b2b[0].inv[0].itms[0].itm_det, {
         hsn_sc: '123456',
+        qty: 2,
+        uqc: 'NOS',
         txval: 1000,
         rt: 18,
         iamt: 180,
@@ -68,6 +70,9 @@ test('builds a valid GSTR-1 shape and groups invoices by recipient', function ()
     assert.deepEqual(payload.b2cs, []);
     assert.deepEqual(payload.nil, { inv: [] });
     assert.equal(payload.b2b[0].inv[0].itms[0].itm_det.hsn_sc, '123456');
+    assert.equal(payload.hsn.hsn_b2b.length, 1);
+    assert.equal(payload.hsn.hsn_b2b[0].qty, 4);
+    assert.equal(payload.hsn.hsn_b2b[0].val, 2360);
 });
 
 test('rejects malformed GSTINs, return periods and HSN values', function () {
@@ -85,4 +90,58 @@ test('rejects malformed GSTINs, return periods and HSN values', function () {
     assert.throws(function () {
         model.buildReturn(supplier, '102026', [makeInvoice({ idt: '31/02/2026' })]);
     }, /invoice date/i);
+});
+
+test('exports only enabled small B2C, exempt, unregistered note, e-commerce and document sections', function () {
+    var payload = model.buildReturn(supplier, '102026', {
+        invoices: [makeInvoice()],
+        sections: {
+            b2cs: [{ pos: '27', txval: 500, rt: 5 }],
+            nil: [{ sply_ty: 'INTER', kind: 'expt_amt', amount: 200 }],
+            cdnur: [{
+                ntty: 'C',
+                nt_num: 'CN-1',
+                nt_dt: '11/10/2026',
+                typ: 'B2CL',
+                pos: '27',
+                txval: 100,
+                rt: 5
+            }],
+            ecom: [{ category: 'b2c', pos: '29', txval: 400, rt: 5 }],
+            doc: [
+                { doc_typ: '1', num_from: 1, num_to: 10, total: 10, cancel: 1 },
+                { doc_typ: '1', num_from: 11, num_to: 12, total: 2, cancel: 0 }
+            ]
+        }
+    });
+
+    assert.deepEqual(payload.b2cs, [{
+        pos: '27', typ: 'OE', rt: 5, txval: 500, iamt: 25, camt: 0, samt: 0, csamt: 0
+    }]);
+    assert.deepEqual(payload.nil.inv, [{
+        sply_ty: 'INTER', expt_amt: 200, nil_amt: 0, ngsup_amt: 0
+    }]);
+    assert.equal(payload.cdnur[0].ntty, 'C');
+    assert.equal(payload.cdnur[0].itms[0].itm_det.iamt, 5);
+    assert.equal(payload.cdnur[0].diff_percent, 1);
+    assert.deepEqual(payload.ecom.b2c, [{
+        pos: '29', rt: 5, txval: 400, iamt: 0, camt: 10, samt: 10, csamt: 0
+    }]);
+    assert.equal(payload.doc_issue.doc_det.length, 1);
+    assert.equal(payload.doc_issue.doc_det[0].docs.length, 2);
+    assert.equal(payload.doc_issue.doc_det[0].docs[0].net_issue, 9);
+    assert.deepEqual(payload.b2cl, []);
+    assert.deepEqual(payload.cdnr, []);
+    assert.deepEqual(payload.ecoma.b2ba, []);
+});
+
+test('rejects invalid document ranges and disabled GSTR-1 sections', function () {
+    assert.throws(function () {
+        model.validateSectionEntry('doc', {
+            doc_typ: '1', num_from: 1, num_to: 5, total: 4, cancel: 0
+        }, supplier);
+    }, /range size/);
+    assert.throws(function () {
+        model.validateSectionEntry('b2cl', {}, supplier);
+    }, /not enabled/);
 });

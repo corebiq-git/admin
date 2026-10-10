@@ -1,6 +1,8 @@
 # COREBIQ GSTR-1 local web app
 
-The first online version is a browser-local GSTR-1 B2B invoice tool. It saves returns in IndexedDB in the current browser on the current device, exports a GSTR-1 JSON file, and can be installed as a mobile web app when served over HTTPS. It does not use Firebase, Firestore, or server-side return storage. Other return sections, imports, and the legacy API workflows are not included in this first version.
+The online version is a browser-local GSTR-1 tool. It saves returns in IndexedDB in the current browser on the current device, exports a GSTR-1 JSON file, and can be installed as a mobile web app when served over HTTPS. It does not use Firebase, Firestore, or server-side return storage.
+
+Only these GSTR-1 sections are enabled: B2B, B2C small, exempted/nil-rated/non-GST supplies, credit/debit notes for unregistered recipients, e-commerce supplies, documents issued, and the derived B2B HSN summary. Other return sections, refunds, imports, and legacy upload workflows remain disabled.
 
 ## Deploy
 
@@ -16,4 +18,4 @@ The public URL `https://admin.corebiq.com/gstr1/` must be routed by the `admin.c
 - Static app resources are downloaded from the app host. The service worker caches only the app shell/resources, not return data.
 - Server-side return API routes are disabled and return `410 Gone`.
 
-The exported JSON contains B2B invoices only. Review and validate the return in the GST portal before filing.
+The exported JSON contains data only for the enabled sections. Review and validate the return in the GST portal before filing.

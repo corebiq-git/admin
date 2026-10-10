@@ -81,6 +81,15 @@ input:focus, select:focus, button:focus-visible { outline: 3px solid #7cb5ff; ou
 .status { min-height: 1.3em; margin: 14px 0 0; }
 .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 15px; }
 .section-heading p { margin: 0; }
+.section-tabs { display: flex; gap: 8px; overflow-x: auto; margin: 16px 0 20px; padding-bottom: 8px; }
+.section-tab { flex: 0 0 auto; min-height: 40px; padding: 8px 12px; border: 1px solid #c7d2df; border-radius: 6px; background: #fff; color: #29415f; font: inherit; cursor: pointer; }
+.section-tab.active { border-color: #1758a6; background: #1758a6; color: #fff; }
+.section-panel h3 { margin: 0 0 14px; color: #173861; }
+.section-table-wrap { margin-top: 16px; }
+.summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-top: 14px; }
+.summary-card { padding: 14px; border: 1px solid #dce3eb; border-radius: 7px; background: #f8fafc; }
+.summary-card strong { display: block; color: #102b5c; }
+.summary-card span { color: #59697d; font-size: 14px; }
 .table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; text-align: left; }
 th, td { padding: 11px 9px; border-bottom: 1px solid #e4e9ef; white-space: nowrap; }
@@ -96,6 +105,7 @@ td { font-size: 14px; }
   .card { padding: 17px 14px; }
   .form-grid { grid-template-columns: 1fr; gap: 13px; }
   .section-heading { align-items: flex-start; flex-direction: column; }
+  .section-tabs { margin-left: -2px; margin-right: -2px; }
   .section-heading .button { width: 100%; }
   .actions.align-end .button, .actions .button { width: 100%; }
   th, td { padding: 9px 7px; }

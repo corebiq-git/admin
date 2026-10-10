@@ -1,6 +1,6 @@
 'use strict';
 
-var CACHE_NAME = 'corebiq-gstr1-local-v1';
+var CACHE_NAME = 'corebiq-gstr1-local-v2';
 var CACHE_PREFIX = 'corebiq-gstr1-local-';
 var APP_ASSETS = [
     './',
