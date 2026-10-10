@@ -1,0 +1,145 @@
+doctype html
+html(ng-app='returnsApp')
+  head
+    title COREBIQ GSTR1 TOOL
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(http-equiv='Cache-control', content='no-cache, no-store, must-revalidate')
+    meta(http-equiv='pragma', content='no-cache')
+    meta(http-equiv='Expires', content='0')
+    meta(http-equiv='Content-type', content='text/html; charset=utf-8')
+    meta(name='keywords', content='')
+    meta(name='description', content='')
+    meta(name='viewport', content='initial-scale=1')
+    base(href=basePath + '/')
+    script.
+      window.COREBIQ_REQUIRE_AUTH = #{requireAuth};
+      window.COREBIQ_BASE_PATH = '#{basePath}';
+    link(rel='stylesheet', href='uiassets/css/fwk/bootstrap1.0.css')
+    link(rel='stylesheet', href='uiassets/css/fwk/font-awesome.min.css')
+    link(rel='stylesheet', href='uiassets/css/fwk/ng-table.min.css')
+    link(rel='stylesheet', href='uiassets/css/fwk/datepicker1.0.css')
+    link(rel='stylesheet', href='uiassets/css/app1.0.css', title='app-css')
+    link(rel='stylesheet', href='uiassets/css/app_overide.css', title='app-css')
+    //[if lt IE 10]>
+      <script>alert("This tool does not work in Internet Explorer 10 and below!\n\nPlease upgrade to a newer version of InternetExplorer or switch to Chrome or Firefox.");setTimeout(function(){document.body.innerHTML = "This tool does not work in Internet Explorer 9 and below!\n\nPlease upgrade to a newer version of InternetExplorer or switch to Chrome or Firefox.";}, 2000);</script>
+      <![endif]
+  body(data-ng-controller='transctrl', ng-init="init('returns')")
+  header#rtHeader.main-header.fade-ng-cloak
+    .container.w100
+      .row.branding
+        .col-xs-12
+          a.corebiq-brand(href='#/home', title='COREBIQ GSTR1 TOOL') COREBIQ
+          h1.site-title
+            a(href='#/home') COREBIQ GSTR1 TOOL
+          button.btn.btn-default.auth-logout(type='button', data-ng-if='$root.authRequired && $root.currentUser', data-ng-click='$root.logout()') Sign out
+          ul.list-inline.mlinks(ng-if='info && info.fy && info.isUpload=="N"')
+            li.gsHdInfo
+              a.bl0(href='#/gstr/dashboard', data-ng-bind='info.form')
+              a.bl0(href='#/gstr/dashboard', data-ng-bind='info.gstn')
+              a.bl0(href='#/gstr/dashboard', data-ng-bind='info.fy')
+              a(href='#/gstr/dashboard', data-ng-bind='info.month')
+          ul.list-inline.mlinks(ng-if='info && info.fy && info.isUpload=="Y"')
+            li.gsHdInfo
+              a.bl0(href='#/gstr/upload/dashboard', data-ng-bind='info.form')
+              a.bl0(href='#/gstr/upload/dashboard', data-ng-bind='info.gstn')
+              a.bl0(href='#/gstr/upload/dashboard', data-ng-bind='info.fy')
+              a(href='#/gstr/upload/dashboard', data-ng-bind='info.month')
+          ul.list-inline.mlinks(ng-if='info && info.fy && info.isUpload=="E"')
+            li.gsHdInfo
+              a.bl0(href='#/gstr/error/dashboard', data-ng-bind='info.form')
+              a.bl0(href='#/gstr/error/dashboard', data-ng-bind='info.gstn')
+              a.bl0(href='#/gstr/error/dashboard', data-ng-bind='info.fy')
+              a(href='#/gstr/error/dashboard', data-ng-bind='info.month')
+          ul.list-inline.mlinks(ng-if='infoRfd && infoRfd.fy && infoRfd.isUpload=="N"')
+            li.gsHdInfo
+              a.bl0(href='#/refunds/dashboard', data-ng-bind='infoRfd.form | uppercase')
+              a.bl0(href='#/refunds/dashboard', data-ng-bind='infoRfd.gstn')
+              a.bl0(href='#/refunds/dashboard', data-ng-bind='infoRfd.fy')
+              a(href='#/refunds/dashboard', data-ng-bind='infoRfd.month')
+  #authPanel.auth-panel(data-ng-if='$root.authRequired && $root.authReady && !$root.currentUser', data-ng-controller='firebaseAuthCtrl')
+    .auth-card
+      h2 COREBIQ GSTR1 TOOL
+      p Sign in to access your GST returns. Each account's files are stored separately.
+      p.auth-error(data-ng-if='message', role='alert', data-ng-bind='message')
+      form(data-ng-submit='signIn()', novalidate)
+        label(for='authEmail') Email
+        input#authEmail.form-control(type='email', data-ng-model='email', autocomplete='email', required)
+        label(for='authPassword') Password
+        input#authPassword.form-control(type='password', data-ng-model='password', autocomplete='current-password', required)
+        button.btn.btn-primary(type='submit', data-ng-disabled='busy') Sign in
+        button.btn.btn-default(type='button', data-ng-click='createAccount()', data-ng-disabled='busy') Create account
+        button.btn.btn-link(type='button', data-ng-click='resetPassword()', data-ng-disabled='busy') Reset password
+      p.auth-error(data-ng-if='$root.authError', role='alert', data-ng-bind='$root.authError')
+  #rtContainer.content-wrapper
+    .dimmer-holder
+      #dimmer
+    .container.fade-ng-cloak.w100(data-ng-if='!$root.authRequired || ($root.authReady && $root.currentUser)')
+      .mypage
+        div(data-ng-controller='mainctrl', ng-view='')
+  footer.offFtr
+    #demo.ifooter
+      .f2
+        .container
+          .row
+            .col-xs-14
+              p COREBIQ GSTR1 TOOL
+  a.back-to-top
+    i.fa.fa-angle-up
+  #ngProgress-container
+    #ngProgress(style='height: 2px; background-color: firebrick; color: firebrick; width: 0%; opacity: 1;')
+  style(type='text/css').
+    .offFtr {
+    padding-top: 0; margin:0; height:100%;
+    }
+    .corebiq-brand { display:inline-block; font-weight:bold; font-size:22px; margin:12px 18px 12px 0; color:#0B1E59; text-decoration:none; }
+    .auth-logout { float:right; margin-top:14px; }
+    .auth-panel { max-width:480px; margin:60px auto; padding:0 16px; }
+    .auth-card { padding:28px; background:#fff; border:1px solid #ddd; border-radius:6px; box-shadow:0 2px 12px rgba(0,0,0,.1); }
+    .auth-card h2 { margin-top:0; color:#0B1E59; }
+    .auth-card label { display:block; margin-top:14px; }
+    .auth-card input { margin-bottom:12px; }
+    .auth-card button { margin:8px 6px 0 0; }
+    .auth-error { color:#a94442; margin:10px 0; }
+  script(src='https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js')
+  script(src='https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js')
+  script(src='#{basePath}/firebase-config.js')
+  script(src='#{basePath}/uiassets/js/auth/firebase-init.js')
+  script(src='uiassets/javascripts/fwk/script.min.js')
+  script(src='uiassets/javascripts/fwk/uiscripts.js')
+  script(src='uiassets/javascripts/fwk/datepicker.min.1.4.js')
+  script(src='uiassets/js/common/common1.3.js')
+  script(src='uiassets/javascripts/fwk/angular.min.js')
+  script(src='#{basePath}/uiassets/javascripts/fwk1/angular-route.min.js')
+  script(src='#{basePath}/uiassets/javascripts/fwk1/angular-local-storage.min.0.2.7.js')
+  script(src='uiassets/javascripts/fwk1/angular-csv-import.js')
+  script(src='uiassets/js/returns/xlsx.js')
+  //script(src='uiassets/javascripts/fwk1/xlsx.full.min.js')
+  script(src='uiassets/javascripts/fwk1/ods.js')
+  script(src='uiassets/javascripts/fwk1/dirPagination/dirPagination.js')
+  script(src='uiassets/javascripts/fwk1/angular-resource.min.js')
+  script(src='uiassets/javascripts/fwk/ngprogress.min.js')
+  script(src='uiassets/javascripts/fwk/pdfmake.min.js')
+  script(src='uiassets/javascripts/fwk/vfs_fonts.js')
+  script(src='uiassets/javascripts/fwk/ng-table.min.js')
+  script(src='uiassets/javascripts/fwk/jszip.min.js')
+  script(src='uiassets/javascripts/fwk/FileSaver.js')
+  script(src='uiassets/js/returns/returns.fct.js')
+  script(src='uiassets/js/returns/returns.filter.js')
+  script(src='uiassets/js/returns/pastecontentdirctiv.js')
+  script(src='uiassets/js/returns/returns.directives.js')
+  script(src='uiassets/js/returns/returns.app.js')
+  script(src='uiassets/js/auth/firebase-auth.js')
+  script(src='uiassets/js/common/directives1.4.js')
+  script(src='uiassets/js/returns/returns.ctrl.js')
+  script(src='uiassets/js/returns/returns1.ctrl.js')
+  script(src='uiassets/js/returns/returns2.ctrl.js')
+  script(src='uiassets/js/returns/returns1a.ctrl.js')
+  script(src='uiassets/js/returns/gstr2a.ctrl.js')
+  script(src='uiassets/js/refunds/refunds.fct.js')
+  script(src='uiassets/js/refunds/refunds.app.js')
+  script(src='uiassets/js/refunds/refunds.directives.js')
+  script(src='uiassets/js/refunds/refunds.ctrl.js')
+  script(src='uiassets/js/refunds/refunds1.ctrl.js')
+  script(src='uiassets/js/returns/angularjs-dropdown-multiselect.js')

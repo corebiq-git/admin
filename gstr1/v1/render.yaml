@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: corebiq-gstr1-tool
+    runtime: node
+    plan: starter
+    rootDir: gstr1
+    autoDeployTrigger: commit
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /gstr1/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: BASE_PATH
+        value: /gstr1
