@@ -1,0 +1,238 @@
+{
+    "GSTR1": [
+        {
+            "cd": "b2b",
+            "url": "/pages/returns/gstr1/b2b/summary.html",
+            "nm": "B2B, SEZ, DE Invoices - 4A, 4B, 6B, 6C"
+        },
+        {
+            "cd": "b2ba",
+            "url": "/pages/returns/gstr1/b2ba/summary.html",
+            "nm": "Amended B2B Invoices"
+        },
+        {
+            "cd": "b2cl",
+            "url": "/pages/returns/gstr1/b2cl/summary.html",
+            "nm": "B2C(Large) Invoices - 5A, 5B"
+        },
+        {
+            "cd": "b2cla",
+            "url": "/pages/returns/gstr1/b2cla/summary.html",
+            "nm": "Amended B2C(Large) Invoices"
+        },
+        {
+            "cd": "b2cs",
+            "url": "/pages/returns/gstr1/b2cs/summary.html",
+            "nm": "B2C(Small) Details - 7"
+        },
+        {
+            "cd": "b2csa",
+            "url": "/pages/returns/gstr1/b2csa/summary.html",
+            "nm": "Amended B2C(Small) Details"
+        },
+        {
+            "cd": "cdnr",
+            "url": "/pages/returns/gstr1/cdnr/summary.html",
+            "nm": "Credit/Debit Notes(Registered) - 9B"
+        },
+        {
+            "cd": "cdnra",
+            "url": "/pages/returns/gstr1/cdnra/summary.html",
+            "nm": "Amended Credit/Debit Notes(Registered)"
+        },
+        {
+            "cd": "cdnur",
+            "url": "/pages/returns/gstr1/cdnur/summary.html",
+            "nm": "Credit/Debit Notes(Unregistered) - 9B"
+        },
+        {
+            "cd": "cdnura",
+            "url": "/pages/returns/gstr1/cdnura/summary.html",
+            "nm": "Amended Credit/Debit Notes(Unregistered)"
+        },
+        {
+            "cd": "exp",
+            "url": "/pages/returns/gstr1/exp/summary.html",
+            "nm": "Exports Invoices - 6A"
+        },
+        {
+            "cd": "expa",
+            "url": "/pages/returns/gstr1/expa/summary.html",
+            "nm": "Amended Exports Invoices"
+        },
+        {
+            "cd": "at",
+            "url": "/pages/returns/gstr1/at/summary.html",
+            "nm": "Tax Liability(Advances Recieved) - 11A(1), 11A(2)"
+        },
+        {
+            "cd": "ata",
+            "url": "/pages/returns/gstr1/ata/summary.html",
+            "nm": "Amended Tax Liability(Advances Recieved)"
+        },
+        {
+            "cd": "atadj",
+            "url": "/pages/returns/gstr1/atadj/summary.html",
+            "nm": "Adjustment of Advances - 11B(1), 11B(2)"
+        },
+        {
+            "cd": "atadja",
+            "url": "/pages/returns/gstr1/atadja/summary.html",
+            "nm": "Amended Adjustment of Advances"
+        },
+        
+        {
+            "cd": "nil",
+            "url": "/pages/returns/gstr1/nil/summary.html",
+            "nm": "Nil Rated Invoices"
+        },
+        {
+            "cd": "doc_issue",
+            "url": "/pages/returns/gstr1/doc/summary.html",
+            "nm": "Documents Issued"
+        }
+    ],
+    "GSTR1A": [
+        {
+            "cd": "b2b",
+            "url": "/pages/returns/upload/gstr1a/b2b/counterpartysummary.html",
+            "nm": "B2B Invoices"
+        },
+        {
+            "cd": "cdnr",
+            "url": "/pages/returns/upload/gstr1a/cdnr/counterpartysummary.html",
+            "nm": "Credit/Debit Notes"
+        }
+    ],
+    "GSTR1IFF":[
+        {
+            "cd": "b2b",
+            "url": "/pages/returns/gstr1/b2b/summary.html",
+            "nm": "B2B, SEZ, DE Invoices - 4A, 4B, 6B, 6C"
+        },
+        {
+            "cd": "b2ba",
+            "url": "/pages/returns/gstr1/b2ba/summary.html",
+            "nm": "Amended B2B Invoices"
+        },
+        {
+            "cd": "cdnr",
+            "url": "/pages/returns/gstr1/cdnr/summary.html",
+            "nm": "Credit/Debit Notes(Registered) - 9B"
+        },
+        {
+            "cd": "cdnra",
+            "url": "/pages/returns/gstr1/cdnra/summary.html",
+            "nm": "Amended Credit/Debit Notes(Registered)"
+        }
+    ],
+    "GSTR2": [
+        {
+            "cd": "b2b",
+            "url": "/pages/returns/gstr2/b2b/summary.html",
+            "nm": "B2B Invoices"
+        },
+        {
+            "cd": "b2bur",
+            "url": "/pages/returns/gstr2/b2bur/summary.html",
+            "nm": "B2BUR Invoices"
+        },
+        {
+            "cd": "cdnr",
+            "url": "/pages/returns/gstr2/cdnr/summary.html",
+            "nm": "Credit/Debit Notes"
+        },
+        {
+            "cd": "cdnur",
+            "url": "/pages/returns/gstr2/cdnur/summary.html",
+            "nm": "Credit/Debit Notes Unregister"
+        },
+        {
+            "cd": "imp_g",
+            "url": "/pages/returns/gstr2/imp_g/summary.html",
+            "nm": "Import Of Goods/Capital Goods"
+        },
+        {
+            "cd": "imp_s",
+            "url": "/pages/returns/gstr2/imp_s/summary.html",
+            "nm": "Import Of Services"
+        },
+        {
+            "cd": "txi",
+            "url": "/pages/returns/gstr2/txi/summary.html",
+            "nm": "Tax Liability(Advances Paid)"
+        },
+        {
+            "cd": "hsnsum",
+            "url": "/pages/returns/gstr2/hsn/summary.html",
+            "nm": "HSN/SAC Summary of Inward Supplies"
+        },
+        {
+            "cd": "itc_rvsl",
+            "url": "/pages/returns/gstr2/itc_rvsl/summary.html",
+            "nm": "ITC Reversal"
+        },
+        {
+            "cd": "nil",
+            "url": "/pages/returns/gstr2/nil/summary.html",
+            "nm": "Nil Rated Invoices"
+        },
+        {
+            "cd": "atadj",
+            "url": "/pages/returns/gstr2/atadj/summary.html",
+            "nm": "Adjustment of Advances"
+        }
+    ],
+		"GSTR2A": [
+        {
+            "cd": "b2b",
+            "url": "/pages/returns/upload/gstr2a/b2b/summary.html",
+            "nm": "B2B Invoices"
+        },
+        {
+            "cd": "cdnr",
+            "url": "/pages/returns/upload/gstr2a/cdnr/summary.html",
+            "nm": "Credit/Debit Notes"
+        },
+        {
+            "cd": "b2ba",
+            "url": "/pages/returns/upload/gstr2a/b2ba/summary.html",
+            "nm": "Amended B2B Invoices"
+        },
+        {
+            "cd": "cdnra",
+            "url": "/pages/returns/upload/gstr2a/cdnra/summary.html",
+            "nm": "Amended Credit/Debit Notes"
+        },
+        {
+            "cd": "isd",
+            "url": "/pages/returns/upload/gstr2a/isd/summary.html",
+            "nm": "Internal Service Distribution"
+        },
+        {
+            "cd": "isda",
+            "url": "/pages/returns/upload/gstr2a/isda/summary.html",
+            "nm": "Amended Internal Service Distribution"
+        },
+        {
+            "cd": "tds",
+            "url": "/pages/returns/upload/gstr2a/tds/summary.html",
+            "nm": "TDS"
+        },
+        {
+            "cd": "tdsa",
+            "url": "/pages/returns/upload/gstr2a/tdsa/summary.html",
+            "nm": "Amended TDSA"
+        },
+        {
+            "cd": "impg",
+            "url": "/pages/returns/upload/gstr2a/impg/summary.html",
+            "nm": "Import of goods from overseas on bill of entry"
+        },
+        {
+            "cd": "impgsez",
+            "url": "/pages/returns/upload/gstr2a/impgsez/summary.html",
+            "nm": "Import of goods from SEZ units / developers on bill of entry"
+        }
+    ]
+}

@@ -1,0 +1,153 @@
+{
+  "state": [
+    {
+      "cd": "01",
+      "nm": "Jammu and Kashmir"
+    },
+    {
+      "cd": "02",
+      "nm": "Himachal Pradesh"
+    },
+    {
+      "cd": "03",
+      "nm": "Punjab"
+    },
+    {
+      "cd": "04",
+      "nm": "Chandigarh"
+    },
+    {
+      "cd": "05",
+      "nm": "Uttarakhand"
+    },
+    {
+      "cd": "06",
+      "nm": "Haryana"
+    },
+    {
+      "cd": "07",
+      "nm": "Delhi"
+    },
+    {
+      "cd": "08",
+      "nm": "Rajasthan"
+    },
+    {
+      "cd": "09",
+      "nm": "Uttar Pradesh"
+    },
+    {
+      "cd": "10",
+      "nm": "Bihar"
+    },
+    {
+      "cd": "11",
+      "nm": "Sikkim"
+    },
+    {
+      "cd": "12",
+      "nm": "Arunachal Pradesh"
+    },
+    {
+      "cd": "13",
+      "nm": "Nagaland"
+    },
+    {
+      "cd": "14",
+      "nm": "Manipur"
+    },
+    {
+      "cd": "15",
+      "nm": "Mizoram"
+    },
+    {
+      "cd": "16",
+      "nm": "Tripura"
+    },
+    {
+      "cd": "17",
+      "nm": "Meghalaya"
+    },
+    {
+      "cd": "18",
+      "nm": "Assam"
+    },
+    {
+      "cd": "19",
+      "nm": "West Bengal"
+    },
+    {
+      "cd": "20",
+      "nm": "Jharkhand"
+    },
+    {
+      "cd": "21",
+      "nm": "Odisha"
+    },
+    {
+      "cd": "22",
+      "nm": "Chhattisgarh"
+    },
+    {
+      "cd": "23",
+      "nm": "Madhya Pradesh"
+    },
+    {
+      "cd": "24",
+      "nm": "Gujarat"
+    },
+    {
+      "cd": "25",
+      "nm": "Daman and Diu"
+    },
+    {
+      "cd": "26",
+      "nm": "Dadra and Nagar Haveli and Daman and Diu"
+    },
+    {
+      "cd": "27",
+      "nm": "Maharashtra"
+    },
+    {
+      "cd": "29",
+      "nm": "Karnataka"
+    },
+    {
+      "cd": "30",
+      "nm": "Goa"
+    },
+    {
+      "cd": "31",
+      "nm": "Lakshadweep"
+    },{
+      "cd": "32",
+      "nm": "Kerala"
+    },{
+      "cd": "33",
+      "nm": "Tamil Nadu"
+    },{
+      "cd": "34",
+      "nm": "Pondicherry"
+    },{
+      "cd": "35",
+      "nm": "Andaman and Nicobar Islands"
+    },
+    {
+      "cd": "36",
+      "nm": "Telangana"
+    },
+    {
+      "cd": "37",
+      "nm": "Andhra Pradesh"
+    },
+	{
+      "cd": "38",
+      "nm": "Ladakh"
+    },
+    {
+      "cd": "97",
+      "nm": "Other Territory"
+    }
+    
+  ]
+}

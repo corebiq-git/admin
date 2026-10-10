@@ -1,0 +1,17 @@
+{
+    "statement1": [{
+        "cd": "statement1",
+        "url": "/pages/refunds/statements/statement1.summary.html",
+        "nm": "Statement1 Summary"
+    }],
+    "statement2": [{
+        "cd": "statement2",
+        "url": "/pages/refunds/statements/statement2.summary.html",
+        "nm": "Statement2 Summary"
+    }],
+    "statement3": [{
+        "cd": "statement3",
+        "url": "/pages/refunds/statements/statement3.summary.html",
+        "nm": "statement3 Summary"
+    }]
+}
