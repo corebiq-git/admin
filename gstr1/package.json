@@ -1,0 +1,49 @@
+{
+  "name": "corebiq-gstr1-tool",
+  "main": "app.js",
+  "version": "2.2.3",
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "adm-zip": "^0.6.1",
+    "async": "^2.3.0",
+    "body-parser": "^1.17.1",
+    "cookie-parser": "^1.4.3",
+    "debug": "^2.6.3",
+    "del": "^2.2.2",
+    "delete": "^1.0.1",
+    "excel4node": "^1.7.2",
+    "express": "^4.21.2",
+    "fs": "^0.0.2",
+    "http": "0.0.0",
+    "jade": "^0.29.0",
+    "json-size": "^1.0.0",
+    "jsonschema": "^1.2.6",
+    "utf8-length": "^0.0.1",
+    "logger": "^0.0.1",
+    "mkdirp": "^0.5.1",
+    "moment": "^2.18.1",
+    "morgan": "^1.8.1",
+    "multer": "^2.4.0",
+    "node-cache": "^4.1.1",
+    "node-native-zip": "^1.1.0",
+    "node.extend": "^2.0.0",
+    "omit-empty": "^0.4.1",
+    "path": "^0.12.7",
+    "underscore": "^1.8.3",
+    "winston": "^2.3.1",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
+    "firebase-admin": "^14.5.0"
+  },
+  "overrides": {
+    "excel4node": {
+      "image-size": "^2.0.4",
+      "uuid": "^11.1.1"
+    }
+  }
+}
