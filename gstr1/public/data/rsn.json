@@ -1,0 +1,33 @@
+{
+  "reason": [
+    {
+      "cd": "01",
+      "nm": "Sales Return"
+    },
+    {
+      "cd": "02",
+      "nm": "Post Sale Discount"
+    },
+    {
+      "cd": "03",
+      "nm": "Deficiency in services"
+    },
+    {
+      "cd": "04",
+      "nm": "Correction in Invoice"
+    },
+    {
+      "cd": "05",
+      "nm": "Change in POS"
+    },
+    {
+      "cd": "06",
+      "nm": "Finalization of Provisional assessment"
+    },
+    {
+      "cd": "07",
+      "nm": "Others"
+    }
+   
+  ]
+}

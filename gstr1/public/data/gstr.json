@@ -1,0 +1,32 @@
+{
+    "gstr": [{
+        "cd": "GSTR1",
+        "nm": "GSTR1",
+		"desc":"GSTIN of Supplier"
+    }, {
+        "cd": "GSTR2",
+        "nm": "GSTR2",
+		"desc":"GSTIN of Receiver",
+        "disabled": true
+    }, {
+        "cd": "GSTR1A",
+        "nm": "GSTR1A",
+		"desc":"GSTIN of Receiver",
+        "disabled": true
+    }],
+    "gstriff": [{
+        "cd": "GSTR1IFF",
+        "nm": "GSTR-1/IFF",
+		"desc":"GSTIN of Supplier"
+    }, {
+        "cd": "GSTR2",
+        "nm": "GSTR2",
+		"desc":"GSTIN of Receiver",
+        "disabled": true
+    }, {
+        "cd": "GSTR1A",
+        "nm": "GSTR1A",
+		"desc":"GSTIN of Receiver",
+        "disabled": true
+    }]
+}

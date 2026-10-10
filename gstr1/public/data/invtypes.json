@@ -1,0 +1,18 @@
+{
+    "b2b": [{
+        "c": "R",
+        "n": "Regular"
+    }, {
+        "c": "DE",
+        "n": "Deemed Exports"
+    }, {
+        "c": "SEWP",
+        "n": "SEZ Supplies with payment"
+    }, {
+        "c": "SEWOP",
+        "n": "SEZ Supplies without payment"
+    }, {
+        "c": "CBW",
+        "n": "Intra-State supplies attracting IGST"
+    }]
+}

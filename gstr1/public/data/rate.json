@@ -1,0 +1,71 @@
+{
+    "IGST": [{
+        "value": 0
+    }, {
+        "value": 5
+    }, {
+        "value": 12
+    }, {
+        "value": 18
+    }, {
+        "value": 28
+    }],
+    "CommGST": [{
+        "value": 0
+    }, {
+        "value": 0.1
+    },{
+        "value": 0.25
+    }, {
+        "value": 1
+    },{
+        "value": 1.5
+    },{
+        "value": 3
+    }, {
+        "value": 5
+    }, {
+        "value": 6
+    },{
+        "value": 7.5
+    },{
+        "value": 12
+    }, {
+        "value": 18
+    }, {
+        "value": 28
+    }, {
+        "value": 40
+    }],
+    "CGST": [{
+        "value": 0
+    }, {
+        "value": 2.5
+    }, {
+        "value": 6
+    }, {
+        "value": 9
+    }, {
+        "value": 14
+    }],
+    "SGST": [{
+        "value": 0
+    }, {
+        "value": 2.5
+    }, {
+        "value": 6
+    }, {
+        "value": 9
+    }, {
+        "value": 14
+    }],
+    "CESS": [{
+        "value": 0
+    }, {
+        "value": 15
+    }, {
+        "value": 135
+    }, {
+        "value": 290
+    }]
+}

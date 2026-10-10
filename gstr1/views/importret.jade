@@ -1,0 +1,67 @@
+doctype html
+html
+  head
+    title GSTR Returns
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    meta(http-equiv='Cache-control', content='no-cache, no-store, must-revalidate')
+    meta(http-equiv='pragma', content='no-cache')
+    meta(http-equiv='Expires', content='0')
+    meta(http-equiv='Content-type', content='text/html; charset=utf-8')
+    meta(name='keywords', content='')
+    meta(name='description', content='')
+    meta(name='viewport', content='initial-scale=1')
+    link(rel='stylesheet', type='text/css', href='/stylesheets/jquery-ui.min.css')
+    link(rel='stylesheet', type='text/css', href='/stylesheets/bootstrap.min.css')
+    link(rel='stylesheet', type='text/css', href='/stylesheets/buttons.dataTables.min.css')
+    link(rel='stylesheet', type='text/css', href='/stylesheets/style.css')
+    link(rel='stylesheet', type='text/css', href='/stylesheets/buttons.dataTables.css')
+    link(rel='stylesheet', type='text/css', href='/stylesheets/angular-datepicker.min.css')
+    link(rel='stylesheet', type='text/css',  href='/stylesheets/font-awesome.min.css')
+    body(ng-app='returnsApp')
+    
+    .col-lg-12.col-sm-12.col-xs-12.col-md-12
+      .row.back-color        
+        .col-lg-6.col-md-5.col-sm-7.col-xs-10
+          h3 Goods and Services Tax
+        .col-lg-6.col-md-6.col-sm-4.col-xs-12
+          h3.pull-right GSTR Returns
+    .clearfix
+    .header-style1      
+    .header-style2      
+    .clearfix05   
+    .clearfix05   
+    .clearfix05   
+     .container-fluid
+      .col-lg-10.col-sm-6.col-md-12.col-sm-12.pad-l-0.pad-r-0
+        i.glyphicon.glyphicon-home
+        span.small-size
+        span GSTR
+      .col-lg-2.col-sm-6.col-md-12.col-sm-12.menufont(ng-controller='transctrl')
+        span.language.dropdown(ng-init="selectLang('en')")
+          i.fa.fa-globe
+          span.dropdown-toggle(data-toggle='dropdown') {{selectedLang}}
+          ul.dropdown-menu
+            li(ng-repeat='language in language')
+              a(ng-click='selectLang(language.cd)', href='') {{language.nm}}
+    div(ng-view='')
+  script(type='text/javascript', src='/javascripts/fwk/jquery-1.11.2.min.js')
+  script(type='text/javascript', src='/javascripts/fwk/bootstrap.min.js')
+  script(type='text/javascript', src='/javascripts/fwk/angular.min.js')
+  script(type='text/javascript', src='/javascripts/fwk/jquery.dataTables.js')
+  script(type='text/javascript', src='/javascripts/fwk/jquery.tabletojson.js')
+  script(type='text/javascript', src='/javascripts/fwk/dataTables.bootstrap.min.js')
+  script(type='text/javascript', src='/javascripts/fwk/dataTables.buttons.min.js')
+  script(type='text/javascript', src='/javascripts/fwk/angular-resource.min.js')
+  script(type='text/javascript', src='/javascripts/fwk/angular-route.min.js')  
+  script(type='text/javascript', src='/javascripts/fwk/smart-table.js')
+  script(type='text/javascript', src='/javascripts/fwk/angular-datepicker.min.js')
+  script(type='text/javascript', src='/javascripts/fwk/dataTables.buttons.min.js')
+  script(type='text/javascript', src='/javascripts/fwk/simplePagination.js')
+  script(type='text/javascript', src='/javascripts/fwk/jszip.js')
+  script(type='text/javascript', src='/javascripts/fwk/FileSaver.js')
+  script(type='text/javascript', src='/javascripts/fwk/angular-datatables.buttons.min.js')    
+  script(type='text/javascript', src='/javascripts/returnsctrl1.js')
+  script(type='text/javascript', src='/javascripts/common.js')
+  script(type='text/javascript', src='/uiassets/js/returns/angularjs-dropdown-multiselect.js')
+  style(type='text/css').

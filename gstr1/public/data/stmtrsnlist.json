@@ -1,0 +1,12 @@
+{
+    "reasonList": [{
+        "name": "Excess Balance in Cash Ledger",
+        "id": "EXBCL"
+    }, {
+        "name": "Export of Goods/Services With Payment of Tax",
+        "id": "EXPWP"
+    }, {
+        "name": "Export of Goods/Services Without Payment of Tax",
+        "id": "EXPWOP"
+    }]
+}

@@ -1,0 +1,15 @@
+{
+    "statementList": [{
+            "cd": "statement2",
+            "desc": "GSTIN of Supplier",
+            "nm": "Statement2",
+            "reasonId": "EXPWP"
+        },
+        {
+            "cd": "statement3",
+            "desc": "GSTIN of Supplier",
+            "nm": "Statement3",
+            "reasonId": "EXPWOP"
+        }
+    ]
+}
