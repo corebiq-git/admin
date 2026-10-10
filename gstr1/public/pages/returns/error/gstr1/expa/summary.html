@@ -1,0 +1,151 @@
+<div data-ng-controller="errorreturnsctrl">
+    <div class="tabpane">
+        <!-- <p class="mand-text" data-ng-bind="trans.HLP_MAND_FIELD"></p> -->
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="table-responsive">
+                    <table class="table tbl exp inv table-bordered" ng-show="ErrorList.length>0">
+                        <thead>
+                            <tr>
+                                <th class="text-center">
+                                    <input type="checkbox" class="chkbx" ng-model="selectAll" ng-click="checkAll()" ng-checked="allSelected()" />
+                                    <label for="checkbox_all"></label>
+                                </th>
+                                <th class="gstTblHeadr spTblHdr reg m-cir" data-ng-bind="trans.HEAD_GST_PAY"></th>
+                                <th class="gstTblHeadr m100TblHdr reg m-cir sort" data-ng-bind="trans.LBL_ORIGINAL_INVOICE_NUMBER" ng-click="sort('oinum')"></th>
+                                <th class="gstTblHeadr dtTblHdr reg m-cir sort" data-ng-bind="trans.LBL_ORIGINAL_INVOICE_DATE" ng-click="sort('oidt')"></th>
+                                <th class="gstTblHeadr m100TblHdr reg m-cir sort" data-ng-bind="trans.LBL_REV_INVOICE_NUMBER" ng-click="sort('inum')"></th>
+                                <th class="gstTblHeadr dtTblHdr reg m-cir sort" data-ng-bind="trans.LBL_REV_INVOICE_DATE" ng-click="sort('idt')"></th>
+                                <th class="gstTblHeadr m100TblHdr reg m-cir sort" data-ng-bind="trans.LBL_INVOICE_VALUE" ng-click="sort('val')"></th>
+                                <th class="gstTblHeadr w100TblHdr reg sort" data-ng-bind="trans.HEAD_PORT_CD" ng-click="sort('sbpcode')"></th>
+                                <th class="gstTblHeadr w100TblHdr reg  sort" data-ng-bind="trans.HEAD_SHIP_BILL_NO" ng-click="sort('sbnum')"></th>
+                                <th class="gstTblHeadr dtTblHdr reg  sort" data-ng-bind="trans.HEAD_SHIP_BILL_DATE" ng-click="sort('sbdt')"></th>
+                                <!--<th class="gstTblHeadr m100TblHdr reg m-cir sort" data-ng-bind="trans.LBL_ORD_NO" ng-click="sort('od_num')"></th>
+                                <th class="gstTblHeadr dtTblHdr reg m-cir sort" data-ng-bind="trans.LBL_ORD_DATE" ng-click="sort('od_dt')"></th>-->
+                                <th class="gstTblHeadr spTblHdr reg m-cir sort" data-ng-bind="trans.LBL_SUPPLY_TYPE"></th>
+                                <th class="gstTblHeadr errMsg">Error Message</th>
+                                <th class="gstTblHeadr m100TblHdr" data-ng-bind="trans.HEAD_ACTIONS"></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <!--                            <tr data-ng-repeat="y in ErrorList">-->
+                            <tr dir-paginate="y in ErrorList | filter:searchInvNum | orderBy:sortBy:sortReverse | itemsPerPage: pageSize" current-page="currentPage"
+                                ng-form="invFrm" ng-init="y.old_inum=y.inum">
+                                <td class="text-center">
+                                    <input type="checkbox" class="chkbx" ng-model="y.select" />
+                                    <label for="checkbox_all"></label>
+                                </td>
+                                <td data-ng-class="{'has-error': (!y.exp_typ)}">
+                                    <select class="form-control" ng-options="opt.name as opt.id for opt in users" ng-model="y.exp_typ" data-ng-disabled="!invFrm.edb"></select>
+                                </td>
+
+                                <td data-ng-class="{'has-error':  (invFrm.oinum.$error.pattern || invFrm.oinum.$error.required || invFrm.oinum.$invalid)}">
+                                    <input name="c" type="text" class="form-control text-left" data-ng-pattern="validations.formats.invoiceregex" data-ng-model="y.oinum"
+                                        data-ng-change="isDuplicateInvoice(0,y,'oinum',invFrm)" data-ng-focus="freezeOrder('oinum')"
+                                        data-ng-model-options="{updateOn:'blur'}" ng-required="true" data-ng-disabled="!invFrm.edb">
+                                </td>
+                                <td data-ng-class="{'has-error': (invFrm.oidt.$error.pattern || invFrm.oidt.$error.required)}">
+                                    <div class="datepicker-icon input-group">
+                                        <div class="datepicker-icon input-group">
+                                            <i class="fa fa-calendar"></i>
+                                            <input name="oidt" class="form-control date-picker" data-ng-model="y.oidt" data-datepicker ng-required="true" data-min-years="{{minYearsAllowed}}"
+                                                data-min-date="{{minDate()}}" data-max-date="{{datefunc()}}" data-ng-disabled="!invFrm.edb"
+                                            />
+                                            <span class="input-group-addon"><span class="fa fa-calendar" ></span></span>
+                                        </div>
+                                    </div>
+                                </td>
+
+
+
+                                <td data-ng-class="{'has-error':  (invFrm.inum.$error.pattern || invFrm.inum.$error.required || invFrm.inum.$invalid)}">
+                                    <input name="inum" type="text" class="form-control text-left" data-ng-pattern="validations.formats.invoiceregex" data-ng-model="y.inum"
+                                        data-ng-change="isDuplicateInvoice(0,y,'inum',invFrm)" data-ng-focus="freezeOrder('inum')"
+                                        data-ng-model-options="{updateOn:'blur'}" max-length="16" ng-required="true" data-ng-disabled="!invFrm.edb">
+                                </td>
+
+                                <td data-ng-class="{'has-error': (invFrm.idt.$error.pattern || invFrm.idt.$error.required || invFrm.idt.$invalid)}">
+                                    <div class="datepicker-icon input-group">
+                                        <div class="datepicker-icon input-group">
+                                            <i class="fa fa-calendar"></i>
+                                            <input name="idt" class="form-control date-picker" data-ng-model="y.idt" data-ng-model-options="{updateOn:'blur'}" placeholder="DD-MM-YYYY"
+                                                data-ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])[\-](0?[1-9]|1[012])[\-\-]\d{4}$/"
+                                                data-datepicker ng-required="true" data-min-years="{{minYearsAllowed}}" data-min-date="{{minDate()}}"
+                                                data-max-date="{{datefunc()}}" data-ng-disabled="!invFrm.edb" />
+                                            <span class="input-group-addon"><span class="fa fa-calendar" ></span></span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td data-ng-class="{'has-error': (invFrm.val.$error.required)}">
+                                    <input name="val" type="text" class="form-control text-right" data-format="currency" data-ng-focus="freezeOrder('val')" data-ng-model-options="{updateOn:'blur'}"
+                                        data-ng-model="y.val" ng-required="true" data-id="invval" data-ng-disabled="!invFrm.edb">
+                                </td>
+                                <td data-ng-class="{'has-error':  invFrm.sbpcode.$error.pattern}">
+                                    <input type="text" class="form-control text-center" name="sbpcode" ng-model="y.sbpcode" data-ng-pattern="/^[a-zA-Z0-9]+$/"
+                                        maxlength="6" data-ng-disabled="!invFrm.edb" />
+                                    <span class="err" data-ng-show="invFrm.sbpcode.$error.pattern" data-ng-bind="trans.ERR_INV_CHAR"></span>
+                                </td>
+                                <td data-ng-class="{'has-error':  (invFrm.sbnum.$error.required || invFrm.sbnum.$error.pattern )}">
+                                    <input name="sbnum" type="text" class="form-control text-left" data-ng-pattern="/^[0-9]{3,7}$/" minlength="3" maxlength="7"
+                                        data-ng-model="y.sbnum" data-ng-model-options="{updateOn:'blur'}" data-ng-required="y.sbdt"
+                                        data-ng-disabled="!invFrm.edb">
+                                </td>
+
+                                <td data-ng-class="{'has-error': (invFrm.sbdt.$error.pattern ||invFrm.sbdt.$error.required || invFrm.sbdt.$invalid)}">
+                                    <div class="datepicker-icon input-group">
+                                        <div class="datepicker-icon input-group">
+                                            <i class="fa fa-calendar"></i>
+                                            <input name="sbdt" class="form-control date-picker" data-ng-model="y.sbdt" data-datepicker data-max-date="{{todayDate()}}"
+                                                data-ng-disabled="!invFrm.edb" placeholder="DD-MM-YYYY" data-ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])[\-](0?[1-9]|1[012])[\-\-]\d{4}$/"
+                                                data-ng-model-options="{updateOn:'blur'}" data-ng-required="y.sbnum" />
+                                            <span class="input-group-addon"><span class="fa fa-calendar" ></span></span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <!--<td data-ng-class="{'has-error':  (invFrm.od_num.$error.pattern || invFrm.od_num.$error.required)}">
+                                    <input type="text" class="form-control text-left" name="od_num" data-ng-pattern="/^[a-zA-Z0-9]*$/" max-length="50" data-ng-model="y.od_num"
+                                        ng-required="true" data-ng-disabled="!invFrm.edb">
+                                </td>
+                                <td data-ng-class="{'has-error': (invFrm.od_dt.$error.pattern || invFrm.od_dt.$error.required)}">
+                                    <div class="datepicker-icon input-group">
+                                        <div class="datepicker-icon input-group">
+                                            <i class="fa fa-calendar"></i>
+                                            <input name="od_dt" class="form-control date-picker" data-ng-model="y.od_dt" data-datepicker ng-required="true" data-min-years="{{minYearsAllowed}}"
+                                                data-max-date="{{datefunc()}}" data-ng-disabled="!invFrm.edb" />
+                                            <span class="input-group-addon"><span class="fa fa-calendar" ></span></span>
+                                        </div>
+                                    </div>
+                                </td>-->
+                                <td>
+                                    <select class="form-control" ng-options="option.name for option in supplyList track by option.name" ng-model="y.sp_typ" data-ng-disabled="1"></select>
+                                </td>
+                                <td class="text-center">
+
+                                    <div class="text-center"><span data-ng-bind="y.error_msg"></span></div>
+
+                                </td>
+
+                                <td class="text-center newinv">
+                                    <button type="button" class="btn btn-sm btn-primary" ng-if="invFrm.edb" data-ng-click="gotoAddItems(y)" tabindex="0" data-ng-disabled="invFrm.$invalid"><i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                                    <button type="button" class="btn btn-sm btn-primary" ng-if="invFrm.edb" data-ng-click="invFrm.edb=!invFrm.edb;updateInvoice(y)"
+                                        tabindex="0" data-ng-disabled="invFrm.$invalid"><i class="fa fa-save" aria-hidden="true"></i></button>
+                                    <button type="button" class="btn btn-sm btn-primary" ng-hide="invFrm.edb" data-ng-click="invFrm.edb = !invFrm.edb " tabindex="0"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+                <span ng-show="!ErrorList.length"> No Invoices for {{sectionListSelected.cd}}</span>
+                <div class="text-center">
+                    <wrap-dir-pagination></wrap-dir-pagination>
+                </div>
+            </div>
+        </div>
+        <div class="btn-toolbar">
+            <button type="button" class="btn btn-primary" ng-show="ErrorList.length" ng-click="deleteSelectedRows()">Delete</button>
+        </div>
+
+    </div>
+</div>

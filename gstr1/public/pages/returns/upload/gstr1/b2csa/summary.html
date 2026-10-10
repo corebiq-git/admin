@@ -1,0 +1,211 @@
+<div data-ng-controller="uploadgstr1ctrl">
+    <div class="tabpane">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="table-responsive">
+                    <table class="table tbl inv table-bordered">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" class="text-center">
+                                    <input type="checkbox" class="chkbx" ng-model="selectAll" ng-true-value="'Y'" ng-false-value="'N'" ng-click="checkAll(TaxPayerSummaryList, selectAll)"
+                                    />
+                                    <label for="checkbox_all"></label>
+                                </th>
+
+
+                                <th rowspan="2" class="gstTblHeadr m100TblHdr reg m-cir sort" data-ng-bind="trans.LBL_ORG_YEAR"></th>
+                                <th rowspan="2" class="gstTblHeadr m100TblHdr reg m-cir sort" data-ng-bind="trans.LBL_ORG_MONTH" ng-click="sort('omon')"></th>
+                                <!--                                <th colspan="2" class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.LBL_ORGNL_DETALS"></th>-->
+                                <!--<th rowspan="2" class="gstTblHeadr psTblHdr reg m-cir sort" data-ng-bind="trans.LBL_ORG_STATE_CODE" ng-click="sort('opos')"></th>-->
+                                <th rowspan="1" class="gstTblHeadr spTblHdr reg m-cir">Type</th>
+                                <th rowspan="1" class="gstTblHeadr psTblHdr reg m-cir sort" data-ng-bind="trans.LBL_POS" ng-click="sort('state_cd')"></th>
+                                <!--<th rowspan="1" class="gstTblHeadr m100TblHdr reg m-cir sort" data-ng-bind="trans.LBL_TAXABLE_VALUE" ng-click="sort('txval')"></th>-->
+                                <th rowspan="1" class="gstTblHeadr spTblHdr reg m-cir" data-ng-bind="trans.LBL_SUPPLY_TYPE"></th>
+                                <!--<th class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_ORG_RATE"></th>
+                                <th colspan="1" class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_IGST"></th>
+                                <th colspan="1" class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_CGST"></th>
+                                <th colspan="1" class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_SGST"></th>
+                                <th colspan="1" class="gstTblHeadr m100TblHdr reg" reg m-cir data-ng-bind="trans.HEAD_CESS"></th>-->
+                                <!--                                <th rowspan="1" class="gstTblHeadr">Prov. Assmnt.</th>-->
+                                <th class="gstTblHeadr m100TblHdr">Applicable % of Tax Rate</th>
+                                <!-- <th rowspan="1" class="gstTblHeadr m100TblHdr">Sale from Bonded WH</th> -->
+                                <th rowspan="1" class="gstTblHeadr ctnTblHdr" data-ng-bind="trans.E_COMM_GSTN"></th>
+                                <th class="gstTblHeadr">Status</th>
+                                <th rowspan="1" class="gstTblHeadr">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!--                            <tr data-ng-repeat="y in ReturnsList" ng-form="invFrm">-->
+                            <tr dir-paginate="y in TaxPayerSummaryList | itemsPerPage: pageSize" current-page="currentPage" total-items="totalAvailable"
+                                ng-form="invFrm">
+                                <td class="text-center">
+                                    <input type="checkbox" class="chkbx" ng-model="y.select" ng-true-value="'Y'" ng-false-value="'N'" />
+                                    <label for="checkbox_all"></label>
+                                </td>
+                                <td class="text-center" data-ng-class="{'has-error':  (invFrm.oyear.$error.required)}">
+                                    <select name="oyear" class="form-control" data-ng-options="item.year as item.year for item in years" data-ng-model="y.oyear.year"
+                                        data-ng-change="onYearChange(y)" required data-ng-disabled="true"></select>
+                                </td>
+                                <td class="text-center" data-ng-class="{'has-error':  (invFrm.omon.$error.required)}">
+                                    <select name="omon" class="form-control" id="omon" ng-options="opt.value as opt.month for opt in y.oyear.months" ng-model="y.omon"
+                                        ng-required="true" data-ng-disabled="true"></select>
+                                </td>
+
+                                <!--<td data-ng-class="{'has-error': (invFrm.opos.$error.required)}">
+
+                                    <select ng-required="true" name="opos" class="form-control" ng-model="y.opos" data-ng-disabled="true" ng-change="onPosChangeB2CS(y)">
+									 
+										<option data-ng-repeat="opt in StateList" data-ng-bind="opt.cd+'-'+opt.nm" value="{{opt.cd}}"></option>
+										
+										</select>
+
+                                </td>-->
+                                <td data-ng-class="{'has-error': (invFrm.type.$error.required)}">
+                                    <select class="form-control" name="typ" ng-options="opt.value as opt.name for opt in typeList" ng-model="y.typ" data-ng-model-options="{updateOn:'blur'}"
+                                        data-ng-disabled="!invFrm.edb" data-ng-change="isEcom(0,y,invFrm)" ng-required="true"></select>
+                                </td>
+
+                                <td data-ng-class="{'has-error': (invFrm.pos=='')}">
+                                    <select ng-required="true" class="form-control" ng-model="y.pos" ng-change="onCtinChange(y);onPosChange(y)" data-ng-disabled="!invFrm.edb || true">
+                                        <option value="">Select</option>
+										<option data-ng-repeat="opt in StateList" data-ng-bind="opt.cd+'-'+opt.nm" value="{{opt.cd}}"></option>
+										
+										</select>
+                                </td>
+
+                                <td>
+                                    <select name="sply_ty" class="form-control" id="stype" ng-options="option.cd as option.name for option in suplyList" ng-model="y.sply_ty"
+                                        disabled></select>
+                                </td>
+                                <!-- <td class="text-center pRel" title="Is the supply eligible to be taxed at 65% of the existing rate of tax, as notified by the Government?">
+                                    <select class="form-control" ng-options="option.value as option.name for option in differentialPercent"  id="diff_percent" data-ng-change="onDiffPerChange(y);"  data-ng-model="y.diff_percent" data-ng-disabled="!invFrm.edb">
+                                        <option value="">Select</option>
+                                    </select>
+                                </td> -->
+                                <td class="text-center pRel" title="{{trans.LBL_Diff_Percent_title_text}}">
+                                    <select class="form-control" ng-options="option.value as option.name for option in differentialPercent" id="diff_percent"
+                                        data-ng-change="onDiffPerChange(y);" data-ng-model="y.diff_percent" data-ng-disabled="true">
+                                        <option value="">Select</option>
+                                    </select>
+                                </td>
+                                <!-- <td class="text-center pRel">
+                                    <input type="checkbox" class="chkbx" ng-model="y.inv_typ" ng-true-value="'CBW'" ng-false-value="null" data-ng-disabled="!invFrm.edb" data-ng-change="onCBWChange(y)"
+                                    />
+                                    <label for="checkbox_all"></label>
+                                    
+                                </td> -->
+                                <td data-ng-class="{'has-error':  (invFrm.etin.$error.pattern || invFrm.etin.$error.required || (invFrm.etin.$invalid && y.etin))}">
+                                    <input type="text" class="form-control formedit capitalize" name="etin" data-ng-model="y.etin" data-ng-required="false" data-ng-disabled="true || !invFrm.edb"
+                                        data-ng-pattern="validations.formats.etin" data-ng-change="isEtinAsSupRecGstin(0,y,invFrm)"
+                                    />
+                                </td>
+                                <td class="text-center">
+                                    <span class="text-center" ng-bind="y.flag"></span>
+                                    <!--<div class="text-center" ng-if="y.flag=='A'">A</div>
+    <div class="text-center" ng-if="y.flag=='R'">R</div>
+    <div class="text-center" ng-if="y.flag=='M'">M</div>
+    <div class="text-center" ng-if="y.flag=='N'">N</div>
+    <div class="text-center" ng-if="y.flag=='P'">P</div>-->
+
+                                </td>
+                                <td class="text-center newinv">
+                                    <button type="button" class="btn btn-sm btn-primary" ng-if="invFrm.edb" data-ng-click="gotoAddItems(y)" tabindex="0" data-ng-disabled="invFrm.$invalid"><i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                                    <button type="button" class="btn btn-sm btn-primary" ng-if="invFrm.edb" data-ng-click="invFrm.edb=!invFrm.edb;updateInvoice(y);onSetDiffPer(y);"
+                                        tabindex="0" data-ng-disabled="invFrm.$invalid"><i class="fa fa-save" aria-hidden="true"></i></button>
+                                    <button type="button" class="btn btn-sm btn-primary" ng-hide="invFrm.edb" data-ng-click="invFrm.edb = !invFrm.edb " tabindex="0"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                                </td>
+                                <!--<button type="button" class="btn btn-sm btn-primary" ng-hide="invFrm.edb" data-ng-click="invFrm.edb = !invFrm.edb" tabindex="0"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                                    <button type="button" class="btn btn-sm btn-primary" data-ng-if="invFrm.edb" data-ng-click="invFrm.edb = !invFrm.edb;updateInvoice(y)"
+                                        ng-disabled="!invFrm.$valid" tabindex="0"><i class="fa fa-save" aria-hidden="true"></i></button>-->
+
+
+                            </tr>
+                        </tbody>
+                        <tr ng-form="newInvFrm" ng-show="isLastPage(currentPage, pageSize)">
+                            <td></td>
+                            <td data-ng-class="{'has-error':  newInvValidtr && (!newInvRw.oyear),'has-success': newInvValidtr && (newInvRw.oyear) }">
+                                <select name="oyear" class="form-control" data-ng-options="item.year for item in years " data-ng-model="newInvRw.oyear" data-ng-change="onYearChange(newInvRw)"
+                                    required>
+                                <option label="Select" value="" data-ng-selected="true" disabled></option></select>
+                                <span class="err" data-ng-show="newInvValidtr && !newInvRw.oyear" data-ng-bind="trans.ERR_MANDATORY"></span>
+
+                            </td>
+
+
+                            <td data-ng-class="{'has-error':  newInvValidtr && (!newInvRw.omon),'has-success': newInvValidtr && (newInvRw.omon) }">
+                                <select name="omon" class="form-control" id="omon" ng-options="opt.value as opt.month for opt in newInvRw.oyear.months" ng-model="newInvRw.omon">
+                                <option label="Select" value="" data-ng-selected="true" disabled></option></select>
+                                <span class="err" data-ng-show="newInvValidtr && !newInvRw.omon" data-ng-bind="trans.ERR_MANDATORY"></span>
+                            </td>
+
+                            <!--<td data-ng-class="{'has-error':  newInvValidtr && (!newInvRw.opos),'has-success': newInvValidtr && newInvRw.opos }">
+                                <select class="form-control" name="opos" ng-model="newInvRw.opos" required>
+			                    <option value="">Select</option>
+			                    <option data-ng-repeat="opt in StateList" data-ng-bind="opt.cd+'-'+opt.nm" value="{{opt.cd}}"></option>
+		                            </select>
+                                <span class="err" data-ng-show="newInvValidtr && !newInvRw.opos" data-ng-bind="trans.ERR_MANDATORY"></span>
+                            </td>-->
+                            <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.typ.$error.pattern || newInvFrm.typ.$error.required),'has-success': newInvValidtr && newInvFrm.typ.$valid }">
+                                <select class="form-control" name="typ" ng-options="opt.value as opt.name for opt in typeList" ng-model="newInvRw.typ" data-ng-model-options="{updateOn:'blur'}"
+                                    ng-required="true" data-ng-change="isEcom(1,newInvRw)"></select>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.typ.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.typ.$error.pattern" data-ng-bind="trans.ERR_INV_CHAR"></span>
+                            </td>
+
+
+                            <td data-ng-class="{'has-error':  newInvValidtr && (!newInvRw.pos),'has-success': newInvValidtr && newInvRw.pos }">
+                                <select class="form-control" name="state_cd" ng-model="newInvRw.pos" ng-change="onCtinChange(newInvRw);onPosChange(newInvRw)"
+                                    required>
+			                            <option value="">Select</option>
+			                            <option data-ng-repeat="opt in StateList" data-ng-bind="opt.cd+'-'+opt.nm" value="{{opt.cd}}"></option>
+		                        </select>
+                                <span class="err" data-ng-show="newInvValidtr && !newInvRw.pos" data-ng-bind="trans.ERR_MANDATORY"></span>
+                            </td>
+
+
+
+
+                            <td data-ng-class="{'has-error':  newInvValidtr && (!newInvRw.sply_ty.name),'has-success': newInvValidtr && newInvRw.sply_ty.name }">
+                                <select name="sply_ty" class="form-control" id="stype" ng-options="option.cd as option.name for option in suplyList" ng-model="newInvRw.sply_ty"
+                                    disabled></select>
+                                <span class="err" data-ng-show="newInvValidtr && !newInvRw.sply_ty.name" data-ng-bind="trans.ERR_MANDATORY"></span>
+                            </td>
+                            <td class="text-center pRel" title="{{trans.LBL_Diff_Percent_title_text}}">
+                                <select class="form-control" ng-options="opt.name for opt in differentialPercent" data-ng-change="onDiffPerChange(newInvRw);"
+                                    id="diff_percent" data-ng-model="newInvRw.diff_percent">
+                                    <option value="">Select</option>
+                                </select>
+                            </td>
+                            <!-- <td class="text-center pRel">
+                                <input type="checkbox" class="chkbx" ng-model="newInvRw.inv_typ" ng-true-value="'CBW'" ng-false-value="null" data-ng-change="onCBWChange(newInvRw)"
+                                />
+                                <label for="checkbox_all"></label>
+                            </td> -->
+                            <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.etin.$error.pattern || newInvFrm.etin.$error.required),'has-success': newInvValidtr && newInvFrm.etin.$valid && newInvRw.etin }">
+                                <input type="text" class="form-control formedit" name="etin" data-ng-pattern="validations.formats.etin" data-ng-model="newInvRw.etin"
+                                    data-ng-change="isEtinAsSupRecGstin(1,newInvRw)" data-ng-required="false" data-ng-disabled="true"
+                                />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.etin.$error.required" data-ng-bind="trans.ERR_ETIN_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.etin.$error.pattern" data-ng-bind="trans.ERR_INV_CHAR"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvRw.etin && newInvFrm.etin.$invalid" data-ng-bind="trans.ERR_INV_ETIN"></span>
+                            </td>
+                            <td></td>
+                            <td class="text-center" colspan="2">
+                                <button type="button" class="btn btn-sm btn-primary" ng-click="gotoAddItems('add')"><i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                            </td>
+                            <!--<td class="text-center">
+                                <button type="button" class="btn btn-sm btn-primary" ng-click="savePayload()"><i class="fa fa-save" aria-hidden="true"></i></button>
+                            </td>-->
+                        </tr>
+                    </table>
+                </div>
+                <div class="text-center">
+                    <wrap-dir-pagination></wrap-dir-pagination>
+                </div>
+            </div>
+        </div>
+        <div class="btn-toolbar">
+            <button type="button" class="btn btn-primary pull-left" ng-show="TaxPayerSummaryList.length" ng-click="setDeleteFlagOrDelete()">Delete</button>
+        </div>
+    </div>
+</div>

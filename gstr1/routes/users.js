@@ -29,7 +29,8 @@ var firebaseAuth = require('../utility/firebaseAuth');
 router.get('/', function (req, res, next) {
 	res.render('index', {
 		title: 'COREBIQ GSTR1 TOOL',
-		requireAuth: firebaseAuth.required
+		requireAuth: firebaseAuth.required,
+		basePath: req.app.get('basePath')
 	});
 });
 

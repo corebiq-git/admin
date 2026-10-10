@@ -1,0 +1,102 @@
+<div>
+    <div class="tabpane">
+        <div class="row">
+            <div class="col-sm-12">
+                <h4 class="m0">Add Items</h4>
+                <hr>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3 col-xs-12">
+                <label for="fin" class="reg">Section :
+                    <span class="capz">{{dashBoardDt.tbl_cd}}</span>
+                </label>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="table-responsive">
+                    <table class="table tbl inv table-bordered">
+                        <thead>
+                            <tr>
+                                <th data-ng-bind="trans.HEAD_RATE" class="gstTblHeadr reg m-cir"></th>
+                                <th class="gstTblHeadr reg m-cir">Gross Advance Received</th>
+                                <th data-ng-bind="trans.HEAD_CGST_AMT" class="gstTblHeadr reg m-cir" ng-if="intraState">
+                                </th>
+                                <th data-ng-bind="trans.HEAD_SGST_AMT" class="gstTblHeadr reg m-cir" ng-if="intraState">
+                                </th>
+                                <th data-ng-bind="trans.HEAD_IGST_AMT" class="gstTblHeadr reg m-cir"
+                                    ng-if="!intraState"></th>
+                                <th data-ng-bind="trans.HEAD_CESS_AMT" class="gstTblHeadr reg" ng-if="1"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-ng-repeat="y in RateList.CommGST" ng-form="newItmFrm">
+                                <td class="text-center">
+                                    <label class="reg" data-ng-bind="y.value + '%'"></label>
+                                </td>
+                                <td
+                                    data-ng-class="{'has-error':newItmFrm && (newItmFrm.ad_amt.$error.required || newItmFrm.ad_amt.$invalid)}">
+                                    <input type="text" class="form-control text-right" name="ad_amt" data-fraction="2"
+                                        ng-model="rateWiseData[$index].ad_amt"
+                                        ng-change="onRtChange(rateWiseData[$index],intraState?4:3);"
+                                        data-format="currency" required isNeg="true"
+                                        onfocus="if (this.value=='₹0.00') this.value='';"
+                                        onblur="if (this.value=='') this.value=0;" />
+                                </td>
+                                <td ng-if="!intraState"
+                                    data-ng-class="{'has-error':newItmFrm && (newItmFrm.iamt.$invalid || newItmFrm.iamt.$error.required),'has-success': newItmValidtr && newItmFrm.ad_amt.$valid}">
+                                    <input type="text" class="form-control text-right" name="iamt"
+                                        ng-model="rateWiseData[$index].iamt" data-fraction="2" data-format="currency"
+                                        ng-required="true" onfocus="if (this.value=='₹0.00') this.value='';"
+                                        onblur="if (this.value=='') this.value='₹0.00';" isNeg="true" />
+                                </td>
+                                <!-- CGST -->
+                                <td ng-if="intraState"
+                                    data-ng-class="{'has-error':newItmFrm && (newItmFrm.camt.$invalid  || newItmFrm.camt.$error.required),'has-success': newItmValidtr && newItmFrm.ad_amt.$valid}">
+                                    <input type="text" class="form-control text-right" name="camt"
+                                        ng-model="rateWiseData[$index].camt" data-fraction="2" data-format="currency"
+                                        ng-required="true" onfocus="if (this.value=='₹0.00') this.value='';"
+                                        onblur="if (this.value=='') this.value='₹0.00';" isNeg="true" />
+                                </td>
+                                <!-- SGST -->
+                                <td ng-if="intraState"
+                                    data-ng-class="{'has-error':newItmFrm && (newItmFrm.samt.$invalid  || newItmFrm.samt.$error.required),'has-success': newItmValidtr && newItmFrm.ad_amt.$valid}">
+                                    <input type="text" class="form-control text-right" name="samt"
+                                        ng-model="rateWiseData[$index].samt" data-fraction="2" data-format="currency"
+                                        ng-required="true" onfocus="if (this.value=='₹0.00') this.value='';"
+                                        onblur="if (this.value=='') this.value='₹0.00';" isNeg="true" />
+                                </td>
+                                <!-- CESS -->
+                                <td data-ng-class="{'has-error': newItmFrm && (newItmFrm.csamt.$invalid)}">
+                                    <input type="text" class="form-control text-right" name="csamt"
+                                        ng-model="rateWiseData[$index].csamt" data-fraction="2" data-format="currency"
+                                        ng-required="true" isNeg="true"
+                                        onfocus="if (this.value=='₹0.00') this.value='';"
+                                        onblur="if (this.value=='') this.value='₹0.00';" />
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12">
+            <p class="inv">
+                <b>Note:</b> Under Rate column, combined rate (State GST + Central GST) or IGST needs to be written.
+                System
+                will calculate them on its own.</p>
+        </div>
+        <div class="btn-toolbar">
+
+            <button type="button" class="btn btn-primary pull-right" ng-if="!isNewRec"
+                ng-click="updateSavePayload('N')">Update</button>
+            <button type="button" class="btn btn-primary pull-right" ng-if="isNewRec"
+                ng-click="updateSavePayload('Y')">Save</button>
+            <button type="button" class="btn btn-default pull-right" ng-click="page('/gstr/summary')">Back</button>
+
+        </div>
+    </div>
+</div>

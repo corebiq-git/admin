@@ -1,0 +1,106 @@
+<br>
+<form name="dashboard" novalidate="" data-ng-submit="fileReturns()" ng-init="forlabel(formNum)">
+    <div class="tabpane">
+        <div class="row">
+            <div class="col-sm-12">
+                <h4>File Returns</h4>
+                <hr>
+            </div>
+        </div>
+        <p class="mand-text req-field">indicates required fields</p>
+        <!-- <p class="mand-text">Indicates Mandatory Fields</p> -->
+        <div class="rettbl-format">
+            <div class="row">
+                <div class="col-sm-4 col-xs-12">
+                    <label for="formNum" class="reg m-cir">GST Statement/Returns</label>
+                    <!--<select class="form-control" ng-options="option.cd as option.nm for option in GstrForms" ng-model="formNum"></select>  ng-change="forlabel(formNum)" -->
+                    <select class="form-control" ng-options="option.cd as option.nm for option in GstrForms" ng-model="formNum" data-nog-disabled="true"></select>
+
+                    <!--                    <input type="text" name="formNum" data-ng-model="formNum" class="form-control" ng-required="true" ng-disabled="true"/>-->
+                </div>
+                <div class="col-sm-4 col-xs-12" data-ng-class="{'has-error': dashboard.$submitted && ( dashboard.gstinNum.$error.required || dashboard.gstinNum.$error.pattern),'has-success': dashboard.$submitted && dashboard.gstinNum.$valid }">
+                    <label for="gstinNum" class="reg m-cir">{{nameAsPerFormSelected()}}</label>
+                    <input type="text" name="gstinNum" data-ng-model="gstinNum" class="form-control" ng-change="onGstinChange()" maxlength="{{::validations.maxlength.gstin}}"
+                        data-ng-model-options="{updateOn:'blur'}" data-ng-required="true" />
+                    <span class="err" data-ng-show="dashboard.$submitted && dashboard.gstinNum.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                    <span class="err" data-ng-show="dashboard.$submitted && gstinNum && dashboard.gstinNum.$error.pattern" data-ng-bind="trans.ERR_INV_GSTN"></span>
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    <label for="fin" class="reg m-cir">Financial Year</label>
+                    <select name="fin" class="form-control" data-ng-options="item.year for item in dropdown " data-ng-model="yearSelected" data-ng-change="onYearChage(); changeForm(isQTaxpayer())"
+                        required >
+                        </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4 col-xs-12">
+                    <label for="mon" class="reg m-cir">Tax Period</label>
+                    <select name="mon" class="form-control" data-ng-model="monthSelected" data-ng-options="item.month for item in yearSelected.months"
+                        required data-ng-change="changeForm(isQTaxpayer())">
+                        </select>
+                </div>
+                <!-- <div class="col-sm-4 col-xs-12">
+                    <br>
+                    <input type="checkbox" id="sprevcharge" class="chkbx" ng-model="prevRtUpStatus" ng-true-value="'Y'" ng-false-value="'N'">
+                    <label for="mon" class="reg">Previous Returns file uploaded</label>
+                </div> -->
+                <div class="col-sm-4 col-xs-12" data-ng-class="{'has-error':  dashboard.$submitted && (dashboard.amounts.gt.$error.required),'has-success': dashboard.$submitted && dashboard.amounts.gt.$valid }"
+                    data-ng-if="isGstr1();isAggregate()">
+                    <label for="gt" class="reg m-cir">Aggregate Turnover in the preceding Financial Year</label>                
+                    <input type="text" name="gt" data-ng-model="amounts.gt" class="form-control" data-format="currency" placeholder="Enter Aggregate Turnover"
+                        ng-required="true" autocomplete="off" />
+                    <span class="err" data-ng-show="dashboard.$submitted && !amounts.gt" data-ng-bind="trans.ERR_MANDATORY"></span>
+
+
+                </div>
+                <div class="col-sm-4 col-xs-12" data-ng-class="{'has-error':  dashboard.$submitted && (dashboard.amounts.cur_gt.$error.required),'has-success': dashboard.$submitted && dashboard.amounts.cur_gt.$valid }"
+                    data-ng-if="isGstr1();isAggregate()">
+                    <label for="att" class="reg m-cir">Aggregate Turnover- April to June, 2017</label>                    
+                    <input type="text" name="cur_gt" data-ng-model="amounts.cur_gt" class="form-control" data-format="currency" placeholder="Enter Aggregate Turnover"
+                        ng-required="true" autocomplete="off" />
+                    <span class="err" data-ng-show="dashboard.$submitted && !amounts.cur_gt" data-ng-bind="trans.ERR_MANDATORY"></span>
+
+
+                </div>
+
+            </div>
+            <div class="row" data-ng-if="isGstr1()">
+                <div class="col-sm-4 col-xs-12">
+                    <label class="reg m-cir" data-ng-bind="'Is SEZ Taxpayer?'"></label>
+                    <input type="radio" name="isSEZTP" data-ng-value="true" data-ng-model="obj.isSEZ" data-ng-required="true" /><label>Yes</label>
+                    <input type="radio" name="isSEZTP" data-ng-value="false" data-ng-model="obj.isSEZ" data-ng-required="true" /><label>No</label>
+                    <br/>
+                    <span class="err" data-ng-show="dashboard.$submitted && dashboard.isSEZTP.$error.required" data-ng-bind="trans.ERR_MANDATORY_FIELD"></span>
+                </div>
+            </div>
+            <!--changes for IFF-->
+            <div class="row" data-ng-if="isGstr1() && isQTaxpayer()">
+                <div class="col-sm-4 col-xs-12">
+                    <label class="reg m-cir" data-ng-bind="'Is taxpayer Quarterly filer?'"></label>
+                    <input type="radio" name="isTPQ" data-ng-value="true" data-ng-model="obj1.isTPQ" data-ng-required="true" data-ng-change="obj1.aatoGreaterThan5CR = null"/><label>Yes</label>
+                    <input type="radio" name="isTPQ" data-ng-value="false" data-ng-model="obj1.isTPQ" data-ng-required="true"/><label>No</label>
+                    <br/>
+                    <span class="err" data-ng-show="dashboard.$submitted && dashboard.isTPQ.$error.required" data-ng-bind="trans.ERR_MANDATORY_FIELD"></span>
+                </div>
+            </div>
+
+            <!-- CR - 19427 added by rohit.kumar105-->
+            <div class="row" data-ng-if="isGstr1() && obj1.isTPQ==false && !isCurrentPeriodBeforeAATOCheck(newHSNStartDateConstant, monthSelected.value)">
+                <div class="col-sm-8 col-xs-12">
+                    <label class="reg m-cir" data-ng-bind="'Is aggregate turnover greater than 5CR in preceding financial year?'"></label>
+                    <input type="radio" name="aatoGreaterThan5CR" data-ng-value="true" data-ng-model="obj1.aatoGreaterThan5CR" data-ng-required="true" /><label>Yes</label>
+                    <input type="radio" name="aatoGreaterThan5CR" data-ng-value="false" data-ng-model="obj1.aatoGreaterThan5CR" data-ng-required="true" /><label>No</label>
+                    <br/>
+                    <span class="err" data-ng-show="dashboard.$submitted && dashboard.aatoGreaterThan5CR.$error.required" data-ng-bind="trans.ERR_MANDATORY_FIELD"></span>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-sm-12 col-xs-12 text-right next-tab-nav">
+                    <button type="button" class="btn btn-default" data-ng-bind="trans.LBL_BACK" data-ng-click="page('/gstr/home')">Back</button>
+                    <button type="submit" class="btn btn-primary accpt" data-ng-bind="trans.BTN_PROCEED">Proceed</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

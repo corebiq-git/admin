@@ -1,0 +1,62 @@
+<div data-ng-controller="uploadgstr1nilsumryctrl">
+    <form name="nilPage" id="nilPage" novalidate="" data-ng-submit="saveuploadgstr1nilSumryList()" data-accessible-form="">
+        <div class="tabpane">
+            <!--<div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <h4 data-ng-bind="trans.LBL_GOODS_SERVICES"></h4>
+                </div>
+            </div>-->
+            <h5 data-ng-if="nilSumryList.chksum">Status : {{nilSumryList.flag}} </h5>
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="table-responsive">
+                        <table class="table inv exp tbl table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" data-ng-bind="trans.LBL_NATURE_SUPP"></th>
+                                    <th class="text-center" data-ng-bind="trans.LBL_NIL_AMT"></th>
+                                    <th class="text-center" data-ng-bind="trans.LBL_EXP_AMT"></th>
+                                    <th class="text-center" data-ng-bind="trans.LBL_NGST_SUPP_AMT"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-ng-repeat="obja in nilSumryList.inv">
+                                    <td data-ng-bind="getDisplayName(obja.sply_ty)"></td>
+                                    <td class="currency">
+                                        <!--<div class="input-group">-->
+                                            <!--<span class="input-group-addon"><button type="button" data-ng-model="obja.sign_nil" data-ng-click="changeSign($index,'nil',obja.sign_nil)" data-ng-disabled="flag">{{obja.sign_nil}}</button> </span>-->
+                                            <input id="internra" data-ng-model="obja.nil_amt" class="form-control newinv formedit  currency" data-format="currency" data-fraction="2"
+                                                title="currency" data-ng-disabled="flag" isNeg="true">
+                                        <!--</div>-->
+                                    </td>
+                                    <td class="currency">
+                                        <!--<div class="input-group">-->
+                                            <!--<span class="input-group-addon"><button type="button" data-ng-model="obja.sign_exp" data-ng-click="changeSign($index,'exp',obja.sign_exp)" data-ng-disabled="flag">{{obja.sign_exp}}</button></span>-->
+                                            <input id="interexa" data-ng-model="obja.expt_amt" class="form-control newinv formedit  currency" data-format="currency"
+                                                data-fraction="2" title="currency" data-ng-disabled="flag" isNeg="true">
+                                        <!--</div>-->
+                                    </td>
+                                    <td class="currency">
+                                        <!--<div class="input-group">-->
+                                            <!--<span class="input-group-addon"><button type="button" data-ng-model="obja.sign_ngsa" data-ng-click="changeSign($index,'ngsup',obja.sign_ngsa)" data-ng-disabled="flag">{{obja.sign_ngsa}}</button></span>-->
+                                            <input id="interngsa" data-ng-model="obja.ngsup_amt" class="form-control formedit newinv  currency" data-format="currency"
+                                                data-fraction="2" title="currency" data-ng-disabled="flag" isNeg="true">
+                                        <!--</div>-->
+                                    </td>
+                                </tr>
+
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-toolbar">
+                <button type="submit" class="btn btn-primary pull-right" id="abc1" style="width:80px" data-ng-bind="trans.LBL_SAVE" ng-disabled="flag"></button>
+<button type="button" class="btn btn-primary pull-right" id="abc" style="width:80px" data-ng-bind="trans.LBL_EDIT" data-ng-click="flag=!flag" ng-disabled="!flag"></button>
+</div>
+</div>
+</form>
+</div>

@@ -1,0 +1,173 @@
+<div data-ng-controller="gstr2asumryctrl">
+	<div class="tabpane">
+		<div class="row">
+			<div class="col-sm-12">
+		 
+				<div class="table-responsive">
+					<table class="table tbl inv table-bordered">
+						<thead>
+							<tr>
+								<th class="gstTblHeadr ctnTblHdr reg m-cir sort" data-ng-bind="trans.LBL_RECEIVER_GSTIN" ng-click="sort('ctin')"></th>
+								<th class="gstTblHeadr m100TblHdr reg m-cir sort" data-ng-bind="trans.LBL_ORG_INV_NO" ng-click="sort('oinum')"></th>
+								<th class="gstTblHeadr m100TblHdr reg m-cir sort" data-ng-bind="trans.LBL_REV_INVOICE_NUMBER" ng-click="sort('inum')"></th>
+								<th class="gstTblHeadr dtTblHdr reg m-cir sort" data-ng-bind="trans.LBL_ORG_INV_DATE" ng-click="sort('oidt')"></th>
+								<th class="gstTblHeadr dtTblHdr reg m-cir sort" data-ng-bind="trans.LBL_REV_INVOICE_DATE" ng-click="sort('idt')"></th>
+								<th class="gstTblHeadr m100TblHdr reg m-cir sort" data-ng-bind="trans.LBL_INVOICE_VALUE" ng-click="sort('val')"></th>
+								<th class="gstTblHeadr psTblHdr reg m-cir sort" data-ng-bind="trans.LBL_POS" ng-click="sort('pos')"></th>
+								<th class="gstTblHeadr spTblHdr reg m-cir" data-ng-bind="trans.LBL_SUPPLY_TYPE"></th>
+								<th class="gstTblHeadr spTblHdr reg m-cir">Invoice Type</th>
+								<th class="gstTblHeadr">Reverse Charge</th>
+								<th class="gstTblHeadr m100TblHdr">Applicable % of Tax Rate</th>
+								<th class="gstTblHeadr ctnTblHdr" data-ng-bind="trans.E_COMM_GSTN"></th>
+								<!--IFF_Static_Label_Changes-->
+								<th data-ng-if="!iffprd" class="gstTblHeadr spTblHdr">GSTR-1/5 Filing Status</th>
+								<th data-ng-if="!iffprd" class="gstTblHeadr spTblHdr">GSTR-1/5 Filing Date</th>
+								<th data-ng-if="!iffprd" class="gstTblHeadr spTblHdr">GSTR-1/5 Filing Period</th>
+								<th data-ng-if="iffprd" class="gstTblHeadr iffTblHdr">GSTR-1/IFF/GSTR-5 Filing Status</th>
+								<th data-ng-if="iffprd" class="gstTblHeadr iffTblHdr">GSTR-1/IFF/GSTR-5 Filing Date</th>
+								<th data-ng-if="iffprd" class="gstTblHeadr iffTblHdr">GSTR-1/IFF/GSTR-5 Filing Period</th>
+								<th class="gstTblHeadr spTblHdr">GSTR-3B Filing Status</th>
+                                <th class="gstTblHeadr spTblHdr">Effective date of cancellation</th>
+                                <th class="gstTblHeadr spTblHdr">Amendment made, if any</th>
+								<th class="gstTblHeadr spTblHdr">Original tax period in which reported </th>
+								<th class="gstTblHeadr m100TblHdr" data-ng-bind="trans.LBL_ACTIONS"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<!--<tr dir-paginate="y in orderBy('sortBy',ReturnsList) | filter:searchInvNum | itemsPerPage: pageSize" current-page="currentPage" ng-form="invFrm">-->
+
+							<tr dir-paginate="y in ReturnsList | filter:searchInvNum | itemsPerPage: pageSize" total-items="totalAvailable" current-page="currentPage" ng-show="ReturnsList.length"
+									ng-form="invFrm">
+
+						 
+								<td data-ng-class="{'has-error':  (invFrm.ctin.$error.pattern || invFrm.ctin.$error.required)}">
+									<input type="text" class="form-control formedit" name="ctin" data-ng-pattern="validations.formats.gstin" data-ng-model="y.ctin"
+											ng-required="true" ng-keypress="onCtinChange(y)" ng-paste="onCtinChange(y)" data-ng-disabled="true"
+									/>
+								</td>
+
+								<td data-ng-class="{'has-error': (invFrm.oinum.$error.pattern || invFrm.oinum.$error.required)}">
+									<input type="text" class="form-control formedit" name="oinum" data-ng-model="y.oinum" data-ng-pattern="/^[a-zA-Z0-9-\/]{1,16}$/"
+												maxlength="16" ng-required="true" data-ng-disabled="true" />
+								</td>
+								<td data-ng-class="{'has-error': (invFrm.inum.$error.pattern || invFrm.inum.$error.required)}">
+									<input type="text" class="form-control formedit" name="inum" data-ng-model="y.inum" data-ng-pattern="/^[a-zA-Z0-9-\/]{1,16}$/"
+												maxlength="16" ng-required="true" data-ng-disabled="true" />
+								</td>
+								<td data-ng-class="{'has-error': (invFrm.oidt.$error.pattern || invFrm.oidt.$error.required || invFrm.oidt.$invalid)}">
+										<div class="datepicker-icon input-group">
+												<div class="datepicker-icon input-group">
+														<i class="fa fa-calendar"></i>
+														<input name="oidt" class="form-control date-picker" data-ng-model="y.oidt" data-datepicker ng-required="true" data-min-years="{{minYearsAllowed}}"
+																data-ng-model-options="{updateOn:'blur'}" placeholder="DD-MM-YYYY" data-ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])[\-](0?[1-9]|1[012])[\-\-]\d{4}$/"
+																data-datepicker ng-required="true" data-ng-change="dateLimit(0,y.oidt,invFrm)"
+																data-min-date="{{minDate()}}" data-max-date="{{datefunc()}}" data-ng-disabled="true"
+														/>
+														<span class="input-group-addon"><span class="fa fa-calendar" ></span></span>
+												</div>
+										</div>
+								</td>
+								<td data-ng-class="{'has-error': (invFrm.idt.$error.pattern || invFrm.idt.$error.required || invFrm.idt.$invalid)}">
+										<div class="datepicker-icon input-group">
+												<div class="datepicker-icon input-group">
+														<i class="fa fa-calendar"></i>
+														<input name="idt" class="form-control date-picker" data-ng-model="y.idt" data-datepicker ng-required="true" data-min-years="{{minYearsAllowed}}"
+																data-ng-model-options="{updateOn:'blur'}" placeholder="DD-MM-YYYY" data-ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])[\-](0?[1-9]|1[012])[\-\-]\d{4}$/"
+																data-datepicker ng-required="true" data-ng-change="dateLimit(0,y.idt,invFrm)"
+																data-min-date="{{minDate()}}" data-max-date="{{datefunc()}}" data-ng-disabled="true"
+														/>
+														<span class="input-group-addon"><span class="fa fa-calendar" ></span></span>
+												</div>
+										</div>
+								</td>
+								
+								<td data-ng-class="{'has-error': (invFrm.val.$error.required)}">
+										<div class="datepicker-icon input-group">
+												<input type="text" class="form-control text-right" name="val" data-ng-model="y.val" data-format="currency" ng-required="true"
+														data-ng-disabled="true" data-id="invval" />
+										</div>
+								</td>
+								<td>
+										<select class="form-control" ng-options="opt.cd as opt.cd+'-'+opt.nm for opt in StateList" ng-model="y.pos" ng-change="onCtinChange(y);onPosChange(y)"
+												data-ng-disabled="!invFrm.edb"></select>
+								</td>
+								<td>
+										<select class="form-control" ng-options="option.value as option.name for option in suplyList track by option.name" ng-model="y.sp_typ"
+												data-ng-disabled="true"></select>
+								</td>
+								<td>
+
+										<select class="form-control" ng-options="type.c as type.n for type in InvTypeList.b2b" ng-model="y.inv_typ" data-ng-disabled="!invFrm.edb"
+												data-ng-change="onCtinChange(y);onPosChange(y );invTypeSelected(y)" ng-required="true"
+												disabled></select>
+								</td>
+								<td class="text-center pRel">
+										<input type="checkbox" class="chkbx" ng-model="y.rchrg" ng-true-value="'Y'" ng-false-value="'N'" data-ng-disabled="true"
+										/>
+										<label for="checkbox_all"></label>
+								</td>
+								<td class="text-center pRel" title="Is the supply eligible to be taxed at 65% of the existing rate of tax, as notified by the Government?">
+										<select class="form-control" ng-options="option.value as option.name for option in differentialPercent"  id="diff_percent" data-ng-change="onDiffPerChange(y);"  data-ng-model="y.diff_percent" data-ng-disabled="!invFrm.edb">
+												<option value="">Select</option>
+										</select>
+								</td>
+								<td data-ng-class="{'has-error':  (invFrm.etin.$error.pattern || (invFrm.etin.$invalid && y.etin))}">
+										<input type="text" class="form-control formedit" name="etin" data-ng-model="y.etin" data-ng-pattern="validations.formats.etin"
+												data-ng-change="isEtinAsSupRecGstin(0,y,invFrm)" data-ng-disabled="!invFrm.edb || true"
+										/>
+								</td>
+								<td >
+                                    <input type="text" class="form-control formedit" name="cfs"  data-ng-model="y.cfs"
+                                        ng-required="true" data-ng-disabled="true"
+                                    />
+                                </td>
+                                  <td >
+                                    <input type="text" class="form-control formedit" name="fldtr1"  data-ng-model="y.fldtr1"
+                                        ng-required="true" data-ng-disabled="true"
+                                    />
+                                </td>
+                                 <td >
+                                    <input type="text" class="form-control formedit" name="flprdr1"  data-ng-model="y.flprdr1"
+                                        ng-required="true" data-ng-disabled="true"
+                                    />
+                                </td>
+								 <td >
+                                    <input type="text" class="form-control formedit" name="cfs3b" data-ng-model="y.cfs3b"
+                                        ng-required="true"  data-ng-disabled="true"
+                                    />
+                                </td>
+								<td >
+                                    <input type="text" class="form-control formedit" name="dtcancel"  data-ng-model="y.dtcancel"
+                                        ng-required="true" data-ng-disabled="true"
+                                    />
+                                </td>
+                                 <td >
+                                    <input type="text" class="form-control formedit" name="atyp" data-ng-model="y.atyp"
+                                        ng-required="true" data-ng-disabled="true"
+                                    />
+                                </td>
+								 <td >
+                                    <input type="text" class="form-control formedit" name="aspd"  data-ng-model="y.aspd"
+                                        ng-required="true" data-ng-disabled="true"
+                                    />
+                                </td>
+								<td class="text-center newinv">
+										<button type="button" class="btn btn-sm btn-primary" data-ng-click="gotoAddItems(y)" tabindex="0"><i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+								</td>
+							</tr>
+
+						</tbody>
+					</table>
+
+				</div>
+
+				<div class="text-center">
+
+					<wrap-dir-pagination></wrap-dir-pagination>
+
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>

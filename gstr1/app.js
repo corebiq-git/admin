@@ -27,6 +27,23 @@ var users = require('./routes/users');
 var app = express();
 const NodeCache = require( "node-cache" );
 var async = require('async');
+var basePath = process.env.BASE_PATH || '';
+
+if (basePath && basePath !== '/') {
+    var baseSegments = basePath.split('/').filter(function (segment) {
+        return segment.length > 0;
+    });
+    if (!baseSegments.length || baseSegments.some(function (segment) {
+        return !/^[A-Za-z0-9_-]+$/.test(segment);
+    })) {
+        throw new Error('BASE_PATH must contain only URL-safe path segments.');
+    }
+    basePath = '/' + baseSegments.join('/');
+} else {
+    basePath = '';
+}
+
+app.set('basePath', basePath);
 app.set('myCache', new NodeCache( { stdTTL: 200, checkperiod: 120 } )); 
 async.waterfall([
 		function(callback) {
@@ -41,8 +58,8 @@ async.waterfall([
 
 		app.use(cookieParser())
         
-		app.use('/', users);
-		app.use(express.static(path.join(__dirname, 'public')));
+		app.use(basePath || '/', users);
+		app.use(basePath || '/', express.static(path.join(__dirname, 'public')));
         app.set('port', process.env.PORT || +constants.NODE_PORT); 
 		app.set('views', path.join(__dirname, 'views'));
 		app.set('view engine', 'jade');
@@ -73,6 +90,5 @@ async.waterfall([
 
 
 })
-
 
 

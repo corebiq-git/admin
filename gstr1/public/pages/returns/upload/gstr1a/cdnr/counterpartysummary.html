@@ -1,0 +1,155 @@
+<div data-ng-controller="uploadreturns1actrl">
+    <div class="tabpane">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="table-responsive">
+
+                    <table class="table tbl inv table-bordered"  ng-show="ReceiverSummaryList.length">
+                        <thead>
+                            <tr>
+                                <th rowspan="3" class="text-center">
+                                    <input type="checkbox" class="chkbx" ng-model="selectAll" ng-true-value="'Y'" ng-false-value="'N'" ng-click="SelectAll()"
+                                    />
+                                    <label for="checkbox_all"></label>
+                                </th>
+                                <th rowspan="3" class="gstTblHeadr ctnTblHdr reg m-cir sort" data-ng-bind="trans.LBL_RECEIVER_GSTIN" ng-click="sort('ctin')"></th>
+                                <th rowspan="3" class="gstTblHeadr spTblHdr reg m-cir sort" data-ng-bind="trans.LBL_NOT_TYP"></th>
+                                <th class="gstTblHeadr psTblHdr reg m-cir" data-ng-bind="trans.LBL_NOT_VAL"></th>
+                                <th rowspan="3" class="gstTblHeadr m100TblHdr reg m-cir sort" data-ng-bind="trans.LBL_DEBIT_CREDIT_NOTE_NO" ng-click="sort('nt_num')"></th>
+                                <th rowspan="3" class="gstTblHeadr dtTblHdr reg m-cir sort" data-ng-bind="trans.LBL_DEBIT_CREDIT_NOTE_DATE" ng-click="sort('nt_dt')"></th>
+                                <th rowspan="3" class="gstTblHeadr m100TblHdr reg m-cir sort" data-ng-bind="trans.LBL_INVOICE_NUMBER" ng-click="sort('inum')"></th>
+                                <th rowspan="3" class="gstTblHeadr dtTblHdr reg m-cir sort" data-ng-bind="trans.LBL_INVOICE_DATE" ng-click="sort('idt')"></th>
+                                <th rowspan="3" class="gstTblHeadr spTblHdr reg m-cir" data-ng-bind="trans.LBL_SUPPLY_TYPE"></th>
+                                <th rowspan="3" class="gstTblHeadr spTblHdr reg m-cir" data-ng-bind="trans.LBL_RSN_NOTE"></th>
+                                <th class="gstTblHeadr">Pre GST</th>
+                                <th class="gstTblHeadr">Status</th>
+                                <th rowspan="3" class="gstTblHeadr m100TblHdr" data-ng-bind="trans.LBL_ACTIONS"></th>
+                            </tr>
+
+                        </thead>
+                        <tbody>
+                            <tr dir-paginate="y in ReceiverSummaryList | filter:searchInvNum  | orderBy:sortBy:sortReverse | filter:search_filter_value.val | itemsPerPage: pageSize" current-page="currentPage" total-items="totalAvailable"
+                                ng-form="invFrm">
+
+                                <td class="text-center">
+                                    <div>
+                                        <input type="checkbox" class="chkbx" ng-model="y.Select" ng-true-value="'Y'" ng-false-value="'N'"  ng-click="SelectOne($index)"/>
+                                        <label for="checkbox_all"></label>
+                                    </div>
+                                </td>
+
+                                <td data-ng-class="{'has-error':  (invFrm.ctin.$error.pattern || invFrm.ctin.$error.required)}">
+                                    <input type="text" class="form-control formedit" name="ctin" data-ng-pattern="/^[A-Za-z0-9]{15}$/" data-ng-model="y.ctin"
+                                        ng-required="true" ng-change="onCtinChange(y)" data-ng-disabled="true"
+                                    />
+                                </td>
+
+                                <td>
+                                    <select class="form-control" ng-options="opt.value as opt.name for opt in noteList1" ng-model="y.ntty" data-ng-disabled="true"></select>
+                                </td>
+                                <td data-ng-class="{'has-error': (invFrm.val.$error.required)}">
+                                    <div class="datepicker-icon input-group">
+                                        <input type="text" class="form-control text-right" name="val" data-ng-model="y.val" data-format="currency" ng-required="true"
+                                            data-ng-disabled="true" data-ng-change="onRtChange(y)" />
+                                    </div>
+                                </td>
+
+                                <td data-ng-class="{'has-error': (invFrm.nt_num.$error.pattern || invFrm.nt_num.$error.required)}">
+                                    <input type="text" class="form-control formedit" name="nt_num" data-ng-model="y.nt_num" data-ng-pattern="/^[a-zA-Z0-9-\/]*$/"
+                                        maxlength="50" ng-required="true" data-ng-disabled="true" />
+                                </td>
+                                <td data-ng-class="{'has-error': (invFrm.nt_dt.$error.required)}">
+                                    <div class="datepicker-icon input-group">
+                                        <div class="datepicker-icon input-group">
+                                            <i class="fa fa-calendar"></i>
+                                            <input name="nt_dt" class="form-control date-picker" data-ng-model="y.nt_dt" data-datepicker ng-required="true" data-min-years="{{minYearsAllowed}}"
+                                                data-min-date="{{minDate()}}" data-max-date="{{datefunc()}}" data-ng-disabled="true"
+                                            />
+                                            <span class="input-group-addon"><span class="fa fa-calendar" ></span></span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td data-ng-class="{'has-error': (invFrm.inum.$error.pattern || invFrm.inum.$error.required)}">
+                                    <input type="text" class="form-control formedit" name="inum" data-ng-model="y.inum" data-ng-pattern="/^[a-zA-Z0-9-/]*$/"
+                                        maxlength="50" ng-required="true" data-ng-disabled="true" />
+                                </td>
+                                <td data-ng-class="{'has-error': (invFrm.idt.$error.pattern || invFrm.idt.$invalid || invFrm.idt.$error.required)}">
+                                    <div class="datepicker-icon input-group">
+                                        <div class="datepicker-icon input-group">
+                                            <i class="fa fa-calendar"></i>
+                                            <input name="idt" class="form-control date-picker" data-ng-model="y.idt" data-datepicker data-ng-disabled="true" ng-required="true"
+                                                data-ng-change="isPreGST(0,y,invFrm);isLessThanInvDate(0,y,invFrm);" data-min-years="{{minYearsAllowed}}"
+                                                data-min-date="{{minInvDatePGst(y)}}" data-max-date="{{maxInvDatePGst(y)}}" />
+                                            <span class="input-group-addon"><span class="fa fa-calendar" ></span></span>
+                                        </div>
+                                    </div>
+                                    <span class="err" data-ng-show="invFrm.idt && invFrm.idt.$invalid" ng-bind="invdtmsg"></span>
+                                </td>
+                                <!--<td data-ng-class="{'has-error': (invFrm.val.$error.required)}">
+                                    <div class="datepicker-icon input-group">
+                                        <input type="text" class="form-control text-right" name="val" data-ng-model="y.val" data-format="currency" ng-required="true"
+                                            data-ng-disabled="!invFrm.edb" data-ng-change="onRtChange(y)" />
+                                    </div>
+                                </td>-->
+
+                                <td>
+                                    <select class="form-control" data-ng-disabled="true" ng-options="option.name for option in suplyList track by option.name"
+                                        ng-model="y.sp_typ"></select>
+                                </td>
+
+
+
+                                <td>
+                                    <select class="form-control" ng-options="opt.cd+'-'+opt.nm as opt.cd+'-'+opt.nm for opt in rsnList" ng-model="y.rsn" data-ng-disabled="true"></select>
+                                </td>
+
+                                <td class="text-center pRel">
+                                    <input type="checkbox" class="chkbx" ng-model="y.p_gst" ng-true-value="'Y'" ng-false-value="'N'" data-ng-disabled="true"
+                                        ng-change="isPreGST(0,y,invFrm);isLessThanInvDate(0,y,invFrm);" />
+                                    <label for="checkbox_all"></label>
+                                </td>
+
+
+                                <td class="text-center">
+                                    <span class="text-center" ng-bind="y.flag"></span>
+                                    <!--<div class="text-center" ng-if="y.flag=='A'">A</div>
+                                    <div class="text-center" ng-if="y.flag=='R'">R</div>
+                                    <div class="text-center" ng-if="y.flag=='M'">M</div>
+                                    <div class="text-center" ng-if="y.flag=='N'">N</div>
+                                    <div class="text-center" ng-if="y.flag=='P'">P</div>
+
+                                </td>
+                                <!--<td class="text-center newinv">
+                                <div ng-if="is_disabledCFS(y.ctin, y)">
+
+                                    <button type="button" class="btn btn-sm btn-primary" ng-hide="invFrm.edb" data-ng-disabled="y.flag=='R'" data-ng-click="invFrm.edb = !invFrm.edb"
+                                        tabindex="0"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                                     <button type="button" class="btn btn-sm btn-primary" ng-if="invFrm.edb" data-ng-click="gotoAddItems(y)" tabindex="0" data-ng-disabled="invFrm.$invalid "><i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                                    <button type="button" class="btn btn-sm btn-primary" data-ng-if="invFrm.edb" data-ng-click="invFrm.edb = !invFrm.edb;updateInvoice(y)"
+                                        tabindex="0" data-ng-disabled="invFrm.$invalid"><i class="fa fa-save" aria-hidden="true"></i></button>
+                                </div>
+                                </td>-->
+                                    <td class="text-center newinv">
+                                            <button type="button" class="btn btn-sm btn-primary"  data-ng-click="gotoAddItems(y)" tabindex="0" ><i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                                    </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center">
+                    <wrap-dir-pagination></wrap-dir-pagination>
+                </div>
+            </div>
+        </div>
+        <span ng-show="!ReceiverSummaryList.length">No Invoices Found</span>
+        <div class="btn-toolbar">
+            <!--<button type="button" class="btn btn-primary pull-left" ng-show="ReceiverSummaryList.length" ng-click="deleteSelectedRows()">Delete</button>-->
+            <button type="button" class="btn btn-primary pull-left" ng-show="ReceiverSummaryList.length" ng-disabled="false" ng-click="AcceptSelectedRows()">Accept</button>
+            <button type="button" class="btn btn-primary pull-left" ng-show="ReceiverSummaryList.length" ng-disabled="false" ng-click="RejectSelectedRows()">Reject</button>
+            <button type="button" class="btn btn-primary pull-left" ng-show="ReceiverSummaryList.length" ng-disabled="false" ng-click="setPendingSelectedRows()">Pending</button>
+            <!-- <button type="button" class="btn btn-primary pull-left" ng-show="SupplierSummaryList.length" ng-disabled="false" ng-click="updateSelectedRows('P')">Pending</button>-->
+        </div>
+    </div>
+    
+
+</div>

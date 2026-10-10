@@ -1,0 +1,90 @@
+<div data-ng-controller="uploadreturnsctrl">
+    <div class="tabpane">
+
+        <div class="table-responsive">
+            <table class="table tbl inv table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center">
+                            <input type="checkbox" class="chkbx" ng-model="deleteAll" ng-true-value="'Y'" ng-false-value="'N'" ng-click="DeleteAll(ReceiverSummaryList, deleteAll)"
+                            />
+                            <label for="checkbox_all"></label>
+                        </th>
+                        <th class="gstTblHeadr dtTblHdr reg m-cir sort" ng-click="sort('state_cd')">Place Of Supply</th>
+                        <!--data-ng-bind="trans.LBL_REC_STATECD"-->
+                        <!-- <th class="gstTblHeadr dtTblHdr " ng-click="sort('ad_Amt')"> Gross Taxable Amount</th>-->
+                        <th class="gstTblHeadr spTblHdr reg m-cir" data-ng-bind="trans.LBL_SUPPLY_TYPE"></th>
+                        <th class="gstTblHeadr">Status</th>
+                        <th class="gstTblHeadr m100TblHdr" data-ng-bind="trans.LBL_ACTIONS"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr dir-paginate="y in ReceiverSummaryList | itemsPerPage: pageSize" current-page="currentPage" total-items="totalAvailable"
+                        ng-form="invFrm">
+                        <td class="text-center">
+                            <input type="checkbox" class="chkbx" ng-model="y.DeleteSelect" ng-true-value="'Y'" ng-false-value="'N'" />
+                            <label for="checkbox_all"></label>
+                        </td>
+                        <td>
+                            <select class="form-control" ng-options="opt.cd as opt.cd+'-'+opt.nm for opt in StateList" ng-model="y.pos" data-ng-disabled="true"
+                                ng-change="onPosChange(y)"></select>
+                        </td>
+                        <!--!invFrm.edb -->
+
+                        <td> <select class="form-control" ng-options="option.cd as option.name for option in suplyList " ng-model="y.sply_ty"
+                                data-ng-disabled="true"></select>
+                            <!--!invFrm.edb -->
+                        </td>
+                        <td class="text-center">
+                            <span class="text-center" ng-bind="y.flag"></span>
+                        </td>
+
+
+                        <td class="text-center newinv">
+                            <button type="button" class="btn btn-sm btn-primary" ng-if="invFrm.edb" data-ng-click="gotoAddItems(y)" tabindex="0" data-ng-disabled="invFrm.$invalid"><i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                           <!-- <button type="button" class="btn btn-sm btn-primary" ng-if="invFrm.edb" data-ng-click="invFrm.edb=!invFrm.edb;updateInvoice(y)"
+                                tabindex="0" data-ng-disabled="invFrm.$invalid"><i class="fa fa-save" aria-hidden="true"></i></button>-->
+                            <button type="button" class="btn btn-sm btn-primary" ng-hide="invFrm.edb" data-ng-click="invFrm.edb = !invFrm.edb " tabindex="0"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+                <tr ng-form="newInvFrm" ng-show="isLastPage(currentPage, pageSize)">
+                    <td></td>
+                    <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.supst_cd.$error.required),'has-success': newInvValidtr && newInvFrm.supst_cd.$valid}">
+                        <select class="form-control" name="supst_cd" ng-model="newInvRw.pos" ng-change="isExistingPos(1,newInvRw.pos)"
+                            ng-required="true">
+							<option value="">Select</option>
+										<option data-ng-repeat="opt in StateList" data-ng-bind="opt.cd+'-'+opt.nm" value="{{opt.cd}}"></option>
+							</select>
+                        <!---->
+                        <span class="err" data-ng-show="newInvValidtr && newInvFrm.supst_cd.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                        <span class="err" data-ng-show="newInvRw.pos && newInvFrm.supst_cd.$invalid">This Place of Supply (POS) already exists. Please enter another POS.</span>
+                    </td>
+                    <td data-ng-class="{'has-error':  newInvValidtr && (!newInvRw.sply_ty),'has-success': newInvValidtr && newInvRw.sply_ty }">
+
+                        <select name="sply_ty" class="form-control" id="stype" ng-options="option.cd as option.name for option in suplyList" ng-model="newInvRw.sply_ty"
+                            ng-required="true">
+                                    <option label="Select" value="" data-ng-selected="true" disabled></option></select>
+                        <span class="err" data-ng-show="newInvValidtr && !newInvRw.sply_ty" data-ng-bind="trans.ERR_MANDATORY"></span>
+                    </td>
+                    <td></td>
+                    <td class="text-center" colspan="2">
+                        <button type="button" class="btn btn-sm btn-primary" ng-click="gotoAddItems('add')"><i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                    </td>
+                </tr>
+
+
+            </table>
+        </div>
+        <div class="text-center">
+            <wrap-dir-pagination></wrap-dir-pagination>
+        </div>
+        <div class="btn-toolbar">
+            <button type="button" class="btn btn-primary pull-left" ng-show="ReceiverSummaryList.length" ng-click="deleteSelectedRows()">Delete</button>
+            <!--  <button type="button" class="btn btn-primary pull-left" ng-show="ReceiverSummaryList.length" ng-disabled="false" ng-click="updateSelectedRows('A')">Accept</button>
+            <button type="button" class="btn btn-primary pull-left" ng-show="ReceiverSummaryList.length" ng-disabled="false" ng-click="updateSelectedRows('R')">Reject</button>
+            <button type="button" class="btn btn-primary pull-left" ng-show="ReceiverSummaryList.length" ng-disabled="false" ng-click="updateSelectedRows('P')">Pending</button>-->
+        </div>
+    </div>
+
+</div>

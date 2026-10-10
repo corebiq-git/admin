@@ -1,0 +1,102 @@
+<div data-ng-controller="errorgstr2nilsumryctrl">
+    <form name="nilPage" id="nilPage" novalidate="" data-ng-submit="updatenilSumryList()" data-accessible-form="">
+        <div class="tabpane">
+            <!--<div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <h4 data-ng-bind="trans.LBL_GOODS_SERVICES"></h4>
+                </div>
+            </div>-->
+            <h5>Error Status : {{error_msg}} </h5>
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="table-responsive">
+                        <table class="table inv exp tbl table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" data-ng-bind="trans.LBL_NATURE_SUPP"></th>
+                                    <th class="text-center" data-ng-bind="trans.LBL_COMP_DLR_AMT"></th>
+                                    <th class="text-center" data-ng-bind="trans.LBL_NIL_AMT"></th>
+                                    <th class="text-center" data-ng-bind="trans.LBL_EXP_AMT"></th>
+                                    <th class="text-center" data-ng-bind="trans.LBL_NGST_SUPP_AMT"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                   <td data-ng-bind="trans.LBL_IERSP"></td>
+                                    <td class="currency">
+                                        <!--<div class="input-group">
+                                            <span class="input-group-addon"><button type="button" data-ng-model="nilSumryList.inter.sign_cpddr" data-ng-click="changeSign(0,'cpddr',nilSumryList.inter.sign_cpddr)" data-ng-disabled="flag">{{nilSumryList.inter.sign_cpddr}}</button> </span>-->
+                                            <input id="intercpdra" data-ng-model="nilSumryList.inter.cpddr" class="form-control newinv formedit currency" data-format="currency" data-fraction="2"
+                                                title="currency" data-ng-disabled="flag" isNeg="true" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00' " data-format="currency" ng-required="true">
+                                        <!--</div>-->
+                                    </td>
+                                    <td class="currency">
+                                        <!--<div class="input-group">
+                                            <span class="input-group-addon"><button type="button" data-ng-model="nilSumryList.inter.sign_nilSumryListsply" data-ng-click="changeSign(0,'nilSumryListsply',nilSumryList.inter.sign_nilSumryListsply)" data-ng-disabled="flag">{{nilSumryList.inter.sign_nilSumryListsply}}</button> </span>-->
+                                            <input id="internra" data-ng-model="nilSumryList.inter.nilsply" class="form-control newinv formedit  currency" data-format="currency" data-fraction="2"
+                                                title="currency" data-ng-disabled="flag" isNeg="true" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00' " data-format="currency" ng-required="true">
+                                        <!--</div>-->
+                                    </td>
+                                    <td class="currency">
+                                        <!--<div class="input-group">
+                                            <span class="input-group-addon"><button type="button" data-ng-model="nilSumryList.inter.sign_exptdsply" data-ng-click="changeSign(0,'exptdsply',nilSumryList.inter.sign_exptdsply)" data-ng-disabled="flag">{{nilSumryList.inter.sign_exptdsply}}</button></span>-->
+                                            <input id="interexa" data-ng-model="nilSumryList.inter.exptdsply" class="form-control newinv formedit  currency" data-format="currency"
+                                                data-fraction="2" title="currency" data-ng-disabled="flag" isNeg="true" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00' " data-format="currency" ng-required="true">
+                                        <!--</div>-->
+                                    </td>
+                                    <td class="currency">
+                                        <!--<div class="input-group">
+                                            <span class="input-group-addon"><button type="button" data-ng-model="nilSumryList.inter.sign_ngsply" data-ng-click="changeSign(0,'ngsply',nilSumryList.inter.sign_ngsply)" data-ng-disabled="flag">{{nilSumryList.inter.sign_ngsply}}</button></span>-->
+                                            <input id="interngsa" data-ng-model="nilSumryList.inter.ngsply" class="form-control formedit newinv  currency" data-format="currency"
+                                                data-fraction="2" title="currency" data-ng-disabled="flag" isNeg="true" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00' " data-format="currency" ng-required="true">
+                                        <!--</div>-->
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td data-ng-bind="trans.LBL_IARSP"></td>
+                                    <td class="currency">
+                                        <!--<div class="input-group">
+                                            <span class="input-group-addon"><button type="button" data-ng-model="nilSumryList.intra.sign_cpddr" data-ng-click="changeSign(1,'cpddr',nilSumryList.intra.sign_cpddr)" data-ng-disabled="flag">{{nilSumryList.intra.sign_cpddr}}</button> </span>-->
+                                            <input id="intercpdra" data-ng-model="nilSumryList.intra.cpddr" class="form-control newinv formedit  currency" data-format="currency" data-fraction="2"
+                                                title="currency" data-ng-disabled="flag" isNeg="true" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00' " data-format="currency" ng-required="true">
+                                        <!--</div>-->
+                                    </td>
+                                    <td class="currency">
+                                        <!--<div class="input-group">
+                                            <span class="input-group-addon"><button type="button" data-ng-model="nilSumryList.intra.sign_nilSumryListsply" data-ng-click="changeSign(1,'nilSumryListsply',nilSumryList.intra.sign_nilSumryListsply)" data-ng-disabled="flag">{{nilSumryList.intra.sign_nilSumryListsply}}</button> </span>-->
+                                            <input id="internra" data-ng-model="nilSumryList.intra.nilsply" class="form-control newinv formedit  currency" data-format="currency" data-fraction="2"
+                                                title="currency" data-ng-disabled="flag" isNeg="true" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00' " data-format="currency" ng-required="true">
+                                        <!--</div>-->
+                                    </td>
+                                    <td class="currency">
+                                        <!--<div class="input-group">
+                                            <span class="input-group-addon"><button type="button" data-ng-model="nilSumryList.intra.sign_exptdsply" data-ng-click="changeSign(1,'exptdsply',nilSumryList.intra.sign_exptdsply)" data-ng-disabled="flag">{{nilSumryList.intra.sign_exptdsply}}</button></span>-->
+                                            <input id="interexa" data-ng-model="nilSumryList.intra.exptdsply" class="form-control newinv formedit  currency" data-format="currency"
+                                                data-fraction="2" title="currency" data-ng-disabled="flag" isNeg="true" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00' " data-format="currency" ng-required="true">
+                                        <!--</div>-->
+                                    </td>
+                                    <td class="currency">
+                                        <!--<div class="input-group">
+                                            <span class="input-group-addon"><button type="button" data-ng-model="nilSumryList.intra.sign_ngsply" data-ng-click="changeSign(1,'ngsply',nilSumryList.intra.sign_ngsply)" data-ng-disabled="flag">{{nilSumryList.intra.sign_ngsply}}</button></span>-->
+                                            <input id="interngsa" data-ng-model="nilSumryList.intra.ngsply" class="form-control formedit newinv  currency" data-format="currency"
+                                                data-fraction="2" title="currency" data-ng-disabled="flag" isNeg="true" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00' " data-format="currency" ng-required="true">
+                                        <!--</div>-->
+                                    </td>
+                                </tr>
+
+
+
+
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="btn-toolbar">
+    <button type="submit" class="btn btn-primary pull-right" id="abc1" ng-disabled="flag">UPDATE</button>
+<button type="button" class="btn btn-primary pull-right" id="abc" style="width:80px" data-ng-bind="trans.LBL_EDIT" data-ng-click="flag=!flag" ng-disabled="!flag"></button>
+</div>
+</div>
+</form>
+</div>

@@ -1,0 +1,190 @@
+<div data-ng-controller="errorreturnsctrl">
+    <div class="tabpane">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="table-responsive">
+                    <table class="table tbl inv table-bordered">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" class="text-center">
+                                    <input type="checkbox" class="chkbx" ng-model="selectAll" ng-click="checkAll()" ng-checked="allSelected()" />
+                                    <label for="checkbox_all"></label>
+                                </th>
+                                <th rowspan="2" class="gstTblHeadr ctnTblHdr reg m-cir sort" data-ng-bind="trans.LBL_SUPPLIER_GSTIN" ng-click="sort('ctin')"></th>
+                                <th rowspan="2" class="gstTblHeadr m100TblHdr reg m-cir sort" data-ng-bind="trans.LBL_DEBIT_CREDIT_NOTE_NO" ng-click="sort('nt_num')"></th>
+                                <th rowspan="2" class="gstTblHeadr dtTblHdr reg m-cir sort" data-ng-bind="trans.LBL_DEBIT_CREDIT_NOTE_DATE" ng-click="sort('nt_dt')"></th>
+                                <th rowspan="2" class="gstTblHeadr spTblHdr reg m-cir" data-ng-bind="trans.LBL_NOT_TYP"></th>
+                                <th rowspan="2" class="gstTblHeadr spTblHdr reg m-cir" data-ng-bind="trans.LBL_RSN_NOTE"></th>
+                                <!--<th class="gstTblHeadr psTblHdr reg m-cir sort" data-ng-bind="trans.LBL_POS" ng-click="sort('pos')"></th>-->
+                                <th class="gstTblHeadr psTblHdr reg m-cir">Note/Refund Voucher Value</th>
+                                <th class="gstTblHeadr">Pre GST</th>
+                                <th rowspan="2" class="gstTblHeadr m100TblHdr reg m-cir sort" data-ng-bind="trans.LBL_INVOICE_NUMBER" ng-click="sort('inum')"></th>
+                                <th rowspan="2" class="gstTblHeadr dtTblHdr reg m-cir sort" data-ng-bind="trans.LBL_INVOICE_DATE" ng-click="sort('idt')"></th>
+                                <!--  <th rowspan="2" class="gstTblHeadr m100TblHdr reg m-cir sort" data-ng-bind="trans.LBL_TOT_DIFF_VAL" ng-click="sort('val')"></th>-->
+                                <th rowspan="2" class="gstTblHeadr spTblHdr reg m-cir" data-ng-bind="trans.LBL_SUPPLY_TYPE"></th>
+
+                                <!-- <th class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_RATE"></th>
+                                <th colspan="1" class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_IGST"></th>
+                                 <th colspan="1" class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_CGST"></th>
+                                <th colspan="1" class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_SGST"></th>
+                                <th colspan="1" class="gstTblHeadr m100TblHdr reg" reg m-cir data-ng-bind="trans.HEAD_CESS"></th>
+                                <th rowspan="2" class="gstTblHeadr ctnTblHdr" data-ng-bind="trans.E_COMM_GSTN"></th>-->
+                                <th rowspan="2" class="gstTblHeadr errMsg">Error Message</th>
+                                <th rowspan="2" class="gstTblHeadr m100TblHdr" data-ng-bind="trans.LBL_ACTIONS"></th>
+                            </tr>
+                            <!--  <tr>
+                                <th class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_RATE"></th>
+                                <th class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_AMOUNT"></th>
+                                <th class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_RATE"></th>
+                                <th class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_AMOUNT"></th>
+                                <th class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_RATE"></th>
+                                <th class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_AMOUNT"></th>
+                                <th class="gstTblHeadr m100TblHdr reg " data-ng-bind="trans.HEAD_RATE"></th>
+                                <th class="gstTblHeadr m100TblHdr reg " data-ng-bind="trans.HEAD_AMOUNT"></th>
+                            </tr>-->
+                        </thead>
+
+                        <tbody>
+                            <tr dir-paginate="y in ErrorList | filter:searchInvNum | orderBy:sortBy:sortReverse | itemsPerPage: pageSize" current-page="currentPage"
+                                ng-form="invFrm" ng-init="y.old_ntnum=y.ntnum">
+                                <td class="text-center">
+                                    <input type="checkbox" class="chkbx" ng-model="y.select" />
+                                    <label for="checkbox_all"></label>
+                                </td>
+                                <td data-ng-class="{'has-error':  (invFrm.ctin.$error.pattern || invFrm.ctin.$error.required)}">
+                                    <input type="text" class="form-control formedit" name="ctin" data-ng-model="y.ctin" ng-required="true" ng-change="onCtinChange(y);onGstinChange(y.ctin);"
+                                        data-ng-disabled="true || !invFrm.edb" />
+                                </td>
+                                <td data-ng-class="{'has-error': (invFrm.nt_num.$error.pattern || invFrm.nt_num.$error.required)}">
+                                    <input type="text" class="form-control formedit" name="nt_num" data-ng-model="y.nt_num" data-ng-pattern="/^[a-zA-Z0-9-\/]*$/"
+                                        maxlength="50" ng-required="true" data-ng-disabled="!invFrm.edb" />
+                                    <input type="hidden" name="ntnum_old" data-ng-model="y.old_ntnum" />
+                                </td>
+                                <td data-ng-class="{'has-error': (invFrm.nt_dt.$error.required)}">
+                                    <div class="datepicker-icon input-group">
+                                        <div class="datepicker-icon input-group">
+                                            <i class="fa fa-calendar"></i>
+                                            <input name="nt_dt" class="form-control date-picker" data-ng-model="y.nt_dt" data-datepicker ng-required="true" data-min-years="{{minYearsAllowed}}"
+                                                data-min-date="{{minDate()}}" data-max-date="{{datefunc()}}" data-ng-disabled="!invFrm.edb"
+                                            />
+                                            <span class="input-group-addon"><span class="fa fa-calendar" ></span></span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <select class="form-control" ng-options="opt.value as opt.name for opt in noteList1" ng-model="y.ntty" data-ng-disabled="!invFrm.edb"></select>
+                                </td>
+                                <td>
+                                    <select class="form-control" ng-options="opt.nm as opt.cd+'-'+opt.nm for opt in rsnList" ng-model="y.rsn" data-ng-disabled="!invFrm.edb"></select></td>
+
+                                <!--<td>
+                                    <select class="form-control" ng-options="opt.cd as opt.cd+'-'+opt.nm for opt in StateList" ng-model="y.pos" data-ng-disabled="!invFrm.edb"
+                                        ng-change="onCtinChange(y);onPosChange(y)"></select>
+                                </td>-->
+                                <td data-ng-class="{'has-error': (invFrm.val.$error.pattern || invFrm.val.$error.required)}">
+                                    <input type="text" class="form-control formedit" name="val" data-ng-model="y.val" maxlength="50" ng-required="true" data-ng-disabled="!invFrm.edb"
+                                    />
+                                </td>
+                                <td class="text-center pRel">
+                                    <input type="checkbox" class="chkbx" ng-model="y.p_gst" ng-true-value="'Y'" ng-false-value="'N'" data-ng-disabled="!invFrm.edb"
+                                        ng-change="isPreGST(0,y,invFrm)" />
+                                    <label for="checkbox_all"></label>
+                                </td>
+                                <td data-ng-class="{'has-error': (invFrm.inum.$error.pattern || invFrm.inum.$error.required)}">
+                                    <input type="text" class="form-control formedit" name="inum" data-ng-model="y.inum" data-ng-pattern="/^[a-zA-Z0-9-\/]{1,16}$/"
+                                        maxlength="16" ng-required="true" data-ng-disabled="!invFrm.edb" />
+                                </td>
+                                <!--<td data-ng-class="{'has-error': (invFrm.idt.$error.pattern || invFrm.idt.$error.required || invFrm.idt.$invalid || !validDt)}" data-ng-init="isPreGST(y,invFrm,1)">
+
+                                    <div class="datepicker-icon input-group">
+                                        <i class="fa fa-calendar"></i>
+                                        <input class="form-control date-picker" name="idt" data-ng-model="y.idt" data-datepicker ng-required="true" data-min-years="{{minYearsAllowed}}"
+                                            data-min-date="{{(!y.dt)?y.dt:minDate()}}" data-max-date="{{datefunc()}}" data-ng-change="isPreGST(y,invFrm)"
+                                            data-ng-disabled="!invFrm.edb" />
+                                        <span class="input-group-addon"><span class="fa fa-calendar" ></span></span>
+                                    </div>
+
+                                </td>-->
+                                <td data-ng-class="{'has-error': (invFrm.idt.$error.pattern || invFrm.idt.$error.required || invFrm.idt.$invalid)}">
+                                    <div class="datepicker-icon input-group">
+                                        <div class="datepicker-icon input-group">
+                                            <i class="fa fa-calendar"></i>
+                                            <input name="idt" class="form-control date-picker" data-ng-model="y.idt" data-ng-model-options="{updateOn:'blur'}" data-datepicker
+                                                placeholder="DD-MM-YYYY" data-ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])[\-](0?[1-9]|1[012])[\-\-]\d{4}$/"
+                                                data-datepicker ng-required="true" data-ng-change="isPreGST(0,y,invFrm);isLessThanInvDate(0,y,invFrm);"
+                                                ng-required="true" data-min-years="{{minYearsAllowed}}" data-min-date="{{minInvDatePGst(y)}}"
+                                                data-max-date="{{maxInvDatePGst(y)}}" data-ng-disabled="!invFrm.edb" />
+                                            <span class="input-group-addon"><span class="fa fa-calendar" ></span></span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <!--    <td data-ng-class="{'has-error': (invFrm.val.$error.required)}">
+                                    <div class="datepicker-icon input-group">
+                                        <input type="text" class="form-control text-right" name="val" data-ng-model="y.val" data-format="currency" ng-required="true"
+                                            data-ng-disabled="!invFrm.edb" ng-change="onRtChange(y)" />
+                                    </div>
+                                </td>-->
+
+                                <td>
+                                    <select class="form-control" ng-options="option.name for option in suplyList track by option.name" ng-model="y.sp_typ" data-ng-disabled="!invFrm.edb || y.pos"></select>
+                                </td>
+                                <!--                                RATE
+                                <td data-ng-class="{'has-error': (invFrm.rt.$error.required || invFrm.rt.$error.pattern)}">
+                                    <select class="form-control" name="rt" ng-options="opt.value as opt.value for opt in RateList.CommGST" ng-model="y.rt" ng-change="onRtChange(y, isIntraState(0,y)?4:3)" ng-required="true" data-ng-disabled="!invFrm.edb || isIntraState(0,y)"></select>
+                                </td>
+
+                                <td >
+                                    <input type="text" class="form-control text-right" name="iamt" ng-model="y.iamt"  data-fraction="2"
+                                        data-format="currency" ng-required="true" data-ng-disabled="!invFrm.edb  || (dashbrdGstn==y.pos)"  onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value=0;"
+                                           data-ng-value="{{(!y.iamt)?0:y.iamt}}">
+                                </td>
+                             
+                                <td >
+                                    <input type="text" class="form-control text-right" name="camt" ng-model="y.camt"  data-fraction="2"
+                                        data-format="currency" ng-required="true" data-ng-disabled="!invFrm.edb  || (dashbrdGstn!=y.pos)" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value=0;" data-ng-value="{{(!y.camt)?0:y.camt}}">
+                                </td>
+                           
+                                <td >
+                                    <input type="text" class="form-control text-right" name="samt" ng-model="y.samt"  data-fraction="2"
+                                        data-format="currency" ng-required="true" data-ng-disabled="!invFrm.edb  || (dashbrdGstn!=y.pos)" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value=0;" data-ng-value="{{(!y.samt)?0:y.samt}}">
+                                </td>
+
+                             
+                                <td >
+                                    <input type="text" class="form-control text-right" name="csamt" ng-model="y.csamt"  data-fraction="2"
+                                        data-format="currency" ng-required="true" data-ng-disabled="!invFrm.edb" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value=0;" data-ng-value="{{(!y.csamt)?0:y.csamt}}">
+                                </td>
+                               
+                                 <td data-ng-class="{'has-error':  (invFrm.etin.$error.pattern || (invFrm.etin.$invalid && y.etin))}">
+                                    <input type="text" class="form-control formedit" name="etin" data-ng-model="y.etin" data-ng-pattern="/^[A-Za-z0-9]{15}$/"
+                                        data-ng-change="isEtinAsSupRecGstin(0,y,invFrm)" data-ng-disabled="!invFrm.edb" />
+                                </td>-->
+
+                                <td class="text-center">
+
+                                    <div class="text-center"><span data-ng-bind="y.error_msg"></span></div>
+
+                                </td>
+                                <td class="text-center newinv">
+                                    <button type="button" class="btn btn-sm btn-primary" ng-if="invFrm.edb" data-ng-click="gotoAddItems(y)" tabindex="0" data-ng-disabled="invFrm.$invalid"><i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                                    <button type="button" class="btn btn-sm btn-primary" ng-if="invFrm.edb" data-ng-click="invFrm.edb=!invFrm.edb;updateInvoice(y)"
+                                        tabindex="0" data-ng-disabled="invFrm.$invalid"><i class="fa fa-save" aria-hidden="true"></i></button>
+                                    <button type="button" class="btn btn-sm btn-primary" ng-hide="invFrm.edb" data-ng-click="invFrm.edb = !invFrm.edb " tabindex="0"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+                <div class="text-center">
+                    <wrap-dir-pagination></wrap-dir-pagination>
+                </div>
+            </div>
+        </div>
+        <div class="btn-toolbar">
+
+            <button type="button" class="btn btn-primary pull-left" ng-show="ErrorList.length" ng-click="deleteSelectedRows()">Delete</button>
+
+        </div>
+    </div>
+</div>

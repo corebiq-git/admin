@@ -1,0 +1,74 @@
+<div data-ng-controller="gstr2asumryctrl">
+	<div class="tabpane">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="table-responsive">
+					<table class="table tbl inv table-bordered">
+						<thead>
+							<tr>
+								<th rowspan="2" nowrap>
+									<span>Reference date<br />(ICEGATE) </span>
+									<i class="fa fa-sort" aria-hidden="true" ng-click='sort("refdate")'></i>
+								</th>
+								<th colspan="4" nowrap ng-bind="trans.LBL_BOE_DETAILS"></th>
+								<th colspan="2" nowrap ng-bind="trans.LBL_TX_AMT"></th>
+								<th rowspan="2" nowrap ng-bind="trans.LBL_AMENDED"></th>
+							</tr>
+							<tr>
+								<th>Port code</th>
+								<th ng-bind="trans.LBL_NUMBER"></th>
+								<th nowrap>
+									<span ng-bind="trans.LBL_DATE"></span>
+									<i class="fa fa-sort" aria-hidden="true" ng-click='sort("boedate")'></i>
+								</th>
+								<th ng-bind="trans.LBL_TAX_VAL_RUP"></th>
+								<th ng-bind="trans.LBL_IGST_RUP"></th>
+								<th ng-bind="trans.LBL_CESS_RUP"></th>
+							</tr>
+							<tr>
+								<th>1</th>
+								<th>2</th>
+								<th>3</th>
+								<th>4</th>
+								<th>5</th>
+								<th>6</th>
+								<th>7</th>
+								<th>8</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr dir-paginate="s in ReturnsList | filter:searchInvNum | itemsPerPage: pageSize" total-items="totalAvailable" current-page="currentPage" ng-show="ReturnsList.length"
+							>
+								<td class="text-center">{{s.refdt}}</td>
+								<td class="text-center">{{s.pcode}}</td>
+								<td class="text-center">{{s.boenum}}</td>
+								<td class="text-center" nowrap>{{s.boedt}}</td>
+								<td class="text-right">{{s.boeval| INRPAY}}</td>
+								<td class="text-right">{{s.igst | INRPAY}}</td>
+								<td class="text-right">{{s.cess| INRPAY}}</td>
+								<td class="text-center">{{s.amended}}
+								</td>
+							</tr>
+
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="text-center">
+
+			<wrap-dir-pagination></wrap-dir-pagination>
+
+		</div>
+	</div>
+</div>
+
+<style>
+	.active:after {
+		content: none;
+	}
+
+	.width12em {
+		width: 12em
+	}
+</style>

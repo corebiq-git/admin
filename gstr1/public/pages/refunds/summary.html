@@ -1,0 +1,51 @@
+<div class="container w100 pad0">
+    <!--    <button type="button" class="btn btn-default active" data-ng-click="page('gstr/summary')">Dashboard</button>-->
+    <!-- <button type="button" class="btn btn-primary">Import Files</button> -->
+    <button type="button" class="btn btn-primary" data-conf-click="deleteRefund()">Delete All Data</button>
+    <button type="button" class="btn btn-primary" data-ng-click="page('/refunds/preview')">View Summary</button>
+</div>
+<div ng-if="!sectionList">
+    <!--  Change ng-if="sectionList" -->
+    <form class="form-inline" name="dashboard" novalidate="">
+        <div class="tabpane padBt0 summaryForm" data-ng-init="sectiondisable()">
+            <div class="row">
+                <div class="col-sm-12 col-xs-12">
+                    <div class="form-group input-group" ng-hide="statementListSelected.cd=='nil'">
+                        <div class="input-group-addon"><i class="fa fa-search"></i></div>
+                        <input type="text" class="form-control summaryDrp summaryFilterInput" placeholder="Search Invoices" data-ng-model="search_filter_value.val" ng-change="rfdFilterValChanged()" ng-model-options="{ debounce: 500 }">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-xs-12" style="margin-top: 15px;">
+                    <div class="panel panel-default">
+                        <div class="panel-body" style="background-color: rgba(128, 128, 128, 0.23);">
+                            <p><strong>Note: </strong>In case of multiple BRC’s/ FIRC’s against one invoice, multiple BRC/ FIRC No’s should be mentioned using ‘;’ as the separator. Similarly, the corresponding dates should be mentioned using ‘;’ as the separator.”
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="tabpane" ng-if="!templateLoaded" style="margin-top: -15px;">
+        <alert-message title="{{statementListSelected.nm}}" type="info" message="{{trans.LBL_NOT_AVL}}"></alert-message>
+    </div>
+
+    <div ng-include="statementListSelected.url" onload="finishLoading()" style="margin-top: -25px;"></div>
+    <div class="text-right next-tab-nav">
+        <button type="button" class="btn btn-default" data-ng-click="page('/refunds/dashboard')">Back</button>
+    </div>
+    <!--
+    <div class="text-right next-tab-nav">
+        <button type="button" class="btn btn-primary" data-ng-click="deleteReturn()">Delete Return</button>
+        <button type="button" class="btn btn-primary" data-ng-click="page('/gstr/preview')">View Summary</button>
+    </div>
+-->
+
+</div>
+<div ng-if="sectionList">
+    <!--  Change ng-if="!sectionList" -->
+    <br>
+    <alert-message title="{{info.form}}" type="info" message="{{trans.LBL_NOT_AVL}}"></alert-message>
+</div>
+<br/>

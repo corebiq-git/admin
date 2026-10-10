@@ -23,6 +23,12 @@ myApp.factory('firebaseAuthInterceptor', ['$q', function ($q) {
     return {
         request: function (config) {
             var url = config.url || '';
+            var basePath = window.COREBIQ_BASE_PATH || '';
+            if (basePath && url.charAt(0) === '/' &&
+                    url !== basePath && url.indexOf(basePath + '/') !== 0) {
+                config.url = basePath + url;
+                url = config.url;
+            }
             var isPublicAsset = /^\/(uiassets|pages|images|lang|data|fonts|stylesheets)\//.test(url);
             if (!window.COREBIQ_REQUIRE_AUTH || !url || url.charAt(0) !== '/' ||
                     isPublicAsset || url === '/health') {

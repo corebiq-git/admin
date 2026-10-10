@@ -1,0 +1,197 @@
+<div data-ng-controller="returnsctrl">
+    <div class="tabpane">
+        <div class="row">
+            <div class="col-sm-12">
+                <!--<div class="row">
+                    <div class="col-sm-12 pull-right">
+                        <div class="pull-right mLeft5" wrap-csv-import callback="onpastedone"></div>
+                        <button type="button" class="btn btn-primary mA0 pull-right" ctrl-paste-btn callback="onpastedone">Copy Excel </button>
+                    </div>
+                </div>
+                <br>-->
+                <div class="table-responsive">
+
+                    <table class="table tbl inv table-bordered">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" class="text-center">
+                                    <input type="checkbox" class="chkbx" ng-model="selectAll" ng-true-value="'Y'" ng-false-value="'N'" ng-click="checkAll(ReturnsList, selectAll)" />
+                                    <label for="checkbox_all"></label>
+                                </th>
+                                <!--
+                                <th rowspan="2" class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_CAT"></th>
+                                <th rowspan="2" class="gstTblHeadr m100TblHdr reg m-cir sort" data-ng-bind="trans.HEAD_HSN_SAC_SUP" ng-click="sort('hsn_sc')"></th>
+-->
+                                <th rowspan="2" class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.LBL_HSN"></th>
+                                <th rowspan="2" class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.LBL_DESCRIPTION"></th>
+                                <th rowspan="2" class="gstTblHeadr m100TblHdr reg" data-ng-bind="trans.LBL_UQC"></th>
+                                <th rowspan="2" class="gstTblHeadr m100TblHdr reg m-cir sort" data-ng-bind="trans.LBL_QUANTITY" ng-click="sort('qty')"></th>
+                                <th rowspan="3" class="gstTblHeadr spTblHdr reg m-cir" data-ng-bind="trans.LBL_TOTAL_VALUE"></th>
+                                <th rowspan="2" class="gstTblHeadr spTblHdr reg m-cir sort" data-ng-bind="trans.LBL_TAXABLE_VALUE" ng-click="sort('txval')"></th>
+
+                                <!--<th rowspan="2" class="gstTblHeadr spTblHdr reg m-cir" data-ng-bind="trans.LBL_SUPPLY_TYPE"></th>-->
+
+                                <th colspan="4" data-ng-bind="trans.HEAD_AMOUNT" class="gstTblHeadr reg m-cir"></th>
+
+                                <th rowspan="2" class="gstTblHeadr">Actions</th>
+                            </tr>
+                            <tr>
+                                <th colspan="1" data-ng-bind="trans.HEAD_IGST" class="gstTblHeadr reg"></th>
+                                <th colspan="1" data-ng-bind="trans.HEAD_SGST" class="gstTblHeadr reg"></th>
+                                <th colspan="1" data-ng-bind="trans.HEAD_CGST" class="gstTblHeadr reg"></th>
+                                <th colspan="1" data-ng-bind="trans.HEAD_CESS" class="gstTblHeadr reg"></th>
+                            </tr>
+
+                        </thead>
+                        <tbody>
+                            <tr dir-paginate="y in ReturnsList | filter:searchInvNum | orderBy:sortBy:sortReverse | itemsPerPage: pageSize" current-page="currentPage" ng-form="invFrm">
+
+                                <td class="text-center">
+                                    <input type="checkbox" class="chkbx" ng-model="y.select" ng-true-value="'Y'" ng-false-value="'N'" />
+                                    <label for="checkbox_all"></label>
+                                </td>
+
+                                <td data-ng-class="{'has-error': (invFrm.hsn_sc.$error.pattern || invFrm.hsn_sc.$error.required)}">
+                                    <input type="text" class="form-control text-center" name="hsn_sc" data-ng-model="y.hsn_sc" data-ng-pattern="/^[0-9]*$/" minlength="2" maxlength="8" ng-required="true" data-ng-disabled="!invFrm.edb" />
+                                </td>
+                                <td data-ng-class="{'has-error': (invFrm.desc.$error.required)}">
+                                    <input type="text" class="form-control formedit" name="desc" data-ng-model="y.desc" data-ng-disabled="!invFrm.edb" ng-required="true" />
+                                </td>
+                                <td data-ng-class="{'has-error': (invFrm.uqc.$error.required)}">                                
+                                 
+                                    <select class="form-control formedit" name="uqc" data-ng-model="y.uqc" ng-options="opt.value as opt.name for opt in UQCList" data-ng-disabled="!invFrm.edb"></select>
+                                </td>
+                                <td data-ng-class="{'has-error': (invFrm.qty.$error.pattern || invFrm.qty.$error.required)}">
+                                    <input type="text" class="form-control formedit" name="qty" data-ng-model="y.qty" data-ng-disabled="!invFrm.edb" ng-required="true" data-format="currency" data-fraction="2"/>
+                                </td>
+
+                                <td data-ng-class="{'has-error': (invFrm.val.$error.pattern || invFrm.val.$error.required)}">
+                                    <input type="text" class="form-control text-right" name="val" data-fraction="2" ng-model="y.val" data-format="currency" ng-required="true" ng-change="onRtChange(y)" data-ng-disabled="!invFrm.edb" />
+                                </td>
+
+                                <td data-ng-class="{'has-error': (invFrm.txval.$error.pattern || invFrm.txval.$error.required)}">
+                                    <input type="text" class="form-control text-right" name="txval" data-fraction="2" ng-model="y.txval" data-format="currency" ng-required="true" ng-change="onRtChange(y)" data-ng-disabled="!invFrm.edb" />
+                                </td>
+                                <!--<td>
+                                    <select class="form-control" name="sp_typ" ng-options="option.name for option in suplyList track by option.name" ng-model="y.sp_typ"
+                                        data-ng-disabled="!invFrm.edb" data-ng-change="spTypChange(0,y)"></select>
+                                </td>-->
+                                <!--IGST-->
+                                <td data-ng-class="{'has-error': (invFrm.iamt.$error.required)}">
+                                    <input type="text" class="form-control text-right" name="iamt" ng-model="y.iamt" data-fraction="2" data-format="currency" ng-required="true" data-ng-disabled="!invFrm.edb" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00';">
+                                </td>
+
+                                <!--SGST-->
+                                <td data-ng-class="{'has-error': (invFrm.samt.$error.required)}">
+                                    <input type="text" class="form-control text-right" name="samt" ng-model="y.samt" data-fraction="2" data-format="currency" ng-required="true" data-ng-disabled="!invFrm.edb" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00';">
+                                </td>
+
+                                <!--CGST-->
+                                <td data-ng-class="{'has-error': (invFrm.camt.$error.required)}">
+                                    <input type="text" class="form-control text-right" name="camt" ng-model="y.camt" data-fraction="2" data-format="currency" ng-required="true" data-ng-disabled="!invFrm.edb" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00';">
+                                </td>
+
+                                <!--CESS-->
+                                <td data-ng-class="{'has-error': (invFrm.csamt.$error.required)}">
+                                    <input type="text" class="form-control text-right" name="csamt" ng-model="y.csamt" data-fraction="2" data-format="currency" ng-required="true" data-ng-disabled="!invFrm.edb" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00';">
+                                </td>
+                                <td class="text-center newinv">
+                                    <button type="button" class="btn btn-sm btn-primary" ng-hide="invFrm.edb" data-ng-click="invFrm.edb = !invFrm.edb" tabindex="0"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                                    <button type="button" class="btn btn-sm btn-primary" data-ng-if="invFrm.edb" data-ng-click="invFrm.edb = !invFrm.edb;updateInvoice(y)" tabindex="0" data-ng-disabled="invFrm.$invalid"><i class="fa fa-save" aria-hidden="true"></i></button>
+
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tr ng-form="newInvFrm" ng-show="isLastPage(currentPage, pageSize)">
+                            <td></td>
+
+                            <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.hsn_sc.$error.pattern || newInvFrm.hsn_sc.$error.required || newInvFrm.hsn_sc.$error.minlength),'has-success': newInvValidtr && newInvFrm.hsn_sc.$valid }">
+                                <input type="text" class="form-control text-center" name="hsn_sc" ng-model="newInvRw.hsn_sc" data-ng-pattern="/^[0-9]*$/" minlength="2" maxlength="8" ng-required="true" />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.hsn_sc.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.hsn_sc.$error.pattern" data-ng-bind="trans.ERR_INV_CHAR"></span>
+								<span class="err" data-ng-show="newInvValidtr && newInvFrm.hsn_sc.$error.minlength" >Length should be between 2-8</span>
+                            </td>
+                            <td data-ng-class="{'has-error':  newInvValidtr && newInvFrm.desc.$error.required,'has-success': newInvValidtr && newInvFrm.desc.$valid }">
+                                <input type="text" class="form-control formedit" name="desc" data-ng-model="newInvRw.desc" ng-required="true" />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.desc.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                            </td>
+                            <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.hsn_sc.$error.pattern || newInvFrm.uqc.$error.required),'has-success': newInvValidtr && newInvFrm.uqc.$valid }">
+                              <select class="form-control" name="uqc" ng-model="newInvRw.uqc">
+                              <option value="">Select</option>
+                              <option data-ng-repeat="opt in UQCList" data-ng-bind="opt.name" value="{{opt.value}}"></option>
+                              </select>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.uqc.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.uqc.$error.pattern" data-ng-bind="trans.ERR_INV_CHAR"></span>
+                            </td>
+                     
+                              <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.qty.$error.pattern || newInvFrm.qty.$error.required),'has-success': newInvValidtr && newInvFrm.qty.$valid }">
+                                <input type="text" class="form-control text-right" name="val" data-fraction="2"data-ng-model="newInvRw.qty" data-format="currency" ng-required="true" />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.qty.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.qty.$error.pattern" data-ng-bind="trans.ERR_INV_CHAR"></span>
+                            </td>
+
+                            <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.val.$error.pattern || newInvFrm.val.$error.required),'has-success': newInvValidtr && newInvFrm.val.$valid }">
+                                <input type="text" class="form-control text-right" name="val" data-fraction="2" ng-model="newInvRw.val" ng-change="onRtChange(newInvRw)" data-format="currency" ng-required="true" data-id="invval" />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.val.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.val.$error.pattern" data-ng-bind="trans.ERR_INV_CHAR"></span>
+                            </td>
+
+                            <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.txval.$error.pattern || newInvFrm.txval.$error.required),'has-success': newInvValidtr && newInvFrm.txval.$valid }">
+                                <input type="text" class="form-control text-right" name="txval" data-fraction="2" ng-model="newInvRw.txval" ng-change="onRtChange(newInvRw)" data-format="currency" ng-required="true" data-id="invval" />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.txval.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.txval.$error.pattern" data-ng-bind="trans.ERR_INV_CHAR"></span>
+                            </td>
+                            <!--<td data-ng-class="{'has-error':  newInvValidtr && (!newInvRw.sp_typ.name),'has-success': newInvValidtr && newInvRw.sp_typ.name }">
+
+                                <select name="sp_typ" class="form-control" id="stype" ng-options="option.name for option in suplyList track by option.name"
+                                    ng-model="newInvRw.sp_typ" data-ng-change="spTypChange(1)"></select>
+
+                                <span class="err" data-ng-show="newInvValidtr && !newInvRw.sp_typ.name" data-ng-bind="trans.ERR_MANDATORY"></span>
+                            </td>-->
+                            <!-- IGST -->
+
+                            <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.iamt.$error.pattern || newInvFrm.iamt.$error.required),'has-success': newInvValidtr && newInvFrm.iamt.$valid }">
+                                <input type="text" class="form-control text-right" name="iamt" ng-model="newInvRw.iamt" ng-required="true" data-id="invval" data-format="currency" data-fraction="2" />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.iamt.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.iamt.$error.pattern" data-ng-bind="trans.ERR_INV_CHAR"></span>
+                            </td>
+                            <!-- SGST -->
+
+                            <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.samt.$error.pattern || newInvFrm.samt.$error.required),'has-success': newInvValidtr && newInvFrm.iamt.$valid }">
+                                <input type="text" class="form-control text-right" name="samt" ng-model="newInvRw.samt" ng-required="true" data-id="invval" data-format="currency" data-fraction="2" />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.samt.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.samt.$error.pattern" data-ng-bind="trans.ERR_INV_CHAR"></span>
+                            </td>
+
+                            <!-- CGST -->
+
+                            <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.camt.$error.pattern || newInvFrm.camt.$error.required),'has-success': newInvValidtr && newInvFrm.iamt.$valid }">
+                                <input type="text" class="form-control text-right" name="camt" ng-model="newInvRw.camt" ng-required="true" data-id="invval" data-format="currency" data-fraction="2" />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.camt.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.camt.$error.pattern" data-ng-bind="trans.ERR_INV_CHAR"></span>
+                            </td>
+
+                            <!-- CESS -->
+
+                            <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.csamt.$error.pattern || newInvFrm.csamt.$error.required),'has-success': newInvValidtr && newInvFrm.csamt.$valid }">
+                                <input type="text" data-id="invval" class="form-control text-right" name="csamt" ng-model="newInvRw.csamt" ng-required="true" data-format="currency" data-fraction="2" />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.csamt.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.csamt.$error.pattern" data-ng-bind="trans.ERR_INV_CHAR"></span>
+                            </td>
+                            <td class="text-center" colspan="2">
+                                <button type="button" class="btn btn-sm btn-primary" ng-click="flag=!flag;savePayload()"><i class="fa fa-save" aria-hidden="true"></i></button>
+                            </td>
+
+                        </tr>
+                    </table>
+                </div>
+                <div class="text-center">
+                    <wrap-dir-pagination></wrap-dir-pagination>
+                </div>
+            </div>
+        </div>
+        <div class="btn-toolbar">
+            <button type="button" class="btn btn-primary pull-left" ng-show="ReturnsList.length" ng-click="deleteSelectedRows()">Delete</button>
+        </div>
+    </div>
+</div>

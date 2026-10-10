@@ -1,0 +1,104 @@
+<br>
+<div class="row invsumm HeadBg" data-ng-init="importfiles()">
+    <div class="col-xs-12 col-sm-12">
+        <h4 class="f16">Import Data Using Excel and CSV Import
+            <!--CR18639 help button for import page-->
+            <button type="button" class = "btn btn-primary btn-sm pull-right" data-ng-if="helpTextenable" data-ng-click="help()">
+            <span>Help</span>&nbsp;
+            <i class="fa fa-question-circle" aria-hidden="true"></i>
+        </button> </h4>
+    </div>
+</div>
+
+<div class="tabpane">
+    <!--
+   <div class="row">
+            <div class="col-sm-12">
+                <h4>Saving Large Data Using Excel and CSV Import</h4>
+                <hr>
+                <br>
+            </div>
+        </div>
+-->
+<div data-ng-if="show" style="background-color: #e6f3ff;">
+    <button type="button" class="close" aria-label="Close" data-ng-click="help()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <br>
+    <p><b><span class="helpContentHeading" >IMPORT DATA USING EXCEL AND CSV IMPORT</span></b></p>
+    <p><span class="helpContentFont">Taxpayer can import filled-up Excel or CSV template into the offline 
+    tool by using this option (template available in downloaded offline tool zip file). </span></p>
+    
+    <p><b><span class="helpContentFont">Note:</span></b> 
+    <span class="helpContentFont">Quarterly taxpayers opting to furnish invoices using invoice furnishing facility (IFF) can import details only for following tables:
+    <br>
+    &ensp; 1.	Table 4A, 4B, 4C, 6B, 6C - B2B invoices<br>
+    &ensp; 2.	Table 9B – Credit/ Debit notes (Registered) – CDNR<br>
+    &ensp; 3.	Table 9A - Amended B2B invoices<br>
+    &ensp; 4.	Table 9C - Amended Credit/Debit notes (Registered)<br>
+    &ensp; 5.	Table 15 - Supplies U/s 9(5) - B2B<br>
+    &ensp; 6.	Table 15 - Supplies U/s 9(5) - URP2B<br>
+    &ensp; 7.	Table 15A - Amended Supplies U/s 9(5) - B2B<br>
+    &ensp; 8.	Table 15A - Amended Supplies U/s 9(5) - URP2B</span></p>
+    <br>
+    <p><b><span class="helpContentFont">Note:</span></b> 
+        <span class="helpContentFont">Table 15 is applicable from Jan 2024 and Table 15A is applicable from Feb 2024.
+        </span><br>
+    <p><b><span class="helpContentFont">IMPORT EXCEL</span></b> 
+    <span class="helpContentFont" >– On click of Import excel button, taxpayer can import the filled-up Excel template in the Offline tool.</span></p>
+    
+    <p><b><span class="helpContentFont" >IMPORT CSV</span></b> 
+    <span class="helpContentFont" >– To import filled up CSV template, taxpayer needs to first select the table from the dropdown and click Import CSV button.</span></p>
+    
+    <p><b><span class="helpContentFont">COPY EXCEL</span></b> 
+    <span class="helpContentFont" >– Using this option, taxpayer can copy and paste the details from excel file and import details in tool. </span></p>
+    
+    <p><span class="helpContentFont" >Upon successful import of excel or CSV file, the details shall be auto populated to respective tables. </p>                                     
+<br>
+    </div>
+    <div class="row panContainer">
+        <div class="col-sm-12 pad0">
+            <div class="well well-sm panWell">
+                Import Returns - All sections in one Go
+            </div>
+        </div>
+        <div class="col-sm-12">
+      
+            
+            <div class="fileUpload btn btn-primary " data-toggle="tooltip" title="import of all sections at one go">
+                Import Excel
+                <input type="file" class="upload" id="excelUploadField" upload-excel-file="excelFile"  file-model="excelFile"  accept=".xls,.xlsx,.ods"  />
+            </div> 
+        </div>
+    </div>
+    <div class="row panContainer">
+        <div class="col-sm-12 pad0">
+            <div class="well well-sm panWell">
+                 Import Returns - One section at a time 
+            </div>
+        </div>
+        <div class="col-sm-12">
+
+            <div class="select"  data-ng-init="sectiondisable()">
+                <label for="fin">Select Section</label>
+
+                <select name="mon" class="form-control"  data-ng-model="sectionListSelected" data-ng-options="item.nm disable when item.disabled for item in sectionList" data-ng-change="onSectionChange(sectionListSelected)">
+				<option value="">Select</option>
+				<option data-ng-repeat="item in sectionList" data-ng-bind="item" value="{{item.nm}}"></option>
+				</select>
+            </div>
+            <br>
+            <div data-ng-if="csvflag" class="mLeft5" wrap-csv-import callback="onpastedone"></div>
+            <div>
+                <button type="button" data-ng-if="csvflag" class="btn btn-primary mLeft5" ctrl-paste-btn callback="onpastedone">Copy Excel </button>
+            </div>
+        </div>
+        
+              
+    
+    </div>
+    <div class="btn-toolbar">
+        <button type="button" class="btn btn-primary pull-right" data-ng-click="goToViewSumry()">View Summary</button>
+        <button type="button" class="btn btn-default pull-right" ng-click="goToBack()">Back</button>
+    </div>
+</div>

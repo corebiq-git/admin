@@ -1,0 +1,105 @@
+<div class="container w100 pad0">
+    <!--    <button type="button" class="btn btn-default active" data-ng-click="page('gstr/summary')">Dashboard</button> data-ng-if="isSupplierB2BCDN()"-->
+    <button type="button" class="btn btn-primary" data-ng-show="isTaxpayer()" data-ng-click="goToImportPage()"  data-toggle="tooltip" title="import additional data">Import Files</button>&nbsp;
+     <button type="button" class="btn btn-primary" data-ng-show="isTaxpayer()" data-ng-click="setDeleteFlagForData()" data-toggle="tooltip" title="Marks as delete all the data in the section">Delete Section Data</button>&nbsp;
+    <button type="button" class="btn btn-primary" data-conf-click="deleteSectionData()" data-ng-if="dashBoardDt.form!='GSTR1A'"  data-toggle="tooltip" title="Removes data from offline tool">Clear Section Data</button>&nbsp;
+      <!-- <div class="fileUpload btn btn-primary " data-toggle="tooltip" title="import of all sections at one go" data-ng-if="dashBoardDt.form=='GSTR1A'">
+                Import Excel
+                <input type="file" class="upload" id="excelUploadField" upload-excel-file="excelFile"  file-model="excelFile"  accept=".xls,.xlsx,.ods"  />
+            </div> -->
+    <button type="button" class="btn btn-primary" data-ng-click="page('/gstr/upload/preview')">View Summary</button>
+</div>
+<div ng-if="sectionList">
+    <form class="form-inline" name="dashboard" novalidate="">
+        <div class="tabpane padBt0 summaryForm">
+            <div class="form-group">
+                <label for="fin" class="reg m-cir">Select Section</label>
+                <select name="mon" class="form-control summaryDrp" data-ng-model="sectionListSelected" data-ng-options="item.nm for item in sectionList"
+                    ng-required="true" data-ng-change="onSectionChange(sectionListSelected)"></select>
+            </div>
+            <div class="form-group input-group" ng-hide="sectionListSelected.cd=='nil'">
+                <div class="input-group-addon"><i class="fa fa-search"></i></div>
+                <input type="text" class="form-control summaryDrp summaryFilterInput" placeholder="Search Invoices" data-ng-model="search_filter_value.val" ng-change="filterChanged()" ng-model-options="{ debounce: 500 }">
+            </div>
+            <!--
+            <div class="form-group">
+                <input type="button" class="btn btn-primary mA0" value="Import Files" data-ng-click="page('gstr/invoices/import')" />
+            </div>
+-->
+        </div>
+    </form>
+    <!-- <div class="tabpane col-sm-12 padNav10" data-ng-if="isB2BCDNR()"> -->
+        <!-- <ul class="nav nav-tabs invsumm" data-ng-if="dashBoardDt.form=='GSTR1'">
+            <li class="active">
+                <a data-toggle="tab" data-ng-click="isTabChange('S')">Uploaded By Taxpayer</a>
+            </li>
+            <li>
+                <a data-toggle="tab" data-ng-click="isTabChange('R')">Uploaded By Receiver</a>
+            </li>
+            <li>
+                <a data-toggle="tab" data-ng-click="isTabChange('Modified')">Modified By Receiver</a>
+            </li>
+            <li>
+                <a data-toggle="tab" data-ng-click="isTabChange('Rejected')">Rejected By Receiver</a>
+            </li>
+            <li data-ng-if="dashBoardDt.form=='GSTR2'" data-ng-click="isUploadedBySuplr('S')">
+                <a data-toggle="tab">Uploaded By Supplier</a>
+            </li>
+        </ul> -->
+        <!-- <ul class="nav nav-tabs invsumm" data-ng-if="dashBoardDt.form=='GSTR2'">
+            <li class="active">
+                <a data-toggle="tab" data-ng-click="isTabChange('R')">Uploaded By Taxpayer</a>
+            </li>
+            <li>
+                <a data-toggle="tab" data-ng-click="isTabChange('S')">Uploaded By Supplier</a>
+            </li>
+            
+            <li data-ng-if="dashBoardDt.form=='GSTR2'" data-ng-click="isUploadedBySuplr('S')">
+                <a data-toggle="tab">Uploaded By Supplier</a>
+            </li>
+        </ul> -->
+        <!-- <ul class="nav nav-tabs invsumm" data-ng-if="dashBoardDt.form=='GSTR1A'">
+            <li  class="active">
+                <a data-toggle="tab" data-ng-click="isTabChange('R')">Uploaded By Receiver</a>
+            </li>
+            <li>
+                <a data-toggle="tab" data-ng-click="isTabChange('Modified')">Modified By Receiver</a>
+            </li>
+            <li>
+                <a data-toggle="tab" data-ng-click="isTabChange('Rejected')">Rejected By Receiver</a>
+            </li>
+        </ul> -->
+    <!-- </div> -->
+    <div class="tabpane" ng-if="!templateLoaded">
+       <!-- <alert-message title="{{sectionListSelected.nm}}" type="info" message="{{trans.LBL_NOT_AVL}}"></alert-message>-->
+          <alert-message type="info" message="{{trans.LBL_NOT_LOAD}}"></alert-message>
+    </div>
+    <div ng-include="sectionListSelected.url" onload="finishLoading()"></div>
+<div class="text-right next-tab-nav">
+ <p> <b class="pull-left" data-ng-if="(dashBoardDt.tbl_cd=='b2b' && dashBoardDt.form=='GSTR2' || dashBoardDt.tbl_cd=='b2b' && dashBoardDt.form=='GSTR1') || (dashBoardDt.tbl_cd=='cdnr' && dashBoardDt.form=='GSTR2' || dashBoardDt.tbl_cd=='cdnr' && dashBoardDt.form=='GSTR1')">Note:</b></p><br/>
+        <ol class="pull-left" data-ng-if="(dashBoardDt.tbl_cd=='b2b' && dashBoardDt.form=='GSTR2' || dashBoardDt.tbl_cd=='b2b' && dashBoardDt.form=='GSTR1') || (dashBoardDt.tbl_cd=='cdnr' && dashBoardDt.form=='GSTR2' || dashBoardDt.tbl_cd=='cdnr' && dashBoardDt.form=='GSTR1')" style="text-align: left;padding-left: 20px;">
+          
+            <!-- <li>
+                'Import Files' and 'Delete Section Data' functionalities can be accessed by selecting 'Uploaded by Taxpayer' option.
+            </li> -->
+            <li>'Import Excel' functionality in 'Import Files' can be used to import the return data prepared using exported excel template or the excel template shared along with tool</li>
+    </ol> 
+    <!--<button type="button" class="btn btn-default" ng-click="page('/gstr/upload/dashboard')">Back</button>-->
+    <button type="button" class="btn btn-default" data-ng-click="goToBackPageUpload()">Back</button>
+</div>
+
+<!--
+    <div class="text-right next-tab-nav">
+        <button type="button" class="btn btn-primary" data-ng-click="deleteReturn()">Delete Return</button>
+        <button type="button" class="btn btn-primary" data-ng-click="page('/gstr/preview')">View Summary</button>
+    </div>
+-->
+
+</div>
+
+<div ng-if="!sectionList">
+    <br>
+  <alert-message title="{{info.form}}" type="info" message="{{trans.LBL_NOT_AVL}}"></alert-message>
+
+</div>
+<br/>

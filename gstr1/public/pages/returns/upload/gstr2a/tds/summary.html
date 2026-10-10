@@ -1,0 +1,70 @@
+<div data-ng-controller="gstr2asumryctrl">
+    <div class="tabpane">
+        <div class="row">
+            <div class="col-sm-12">
+                <!--<div class="row">
+                    <div class="col-sm-12 pull-right">
+                        <div class="pull-right mLeft5" wrap-csv-import callback="onpastedone"></div>
+                        <button type="button" class="btn btn-primary mA0 pull-right" ctrl-paste-btn callback="onpastedone">Copy Excel </button>
+                    </div>
+                </div>
+                <br>-->
+                <div class="table-responsive">
+                    <table class="table tbl inv table-bordered">
+                        <thead>
+                            <tr>
+                              
+			 
+
+<th  rowspan="2" class="gstTblHeadr ctnTblHdr reg m-cir sort" ng-click="sort('gstin_deductor')">GSTIN of Deductor</th> 
+<th  rowspan="2" class="gstTblHeadr m100TblHdr reg m-cir sort" ng-click="sort('amt_ded')">Amount deducted</th> 
+
+ <th colspan="3" data-ng-bind="trans.HEAD_AMOUNT" class="gstTblHeadr m100TblHdr reg"></th>
+
+                            </tr>
+														<tr>
+                              
+<th class="gstTblHeadr spTblHdr reg m-cir" data-ng-bind="trans.HEAD_IGST"></th>
+<th class="gstTblHeadr spTblHdr reg m-cir" data-ng-bind="trans.HEAD_CGST"></th>
+<th class="gstTblHeadr" data-ng-bind="trans.HEAD_SGST"></th> 
+                            </tr>
+                        </thead>
+                        <tbody>
+
+<tr dir-paginate="y in ReturnsList | filter:searchInvNum | itemsPerPage: pageSize" total-items="totalAvailable" current-page="currentPage" ng-show="ReturnsList.length" ng-form="invFrm">
+
+<td>
+		<input type="text" class="form-control formedit" name="gstin_deductor" data-ng-model="y.gstin_deductor" data-ng-disabled="true" />
+</td>
+ 
+<td>
+		<input type="text" class="form-control formedit"  data-format="currency" name="amt_ded" data-ng-model="y.amt_ded" data-ng-disabled="true" />
+</td>
+ 
+<td>
+		<input type="text" class="form-control formedit"  data-format="currency" name="iamt" data-ng-model="y.iamt" data-ng-disabled="true" />
+</td>
+<td>
+		<input type="text" class="form-control formedit"  data-format="currency" name="camt" data-ng-model="y.camt" data-ng-disabled="true" />
+</td>
+<td>
+		<input type="text" class="form-control formedit"  data-format="currency" name="samt" data-ng-model="y.samt" data-ng-disabled="true" />
+</td>
+ 
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <div class="text-center">
+
+                    <wrap-dir-pagination></wrap-dir-pagination>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

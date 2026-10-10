@@ -1,0 +1,147 @@
+<div>
+    <div class="tabpane" ng-form="newItmFrms">
+        <div class="row">
+            <div class="col-sm-12">
+                <h4 class="m0">Add Items</h4>
+                <hr>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3 col-xs-12">
+                <label for="fin" class="reg">Section : <span class="capz">{{dashBoardDt.tbl_cd}}</span></label>
+            </div>
+            <div class="col-sm-3 col-xs-12">
+                <label for="fin" class="reg">Invoive No. : <span class="capz">{{itmList.inum}}</span></label>
+            </div>
+        </div>
+        <hr>
+        <p class="err" data-ng-if="itcinvalid">
+            <span>ITC amount available cannot exceed the Tax amount.</span>
+        </p>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="table-responsive">
+                    <form name="newItmFrm">
+                        <table class="table tbl inv table-bordered">
+                            <thead>
+                                <tr>
+                                    <th data-ng-bind="trans.HEAD_RATE" class="gstTblHeadr reg m-cir" rowspan="2"></th>
+                                    <th class="gstTblHeadr reg m-cir" data-ng-bind="trans.LBL_TAXABLE_VALUE" rowspan="2"></th>
+                                    <th class="text-center " ng-if="!intraState" colspan="2" data-ng-bind="trans.LBL_TAX_AMT"></th>
+                                    <th class="text-center " ng-if="intraState" colspan="3" data-ng-bind="trans.LBL_TAX_AMT"></th>
+                                    <th class="text-center m-cir" data-ng-bind="trans.LBL_ELIG_ITC" rowspan="2"></th>
+                                    <th class="text-center" ng-if="!intraState" colspan="2" data-ng-bind="trans.LBL_AMT_ITC"></th>
+                                    <th class="text-center" ng-if="intraState" colspan="3" data-ng-bind="trans.LBL_AMT_ITC"></th>
+                                </tr>
+                                <tr>
+                                    <th data-ng-bind="trans.HEAD_CGST+' '+trans.HEAD_AMOUNT" class="gstTblHeadr reg m-cir" ng-if="intraState"></th>
+                                    <th data-ng-bind="trans.HEAD_SGST+' '+trans.HEAD_AMOUNT" class="gstTblHeadr reg m-cir" ng-if="intraState"></th>
+                                    <th data-ng-bind="trans.HEAD_IGST+' '+trans.HEAD_AMOUNT" class="gstTblHeadr reg m-cir" ng-if="!intraState"></th>
+                                    <th data-ng-bind="trans.HEAD_CESS+' '+trans.HEAD_AMOUNT" class="gstTblHeadr reg" ng-if="1"></th>
+                                    <th data-ng-bind="trans.HEAD_CGST+' '+trans.HEAD_AMOUNT" class="gstTblHeadr reg m-cir" ng-if="intraState"></th>
+                                    <th data-ng-bind="trans.HEAD_SGST+' '+trans.HEAD_AMOUNT" class="gstTblHeadr reg m-cir" ng-if="intraState"></th>
+                                    <th data-ng-bind="trans.HEAD_IGST+' '+trans.HEAD_AMOUNT" class="gstTblHeadr reg m-cir" ng-if="!intraState"></th>
+                                    <th data-ng-bind="trans.HEAD_CESS+' '+trans.HEAD_AMOUNT" class="gstTblHeadr reg" ng-if="1"></th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr data-ng-repeat="y in RateList.CommGST">
+                                    <td class="text-center">
+                                        <label class="reg" data-ng-bind="y.value + '%'"></label>
+                                    </td>
+                                    <td data-ng-class="{'has-error':newItmFrm && (newItmFrm.txval.$error.required)}" data-ng-if="(itmList.inv_typ && itmList.inv_typ=='SEWOP')">
+                                        <input type="text" class="form-control text-right" name="txval" data-fraction="2" ng-model="rateWiseData[$index].txval" data-format="currency"
+                                            required onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value=0;" />
+</td>
+<td data-ng-class="{'has-error':newItmFrm && (newItmFrm.txval.$error.required)}" data-ng-if="!(itmList.inv_typ && itmList.inv_typ=='SEWOP')">
+    <input type="text" class="form-control text-right" name="txval" data-fraction="2" ng-model="rateWiseData[$index].txval" data-format="currency"
+        required ng-change="onRtChange(rateWiseData[$index],intraState?4:3);checkamountwithitc(rateWiseData);initelg(rateWiseData[$index]);"
+        onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value=0;" />
+</td>
+<!--                                <td data-ng-class="{'has-error':  newItmValidtr && (newItmFrm.txval.$error.required),'has-success': newItmValidtr && newItmFrm.txval.$valid }">-->
+<!-- IGST -->
+<td ng-if="!intraState" data-ng-class="{'has-error':newItmFrm && (newItmFrm.iamt.$error.pattern || newItmFrm.iamt.$error.required),'has-success': newItmValidtr && newItmFrm.txval.$valid}">
+    <input type="text" class="form-control text-right" name="iamt" ng-model="rateWiseData[$index].iamt" data-fraction="2" data-format="currency"
+        data-ng-disabled="(!rateWiseData[$index].txval || rateWiseData[$index].txval)" data-ng-change="checkamountwithitc(rateWiseData);modif()"
+        data-ng-required="rateWiseData[$index].txval > 0 " onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00';"/>
+</td>
+
+<!-- CGST -->
+<td ng-if="intraState" data-ng-class="{'has-error':newItmFrm && (newItmFrm.camt.$error.pattern || newItmFrm.camt.$error.required),'has-success': newItmValidtr && newItmFrm.txval.$valid}">
+    <input type="text" class="form-control text-right" name="camt" ng-model="rateWiseData[$index].camt" data-fraction="2" data-format="currency"
+        data-ng-disabled="(!rateWiseData[$index].txval || rateWiseData[$index].txval)" data-ng-change="checkamountwithitc(rateWiseData);modif()"
+        data-ng-required="rateWiseData[$index].txval > 0 " onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00';"/>
+</td>
+<!-- SGST -->
+<td ng-if="intraState" data-ng-class="{'has-error':newItmFrm && (newItmFrm.samt.$error.pattern || newItmFrm.samt.$error.required),'has-success': newItmValidtr && newItmFrm.txval.$valid}">
+    <input type="text" class="form-control text-right" name="samt" ng-model="rateWiseData[$index].samt" data-fraction="2" data-format="currency"
+        data-ng-disabled="(!rateWiseData[$index].txval || rateWiseData[$index].txval)" data-ng-change="checkamountwithitc(rateWiseData);modif()"
+        data-ng-required="rateWiseData[$index].txval > 0 " onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00';"/>
+</td>
+<!-- CESS -->
+<td>
+    <input type="text" class="form-control text-right" data-ng-class="{'has-error': (rateWiseData[$index].txval<=0 ) && rateWiseData[$index].csamt>0}"
+        name="csamt" ng-model="rateWiseData[$index].csamt" data-ng-change="checkamountwithitc(rateWiseData)" data-fraction="2"
+        data-format="currency" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00';" data-ng-disabled="((itmList.inv_typ && itmList.inv_typ=='SEWOP')||(!rateWiseData[$index].txval && !rateWiseData[$index].csamt))" />
+</td>
+<!--data-ng-init="rateWiseData[$index].itc.elg ? true : rateWiseData[$index].itc.elg = 'no'"-->
+<td data-ng-class="{'has-error': rateWiseData[$index].txval > 0 && !rateWiseData[$index].itc.elg }">
+    <select class="form-control" name="elg" id="elg" data-ng-model="rateWiseData[$index].itc.elg" data-ng-required="rateWiseData[$index].txval > 0 "
+        data-ng-disabled="((sezflag || !rateWiseData[$index].txval) || !getEligibilityForITC())" data-ng-change="elgBltyChange(rateWiseData[$index].itc)">
+									<option value="" data-ng-bind="trans.HLP_SELCT" disabled></option>
+                                    <option value="ip" data-ng-bind="trans.LBL_INP"></option>
+									<option value="is" data-ng-bind="trans.LBL_INP_SEV"></option>
+									<option value="cp" data-ng-bind="trans.LBL_GNS"></option>
+									
+									<option value="no" data-ng-bind="trans.LBL_ING_ITC"></option>
+								</select>
+</td>
+<!-- IGST -->
+<td ng-if="!intraState" data-ng-class="{'has-error':(parsefloat(rateWiseData[$index].iamt) < parsefloat(rateWiseData[$index].itc.tx_i))}">
+    <input type="text" class="form-control text-right" name="iamt_itc" ng-model="rateWiseData[$index].itc.tx_i" data-fraction="2"
+        data-ng-init="rateWiseData[$index].itc.tx_i=(rateWiseData[$index].itc.elg =='no')?0:rateWiseData[$index].itc.tx_i" data-format="currency"
+        data-ng-change="checkamountwithitc(rateWiseData)" data-ng-required="rateWiseData[$index].txval > 0 && !rateWiseData[$index].itc.elg =='no'"
+        data-ng-disabled="rateWiseData[$index].itc.elg =='no' || !rateWiseData[$index].txval" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00';"/>
+</td>
+<!-- CGST -->
+
+<td ng-if="intraState" data-ng-class="{'has-error':(parsefloat(rateWiseData[$index].camt) < parsefloat(rateWiseData[$index].itc.tx_c))}">
+
+    <input type="text" class="form-control text-right" name="camt_itc" ng-model="rateWiseData[$index].itc.tx_c" data-ng-init="rateWiseData[$index].itc.tx_c=(rateWiseData[$index].itc.elg =='no')?0:rateWiseData[$index].itc.tx_c"
+        data-fraction="2" data-format="currency" data-ng-change="checkamountwithitc(rateWiseData)" data-ng-required="rateWiseData[$index].txval > 0 && !rateWiseData[$index].itc.elg =='no'"
+        data-ng-disabled="rateWiseData[$index].itc.elg =='no' || !rateWiseData[$index].txval" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00';"/>
+</td>
+<!-- SGST -->
+<td ng-if="intraState" data-ng-class="{'has-error':(parsefloat(rateWiseData[$index].samt) < parsefloat(rateWiseData[$index].itc.tx_s))}">
+    <input type="text" class="form-control text-right" name="samt_itc" ng-model="rateWiseData[$index].itc.tx_s" data-fraction="2"
+        data-ng-init="rateWiseData[$index].itc.tx_s=(rateWiseData[$index].itc.elg =='no')?0:rateWiseData[$index].itc.tx_s" data-format="currency"
+        data-ng-change="checkamountwithitc(rateWiseData)" data-ng-required="rateWiseData[$index].txval > 0 && !rateWiseData[$index].itc.elg =='no'"
+        data-ng-disabled="rateWiseData[$index].itc.elg =='no' || !rateWiseData[$index].txval" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00';"/>
+</td>
+
+<!-- CESS -->
+<td data-ng-class="{'has-error':(parsefloat(rateWiseData[$index].csamt) < parsefloat(rateWiseData[$index].itc.tx_cs))}">
+
+    <input type="text" class="form-control text-right" name="csamt" ng-model="rateWiseData[$index].itc.tx_cs" data-ng-change="checkamountwithitc(rateWiseData)"
+        data-ng-init="rateWiseData[$index].itc.tx_cs=(rateWiseData[$index].itc.elg =='no')?0:rateWiseData[$index].itc.tx_cs"
+        data-fraction="2" data-format="currency" ng-required="true" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00';" data-ng-disabled="rateWiseData[$index].itc.elg =='no' || (!rateWiseData[$index].txval && !rateWiseData[$index].csamt)" />
+</td>
+</tr>
+
+</tbody>
+</table>
+</form>
+</div>
+</div>
+</div>
+<div class="btn-toolbar">
+    <button type="button" class="btn btn-primary pull-right" ng-if="!isNewRec" data-ng-disabled="itcinvalid || newItmFrm.$invalid || newItmFrms.$pristine"
+        ng-click="updateSavePayload('N')">Update</button>
+    <button type="button" class="btn btn-primary pull-right" ng-if="isNewRec" data-ng-disabled="itcinvalid || newItmFrm.$invalid"
+        ng-click="updateSavePayload('Y')">Save</button>
+    <button type="button" class="btn btn-default pull-right" ng-click="page('/gstr/upload/summary')">Back</button>
+
+</div>
+</div>
+</div>

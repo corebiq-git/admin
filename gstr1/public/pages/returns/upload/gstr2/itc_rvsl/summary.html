@@ -1,0 +1,92 @@
+<div data-ng-controller="uploaditcrvrslctrl">
+    <form name="itcrvslPage" id="itcrvslPage" novalidate="" data-ng-submit="saveItcReversalSumryList()" data-accessible-form="">
+        <div class="tabpane">
+            <div class="row">
+                <div class="col-sm-12">
+                    <p class="err" data-ng-if="itcInvalidFlag && chckItcForm(itcSumryList)" data-ng-bind="trans.LBL_MANDATE_ITC"></p>
+                    <div data-ng-repeat="(k,val) in itcSumryList">
+
+                        <p class="err" data-ng-if="itcrvslPage['camt'+$index].$error.required && !itcrvslPage['iamt'+$index].$error.required">
+                            <b>{{getDisplayName(k)}} :</b> <span data-ng-bind="trans.LBL_MANDATE_CG"></span>
+                        </p>
+                        <p class="err" data-ng-if="itcrvslPage['samt'+$index].$error.required && !itcrvslPage['iamt'+$index].$error.required">
+                            <b>{{getDisplayName(k)}} :</b> <span data-ng-bind="trans.LBL_MANDATE_SG"></span>
+                        </p>
+                        <p class="err" data-ng-if="itcrvslPage['iamt'+$index].$error.required">
+                            <b>{{getDisplayName(k)}} :</b> <span data-ng-bind="trans.LBL_MANDATE_ISG"></span>
+                        </p>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table tbl inv table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" data-ng-bind="trans.LBL_NATURE_SUPP"></th>
+                                    <th colspan="1" class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_IGST"></th>
+                                    <th colspan="1" class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_CGST"></th>
+                                    <th colspan="1" class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_SGST"></th>
+                                    <th colspan="1" class="gstTblHeadr m100TblHdr reg" reg m-cir data-ng-bind="trans.HEAD_CESS"></th>
+                                </tr>
+                                <!--/*{{k}}*/-->
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="(k,val) in itcSumryList">
+                                    <td>
+                                        <span data-toggle="tooltip" title="For reclaim of any other ITC you can enter negative value" data-ng-bind="getDisplayName(k)"
+                                            data-ng-if="k=='other'"></span>
+                                        <span data-ng-if="k!=='other'" data-ng-bind="getDisplayName(k)" data-ng-if="k=='other'"></span>
+                                    </td>
+                                    <td class="currency" data-ng-class="{'has-error':itcrvslPage.iamt{{$index}}.$invalid}">
+                                        <div class="input-group">
+                                            <input name="iamt{{$index}}" data-id="invval" class="form-control formedit" type="text" data-ng-model="val.iamt" data-format="currency"
+                                                data-ng-if="isOther(k)" data-fraction="2" data-ng-disabled="itcFlag" data-format="currency"
+                                                isNeg="true" data-ng-required="(itcSumryList[k].csamt && (!itcSumryList[k].iamt && !itcSumryList[k].samt && !itcSumryList[k].camt))">
+                                            <input name="iamt{{$index}}" data-id="invval" class="form-control formedit" type="text" data-ng-model="val.iamt" data-format="currency"
+                                                data-ng-if="!isOther(k)" data-fraction="2" data-ng-disabled="itcFlag" data-format="currency"
+                                                data-ng-required="(itcSumryList[k].csamt && (!itcSumryList[k].iamt && !itcSumryList[k].samt && !itcSumryList[k].camt))">
+                                        </div>
+                                    </td>
+                                    <td class="currency" data-ng-class="{'has-error':itcrvslPage.camt{{$index}}.$invalid}">
+                                        <div class="input-group">
+                                            <input name="camt{{$index}}" data-id="invval" class="form-control formedit" data-ng-if="isOther(k)" type="text" data-ng-model="val.camt"
+                                                data-format="currency" data-fraction="2" data-ng-disabled="itcFlag" data-format="currency"
+                                                isNeg="true" data-ng-required="itcSumryList[k].samt || (itcSumryList[k].csamt && (!itcSumryList[k].iamt && !itcSumryList[k].camt))">
+                                            <input name="camt{{$index}}" data-id="invval" class="form-control formedit" data-ng-if="!isOther(k)" type="text" data-ng-model="val.camt"
+                                                data-format="currency" data-fraction="2" data-ng-disabled="itcFlag" data-format="currency"
+                                                data-ng-required="itcSumryList[k].samt || (itcSumryList[k].csamt && (!itcSumryList[k].iamt && !itcSumryList[k].camt))">
+                                        </div>
+                                    </td>
+                                    <td class="currency" data-ng-class="{'has-error': itcrvslPage.samt{{$index}}.$invalid}">
+                                        <div class="input-group">
+                                            <input name="samt{{$index}}" data-id="invval" data-ng-if="isOther(k)" class="form-control formedit" type="text" data-ng-model="val.samt"
+                                                data-format="currency" data-fraction="2" data-ng-disabled="itcFlag" data-format="currency"
+                                                isNeg="true" data-ng-required="itcSumryList[k].camt || (itcSumryList[k].csamt && (!itcSumryList[k].iamt && !itcSumryList[k].samt))">
+                                            <input name="samt{{$index}}" data-id="invval" data-ng-if="!isOther(k)" class="form-control formedit" type="text" data-ng-model="val.samt"
+                                                data-format="currency" data-fraction="2" data-ng-disabled="itcFlag" data-format="currency"
+                                                data-ng-required="itcSumryList[k].camt || (itcSumryList[k].csamt && (!itcSumryList[k].iamt && !itcSumryList[k].samt))">
+                                        </div>
+                                    </td>
+                                    <td class="currency" data-ng-class="{'has-error':itcrvslPage.csamt{{$index}}.$invalid}">
+                                        <div class="input-group">
+                                            <input name="csamt{{$index}}" class="form-control formedit" type="text" data-ng-if="isOther(k)" isNeg="true" data-ng-model="val.csamt"
+                                                data-format="currency" data-fraction="2" data-ng-disabled="itcFlag" data-format="currency">
+                                            <input name="csamt{{$index}}" class="form-control formedit" type="text" data-ng-if="!isOther(k)" data-ng-model="val.csamt"
+                                                data-format="currency" data-fraction="2" data-ng-disabled="itcFlag" data-format="currency">
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center">
+                        <wrap-dir-pagination></wrap-dir-pagination>
+                    </div>
+                </div>
+            </div>
+            <div class="btn-toolbar">
+                <button type="submit" class="btn btn-primary pull-right" id="abc1" style="width:80px" data-ng-bind="trans.LBL_SAVE" ng-disabled="itcFlag"></button>
+<button type="button" class="btn btn-primary pull-right" id="abc" style="width:80px" data-ng-bind="trans.LBL_EDIT" data-ng-click="itcFlag=!itcFlag" ng-disabled="!itcFlag"></button>
+</div>
+</div>
+</form>
+</div>

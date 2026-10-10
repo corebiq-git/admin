@@ -1,0 +1,15 @@
+<div class="tabpane" data-ng-init="readDirectory()">
+
+	<div class="row">
+		<div class="col-sm-12 col-xs-12 text-center">
+			<h4>Following file(s) have been generated. Please Click on the link to Download</h4>
+			<span><a ng-repeat="x in fileNames" data-ng-click="saveData(x)">{{x}}<br/></a></span>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12 col-xs-12 text-right next-tab-nav">
+			<button type="button" class="btn btn-default" data-ng-bind="trans.LBL_BACK" data-ng-click="goToBackPage()"></button>
+		</div>
+	</div>
+
+</div>

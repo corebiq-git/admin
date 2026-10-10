@@ -1,0 +1,108 @@
+<div data-ng-controller="gstr2asumryctrl">
+    <div class="tabpane">
+        <div class="row">
+            <div class="col-sm-12">
+                <!--<div class="row">
+                    <div class="col-sm-12 pull-right">
+                        <div class="pull-right mLeft5" wrap-csv-import callback="onpastedone"></div>
+                        <button type="button" class="btn btn-primary mA0 pull-right" ctrl-paste-btn callback="onpastedone">Copy Excel </button>
+                    </div>
+                </div>
+                <br>-->
+                <div class="table-responsive">
+                    <table class="table tbl inv table-bordered">
+                        <thead>
+                            <tr>
+                              
+			 
+
+<th  rowspan="2" class="gstTblHeadr ctnTblHdr reg m-cir sort" ng-click="sort('ctin')">Ctin</th> 
+<th  rowspan="2" class="gstTblHeadr m100TblHdr reg m-cir sort" ng-click="sort('isd_docty')">ISD Type</th>
+<th  rowspan="2" class="gstTblHeadr dtTblHdr reg m-cir sort" ng-click="sort('odocnum')">Original ISD No.</th>
+<th  rowspan="2" class="gstTblHeadr dtTblHdr reg m-cir sort" ng-click="sort('rdocnum')">Revised ISD No.</th>
+<th  rowspan="2" class="gstTblHeadr m100TblHdr reg m-cir sort" ng-click="sort('odocdt')">Original ISD Date</th>
+<th  rowspan="2" class="gstTblHeadr m100TblHdr reg m-cir sort" ng-click="sort('rdocdt')">Revised ISD Date</th>
+<th  rowspan="2" class="gstTblHeadr psTblHdr reg m-cir sort" ng-click="sort('itc_elg')">Eligibility for ITC</th>
+
+ <th colspan="4" data-ng-bind="trans.HEAD_AMOUNT" class="gstTblHeadr m100TblHdr reg"></th>
+
+                            </tr>
+														<tr>
+                              
+<th class="gstTblHeadr spTblHdr reg m-cir" data-ng-bind="trans.HEAD_IGST"></th>
+<th class="gstTblHeadr spTblHdr reg m-cir" data-ng-bind="trans.HEAD_CGST"></th>
+<th class="gstTblHeadr" data-ng-bind="trans.HEAD_SGST"></th>
+<th class="gstTblHeadr ctnTblHdr" data-ng-bind="trans.HEAD_CESS"></th>
+<th class="gstTblHeadr spTblHdr">ISD GSTR-6 Filing status</th>
+
+<th class="gstTblHeadr spTblHdr">Amendment made, if any</th>
+<th class="gstTblHeadr spTblHdr">Original tax period in which reported </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+<tr dir-paginate="y in ReturnsList | filter:searchInvNum | itemsPerPage: pageSize" total-items="totalAvailable" current-page="currentPage" ng-show="ReturnsList.length" ng-form="invFrm">
+
+<td>
+		<input type="text" class="form-control formedit" name="ctin" data-ng-model="y.ctin" data-ng-disabled="true" />
+</td>
+ 
+<td>
+		<input type="text" class="form-control formedit" name="isd_docty" data-ng-model="y.isd_docty" data-ng-disabled="true" />
+</td>
+
+
+<td>
+		<input type="text" class="form-control formedit" name="odocnum" data-ng-model="y.odocnum" data-ng-disabled="true" />
+</td>
+<td>
+		<input type="text" class="form-control formedit" name="rdocnum" data-ng-model="y.rdocnum" data-ng-disabled="true" />
+</td>
+
+<td>
+		<input type="text" class="form-control formedit" name="odocdt" data-ng-model="y.odocdt" data-ng-disabled="true" />
+</td>
+<td>
+		<input type="text" class="form-control formedit" name="rdocdt" data-ng-model="y.rdocdt" data-ng-disabled="true" />
+</td>
+<td>
+		<input type="text" class="form-control formedit" name="itc_elg" ng-init="y.iii = ((y.itc_elg =='Y')?'Yes':'No')"  data-ng-disabled="true" ng-value="y.iii" />
+</td>
+<td>
+		<input type="text" class="form-control formedit" name="iamt" data-ng-model="y.iamt"  data-format="currency" data-ng-disabled="true" />
+</td>
+<td>
+		<input type="text" class="form-control formedit" name="camt" data-ng-model="y.camt" data-format="currency" data-ng-disabled="true" />
+</td>
+<td>
+		<input type="text" class="form-control formedit" name="samt" data-ng-model="y.samt" data-format="currency" data-ng-disabled="true" />
+</td>
+<td>
+		<input type="text" class="form-control formedit" name="csamt" data-ng-model="y.csamt" data-format="currency" data-ng-disabled="true" />
+</td>
+<td >
+       <input type="text" class="form-control formedit" name="cfs"  data-ng-model="y.cfs" ng-required="true" data-ng-disabled="true" />
+</td>
+ <td > 
+       <input type="text" class="form-control formedit" name="atyp" data-ng-model="y.atyp" ng-required="true" data-ng-disabled="true" />
+ </td>
+<td >
+       <input type="text" class="form-control formedit" name="aspd"  data-ng-model="y.aspd" ng-required="true" data-ng-disabled="true" />
+</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <div class="text-center">
+
+                    <wrap-dir-pagination></wrap-dir-pagination>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

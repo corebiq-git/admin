@@ -1,0 +1,524 @@
+<div data-ng-controller="returnsctrl" data-ng-init="validateUserMstrRtnPrd()">
+    <div class="tabpane">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="table-responsive">
+
+                    <table class="table tbl inv table-bordered">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" class="text-center">
+                                    <input type="checkbox" class="chkbx" ng-model="selectAll" ng-true-value="'Y'"
+                                        ng-false-value="'N'" ng-click="checkAll(ReturnsList, selectAll)" />
+                                    <label for="checkbox_all"></label>
+                                </th>
+                                <th rowspan="2" class="gstTblHeadr m100TblHdr reg m-cir" style="min-width: 180px;
+                                " data-ng-bind="trans.LBL_HSN">
+                                </th>
+                                <th rowspan="2" class="gstTblHeadr m100TblHdr reg" data-ng-class="{'m-cir':!disableHSNRestrictions}"
+                                    data-ng-bind="trans.LBL_DESCRIPTION"></th>
+                                <th rowspan="2" class="gstTblHeadr m100TblHdr reg" data-ng-if="showHSNTabs" data-ng-class="{'m-cir':!disableHSNRestrictions} "
+                                data-ng-bind="trans.LBL_DESCRIPTION_HSN"></th>
+                                <th rowspan="2" class="gstTblHeadr suptblHdr" data-ng-if="suprtn"
+                                    data-ng-bind="!showHSNTabs ? trans.LBL_PROD_RECIP_NAME : trans.NEW_LBL_PROD_RECIP_NAME">
+                                </th>
+                                <th rowspan="2" class="gstTblHeadr psTblHdr reg m-cir" data-ng-bind="trans.LBL_UQC">
+                                </th>
+                                <th rowspan="2" class="gstTblHeadr m100TblHdr reg m-cir sort"
+                                    data-ng-bind="trans.LBL_QUANTITY" ng-click="sort('qty')"></th>
+                                <th rowspan="2" class="gstTblHeadr spTblHdr reg m-cir sort"
+                                    data-ng-bind="trans.LBL_TAXABLE_VALUE" ng-click="sort('txval')"></th>
+                                <th rowspan="3" class="gstTblHeadr spTblHdr reg m-cir" data-ng-bind="trans.LBL_RATE">
+                                </th>
+
+                                <th colspan="4" data-ng-bind="trans.HEAD_AMOUNT" class="gstTblHeadr m100TblHdr reg">
+                                </th>
+
+                                <th rowspan="2" class="gstTblHeadr">Actions</th>
+                            </tr>
+                            <tr>
+                                <th colspan="1" data-ng-bind="trans.HEAD_IGST" class="gstTblHeadr m100TblHdr reg"></th>
+                                <th colspan="1" data-ng-bind="trans.HEAD_SGST" class="gstTblHeadr m100TblHdr reg"></th>
+                                <th colspan="1" data-ng-bind="trans.HEAD_CGST" class="gstTblHeadr m100TblHdr reg"></th>
+                                <th colspan="1" data-ng-bind="trans.HEAD_CESS" class="gstTblHeadr m100TblHdr reg"></th>
+                            </tr>
+
+                        </thead>
+                        <tbody>
+                            <tr dir-paginate="y in ReturnsList | itemsPerPage: pageSize" current-page="currentPage"
+                                total-items="totalAvailable" ng-form="invFrm" ng-init="oldInv=y">
+
+                                <td class="text-center">
+                                    <input type="checkbox" class="chkbx" ng-model="y.select" ng-true-value="'Y'"
+                                        ng-false-value="'N'" />
+                                    <label for="checkbox_all"></label>
+                                </td>
+
+                                <td
+                                    data-ng-class="{'has-error': (invFrm.hsn_sc.$error.pattern || invFrm.hsn_sc.$error.duplicate || invFrm.hsn_sc.$error.required)}">
+                                    <input data-ng-change="isExistingHsnUqcRate(0,y.rt,y.hsn_sc,y.uqc,invFrm)" style="width: 77%;"
+                                        type="text" class="form-control text-center" name="hsn_sc"
+                                        data-ng-model="y.hsn_sc" data-ng-model-options="{updateOn:'blur'}"
+                                        data-ng-change="isDescSameAsHsn(0,y,invFrm)" data-ng-pattern="/^[0-9]*$/"
+                                        minlength="2" maxlength="8" ng-required="isRequiredField(y,0)"
+                                        data-ng-disabled="true" />
+
+                                        <div data-ng-if="!y.productName" data-ng-hide="y.invalidhsnCode || y.hsn_sc.length<4">
+                                        
+                                            <span>
+                                                <img border="0" width="100" style="width: 15%;height: 3%;margin-top: -33%;margin-left: 84%;"
+                                                title="Add to My Master" ng-click="showProdMaster(y,true)"
+                                                src="../../../../images/addbtn.jpg"></span>
+                                        </div>
+
+                                    <span class="err" data-ng-show="invFrm.hsn_sc && invFrm.hsn_sc.$error.duplicate"
+                                        data-ng-bind="trans.UNIQUE_HSN_COMBINATION_ERRMESSAGE"></span>
+                                    <span class="err" data-ng-if="y.invalidHSNLengthAATO"
+                                        data-ng-bind="aatoErrMsg"></span>
+                                   <span ng-style="{'color': showHSNTabs ? 'red': 'orange'}" data-ng-show="y.invalidhsnCode"
+                                    data-ng-bind="trans.INVALID_HSN_BOOK"></span>
+                                    
+                                </td>
+                                 <td data-ng-if ="showHSNTabs" >
+                                    <input type="text" class="form-control formedit" name="user_desc" data-ng-model="y.user_desc" title={{invFrm.user_desc.$viewValue}}
+                                    data-ng-disabled="!invFrm.edb" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control formedit" name="desc" data-ng-model="y.desc" title={{invFrm.desc.$viewValue}}
+                                        ng-required="isRequiredField(y,1)" data-ng-disabled="showHSNTabs ?true :!invFrm.edb" />
+                                </td>
+                                <td>
+                                    <input type="text" data-ng-if="suprtn" class="form-control formedit" name="productName" maxlength="99" data-ng-model="y.productName" title={{invFrm.productName.$viewValue}}
+                                        ng-required="isRequiredField(y,1)" disabled/>
+                                </td>
+                                <td data-ng-class="{'has-error': (invFrm.uqc.$invalid || invFrm.uqc.$error.duplicate)}">
+
+                                    <select data-ng-change="isExistingHsnUqcRate(0,y.rt,y.hsn_sc,y.uqc,invFrm);y.productName=null"
+                                        class="form-control" name="uqc" data-ng-model="y.uqc"
+                                        data-ng-disabled="!invFrm.edb || checkForServiceHSN(y.hsn_sc, invFrm)">
+                                        <option data-ng-repeat="opt in UQCList" data-ng-bind="opt.name"
+                                        value="{{opt.value}}" ng-if="!checkNA(opt.value) || (checkNA(opt.value) && checkNA(y.uqc))"></option>
+                                    </select>
+
+                                    <span class="err" data-ng-show="invFrm.uqc && invFrm.uqc.$error.duplicate"
+                                        data-ng-bind="trans.UNIQUE_HSN_COMBINATION_ERRMESSAGE"></span>
+                                </td>
+
+                                <td
+                                    data-ng-class="{'has-error': (invFrm.qty.$error.required || invFrm.qty.$error.required)}">
+                                    <input type="text" class="form-control formedit text-right" name="qty" data-ng-model="y.qty"
+                                        data-ng-disabled="!invFrm.edb || checkForServiceHSN(y.hsn_sc, invFrm)" isNeg="true"
+                                        ng-required="true" data-fraction="2" data-formatting="currency"/>
+                                </td>
+
+                                <td
+                                    data-ng-class="{'has-error': (invFrm.txval.$error.pattern || invFrm.txval.$error.required)}">
+                                    <input type="text" class="form-control text-right" isNeg="true" name="txval"
+                                        data-fraction="2" ng-model="y.txval" data-formatting="currency"
+                                        data-ng-disabled="!invFrm.edb" onfocus="if (this.value=='₹0.00') this.value='';"
+                                        onblur="if (this.value=='') this.value='₹0.00';" />
+                                </td>
+
+                                <td data-ng-class="{'has-error': (invFrm.rt.$invalid)}">
+
+                                    <select data-ng-change="isExistingHsnUqcRate(0,y.rt,y.hsn_sc,y.uqc,invFrm);y.productName=null"
+                                        class="form-control" name="rt" data-ng-model="y.rt"
+                                        ng-options="opt.value as opt.value for opt in RateList.CommGST"
+                                        data-ng-disabled="!invFrm.edb">
+                                    </select>
+                                    <span class="err" data-ng-show="invFrm.rt && invFrm.rt.$error.duplicate"
+                                        data-ng-bind="trans.UNIQUE_HSN_COMBINATION_ERRMESSAGE"></span>
+                                </td>
+
+                                <!--IGST-->
+                                <td>
+                                    <input class="form-control text-right" name="iamt" ng-model="y.iamt"
+                                        data-fraction="2" data-formatting="currency" isNeg="true"
+                                        data-ng-disabled="!invFrm.edb" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00';"
+                                        >
+                                </td>
+
+                                <!--SGST-->
+                                <td>
+                                    <input class="form-control text-right" name="samt" ng-model="y.samt"
+                                        data-fraction="2" data-formatting="currency" isNeg="true"
+                                        data-ng-disabled="!invFrm.edb" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00';"
+                                        >
+                                </td>
+
+                                <!--CGST-->
+                                <td>
+                                    <input type="text" class="form-control text-right" name="camt" ng-model="y.camt"
+                                        data-fraction="2" data-formatting="currency" isNeg="true"
+                                        data-ng-disabled="!invFrm.edb" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00';"
+                                        >
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control text-right" name="csamt" ng-model="y.csamt"
+                                        data-fraction="2" data-formatting="currency" isNeg="true" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00';"
+                                        data-ng-disabled="!invFrm.edb">
+                                </td>
+                                <td class="text-center newinv">
+                                    <button type="button" class="btn btn-sm btn-primary" ng-hide="invFrm.edb"
+                                        data-ng-click="invFrm.edb = !invFrm.edb" tabindex="0"><i class="fa fa-pencil"
+                                            aria-hidden="true"></i></button>
+                                    <button type="button" class="btn btn-sm btn-primary" ng-if="invFrm.edb"
+                                        data-ng-click="invFrm.edb=!invFrm.edb;invFrm.$setPristine();updateInvoice(y)"
+                                        tabindex="0" data-ng-disabled="invFrm.$invalid || invFrm.$pristine"><i
+                                            class="fa fa-save" aria-hidden="true"></i></button>
+
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tr ng-form="newInvFrm" ng-show="isLastPage(currentPage, pageSize)">
+                            <td></td>
+
+                            <td 
+                                data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.hsn_sc.$error.duplicate || newInvFrm.hsn_sc.$error.required || newInvFrm.hsn_sc.$error.minlength || newInvFrm.hsn_sc.$invalid),'has-success': newInvValidtr && newInvFrm.hsn_sc.$valid }">
+                                <new-autocomplete-hsn  ng-model="newInvRw.hsn_sc" id="hsn_sc" name="hsn_sc"
+                                input-name="hsn_sc" placeholder={{trans.HSN_PRD_PLACEHOLDER}} pause="500"
+                                remote-url="/listHSNData/" second-url="/listHSNData/" title-field="n" prod-title-field="hsn" 
+                                title={{trans.HSN_HOVER_TITLE_MSTR}} data-maxlength="1000" description-field="c" 
+                                prod-description-field="productName"
+                                minlength="1" clear-result-after-select="false"
+                                after-select="afterHACselecthsnOutward(result)" 
+                                min-code-length-to-display="{{minCodeLengthToDisplay}}" disable-empty-dropdown="disableHSNRestrictions"
+                                disable-after-select="{{hsnsaveedit}}" reset-results="clearHSNInput()" on-hsn-change="onHSNchange()"
+                                show-key-in-description="true" error-msg="err_msg_hsn" show-hsn-tabs="{{showHSNTabs}}"
+                                 desc-error-msg="{{trans.ERR_HSN_LENGTH}}" required on-blurred="checkHSNInput(resultList,newInvRw.hsn_sc, newInvRw);isExistingHsnUqcRate(1,newInvRw.rt,newInvRw.hsn_sc,newInvRw.uqc)">
+                            </new-autocomplete-hsn>
+                            <span class="col-lg-2" data-ng-if="hideaddBtn"  style="margin-top: -18%;
+                            margin-left: 76%;" data-ng-hide="hsnNotfromMstr">
+                                <img border="0" width="25"  
+                                    title="Add to My Master" ng-click="showProdMaster(newInvRw)"
+                                    src="../../../../images/addbtn.jpg">
+
+                            </span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.hsn_sc.$error.required"
+                                    data-ng-bind="trans.ERR_HSN_DESC"></span>
+                                
+
+                                <span class="err" data-ng-show="(newInvFrm.hsn_sc.$error.minlength || minlengthErr) && !invalidHSN && !invalidHsnLength"
+                                    data-ng-bind="trans.ERR_HSN_LENGTH"></span>
+
+                                <span class="err" data-ng-show="invalidHSN"
+                                    data-ng-bind="trans.ERR_INVALID_HSN"></span>
+                                
+                                <span class="err" data-ng-show="invalidHsnLength"
+                                    data-ng-bind="trans.ERR_INVALID_HSN_LENGTH"></span>
+                                    
+                                <span class="err" data-ng-show="newInvRw.hsn_sc && newInvFrm.hsn_sc.$error.duplicate"
+                                    data-ng-bind="trans.UNIQUE_HSN_COMBINATION_ERRMESSAGE"></span>
+                                	<span class="err" data-ng-if="invalidHSNLengthAATO"
+								data-ng-bind="aatoErrMsg"></span>
+                                <span ng-style="{'color': showHSNTabs ? 'red': 'orange'}" data-ng-if="hsnNotfromMstr"
+								data-ng-bind="hsnNotfromMstr"></span>
+                                <span style="color: orange; font-size: 11.7px;" data-ng-show="!(newInvRw.hsn_sc && newInvFrm.hsn_sc.$error.duplicate) && hideaddBtn && !hsnNotfromMstr" data-ng-bind="trans.HSN_ADDTO_MSTR"></span>
+
+                            </td>
+                        
+                             <td data-ng-if="showHSNTabs">
+                                <input type="text" class="form-control formedit" name="desc" title={{newInvRw.user_desc}}
+                                    data-ng-model="newInvRw.user_desc" data-ng-disabled="(!isHsnSelected && !hsnsaveedit) || checkForServiceHSN(savequan.hsn_sc) || hsnNotfromMstr || notfrmdrpdwn"/>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control formedit" name="desc" title={{newInvRw.desc}}
+                                    data-ng-model="newInvRw.desc" data-ng-disabled="newInvRw.productName || showHSNTabs"/>
+                            </td>
+                               <td data-ng-if="showHSNTabs">
+                                <mstr-autocomplete-prod-name data-ng-if="showHSNTabs && suprtn" ng-model="newInvRw.productName" id="pname" name="pname" input-name="pname"
+                                    placeholder={{trans.HSN_PRD_PLACEHOLDER}} pause="500" data-maxlength="1000" prod-title-field="hsn"
+                                    prod-description-field="productName" minlength="1" clear-result-after-select="false"
+                                    after-select="afterHACselecthsnOutward(result)" min-code-length-to-display="{{minCodeLengthToDisplay}}"
+                                    disable-empty-dropdown="disableHSNRestrictions" disable-after-select="{{hsnsaveedit}}"
+                                    reset-results="clearHSNInput()" on-hsn-change="onHSNchange()" show-key-in-description="true">
+                                </mstr-autocomplete-prod-name>
+                                </td>
+                                <td data-ng-if="!showHSNTabs"><input type="text" name="pname" data-ng-if="suprtn" class="form-control formedit" 
+                                title="{{newInvRw.productName}}" maxlength="99" data-ng-model="newInvRw.productName" disabled>
+                        </td>
+                            <td
+                                data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.uqc.$error.required  || newInvFrm.uqc.$error.duplicate  || newInvFrm.uqc.$invalid ),'has-success': newInvValidtr && newInvFrm.uqc.$valid }">
+                                <select
+                                    data-ng-change="isExistingHsnUqcRate(1,newInvRw.rt,newInvRw.hsn_sc,newInvRw.uqc);newInvRw.productName=null"
+                                    class="form-control" name="uqc" ng-model="newInvRw.uqc" ng-required="true"
+                                   data-ng-disabled="showHSNTabs ? !isHsnSelected || checkForServiceHSN(newInvRw.hsn_sc, newInvRw)|| hsnNotfromMstr || notfrmdrpdwn : !isHsnSelected || checkForServiceHSN(newInvRw.hsn_sc, newInvRw)">
+                                    <option value="">Select</option>
+                                    <option data-ng-repeat="opt in UQCList" data-ng-bind="opt.name"
+                                        value="{{opt.value}}" ng-if="!checkNA(opt.value) || (checkNA(opt.value) && checkNA(newInvRw.uqc))"></option>
+                                </select>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.uqc.$error.required"
+                                    data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvRw.uqc && newInvFrm.uqc.$error.duplicate"
+                                    data-ng-bind="trans.UNIQUE_HSN_COMBINATION_ERRMESSAGE"></span>
+
+                            </td>
+                            <td
+                                data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.qty.$error.required || newInvFrm.qty.$error.pattern),'has-success': newInvValidtr && newInvFrm.qty.$valid }">
+                                <input type="text" class="form-control text-right" name="qty"
+                                    data-ng-model="newInvRw.qty" ng-required="true"
+                                    data-fraction="2" id="qty"
+                                    isNeg="true" data-formatting="currency"
+                                    data-ng-disabled="showHSNTabs ? !isHsnSelected || checkForServiceHSN(newInvRw.hsn_sc, newInvRw) || hsnNotfromMstr || notfrmdrpdwn : !isHsnSelected || checkForServiceHSN(newInvRw.hsn_sc, newInvRw) " />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.qty.$error.required"
+                                    data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.qty.$error.pattern"
+                                    data-ng-bind="trans.ERR_TQ_NUMERIC"></span>
+                            </td>
+
+                            <td
+                                data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.txval.$error.pattern || newInvFrm.txval.$error.required),'has-success': newInvValidtr && newInvFrm.txval.$valid }">
+                                <input type="text" class="form-control text-right" name="txval" data-fraction="2"
+                                    isNeg="true" ng-model="newInvRw.txval" data-formatting="currency"
+                                    onfocus="if (this.value=='₹0.00') this.value='';"
+                                    onblur="if (this.value=='') this.value='₹0.00';"
+                                    data-ng-disabled="showHSNTabs ? !isHsnSelected || hsnNotfromMstr || notfrmdrpdwn : !isHsnSelected " />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.txval.$error.required"
+                                    data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.txval.$error.pattern"
+                                    data-ng-bind="trans.ERR_INV_CHAR"></span>
+                            </td>
+
+                            <td
+                                data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.rt.$error.required  || newInvFrm.rt.$error.duplicate  || newInvFrm.rt.$invalid  || newInvFrm.rt.$error.pattern),'has-success': newInvValidtr && newInvFrm.rt.$valid }">
+                                <select
+                                    data-ng-change="isExistingHsnUqcRate(1,newInvRw.rt,newInvRw.hsn_sc,newInvRw.uqc);newInvRw.productName=null"
+                                    class="form-control" name="rt" ng-model="newInvRw.rt" ng-required="true"
+                                    data-ng-disabled="showHSNTabs ? !isHsnSelected || hsnNotfromMstr || notfrmdrpdwn : !isHsnSelected ">
+                                    <option value="">Select</option>
+                                    <option data-ng-repeat="opt in RateList.CommGST" data-ng-bind={{opt.value}}
+                                        value={{opt.value}}>
+                                    </option>
+                                </select>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.rt.$error.required"
+                                    data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvRw.rt && newInvFrm.rt.$error.duplicate"
+                                    data-ng-bind="trans.UNIQUE_HSN_COMBINATION_ERRMESSAGE"></span>
+
+                            </td>
+
+                            <td
+                                data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.iamt.$error.pattern || newInvFrm.iamt.$error.required),'has-success': newInvValidtr && newInvFrm.iamt.$valid }">
+
+                                <input type="text" class="form-control text-right" name="iamt" ng-model="newInvRw.iamt"
+                                    data-ng-disabled="showHSNTabs ? !isHsnSelected || hsnNotfromMstr || notfrmdrpdwn : !isHsnSelected " onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00';"
+                                    data-formatting="currency" isNeg="true" data-fraction="2"
+                                    />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.iamt.$error.pattern"
+                                    data-ng-bind="trans.ERR_INV_CHAR"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.iamt.$error.required"
+                                    data-ng-bind="trans.ERR_MANDATORY"></span>
+                            </td>
+                            <!-- SGST -->
+
+                            <td
+                                data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.samt.$error.pattern || newInvFrm.samt.$error.required),'has-success': newInvValidtr && newInvFrm.iamt.$valid }">
+
+                                <input type="text" class="form-control text-right" name="samt" ng-model="newInvRw.samt"
+                                data-formatting="currency" isNeg="true" data-fraction="2" data-ng-disabled="showHSNTabs ? !isHsnSelected || hsnNotfromMstr || notfrmdrpdwn : !isHsnSelected " onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00';"
+                                   />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.samt.$error.pattern"
+                                    data-ng-bind="trans.ERR_INV_CHAR"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.samt.$error.required"
+                                    data-ng-bind="trans.ERR_MANDATORY"></span>
+                            </td>
+
+                            <!-- CGST -->
+
+                            <td
+                                data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.camt.$error.pattern || newInvFrm.camt.$error.required),'has-success': newInvValidtr && newInvFrm.iamt.$valid }">
+                                <input type="text" class="form-control text-right" name="camt" ng-model="newInvRw.camt"
+                                data-formatting="currency" isNeg="true" data-fraction="2"
+                                    data-ng-disabled="showHSNTabs ? !isHsnSelected || hsnNotfromMstr || notfrmdrpdwn : !isHsnSelected " onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00';"
+                                    />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.camt.$error.pattern"
+                                    data-ng-bind="trans.ERR_INV_CHAR"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.camt.$error.required"
+                                    data-ng-bind="trans.ERR_MANDATORY"></span>
+                            </td>
+
+                            <!-- CESS -->
+                            <td
+                                data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.csamt.$error.pattern),'has-success': newInvValidtr && newInvFrm.csamt.$valid }">
+                                <input type="text" class="form-control text-right" name="csamt"
+                                    ng-model="newInvRw.csamt" data-formatting="currency" isNeg="true" data-fraction="2"
+                                   data-ng-disabled="showHSNTabs ? !isHsnSelected || hsnNotfromMstr || notfrmdrpdwn : !isHsnSelected " onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00';"
+                                    />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.csamt.$error.pattern"
+                                    data-ng-bind="trans.ERR_INV_CHAR"></span>
+                            </td>
+                            <td class="text-center" colspan="2">
+                                <button type="button" class="btn btn-sm btn-primary" ng-click="flag=!flag;savePayload()"
+                                    data-ng-disabled="showHSNTabs ? !isHsnSelected || hsnNotfromMstr || notfrmdrpdwn : !isHsnSelected "><i class="fa fa-save"
+                                        aria-hidden="true"></i></button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="text-center">
+                    <wrap-dir-pagination></wrap-dir-pagination>
+                </div>
+            </div>
+        </div>
+        <div class="btn-toolbar">
+            <button type="button" class="btn btn-primary pull-left" ng-show="ReturnsList.length"
+                ng-click="deleteSelectedRows()">Delete</button>
+        </div>
+    </div>
+
+    <!--Product Master Integration-->
+<div id="prodMastAdd" class="modal fade fade-scale" role="dialog">
+    <div class="modal-dialog sweet" style="width:1250px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title font-weight-bold" style="font-weight: bold;" id="exampleModalLabel" ng-bind="trans.LBL_ADD_PROD_MSTR">
+                </h4>
+            </div>
+            <div class="modal-body" style=" overflow-y: auto; max-height: calc(100vh - 160px);padding-top: 0px;">
+               <form name="prdmstrFrm" novalidate>
+                    <div class="row">
+                        <div class="col-sm-12 pull-left head" style="margin-top: 8px;">
+                            <div class="row" style="padding-left: 26px">
+                                <div class="col-4">
+
+                                </div>
+                                <div class="col-4  font-weight-bold redlink" class=""
+                                    style="margin-top: 10px;margin-right: 2.2%;">
+                                    <b><span class="pull-right red" style="color: red;"
+                                        data-ng-bind=trans.LBL_Field_Mand></span></b>
+                                </div>
+                            </div>
+                            <div class="alert alert-msg alert-danger" data-ng-if="addSupErrMsgShow">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                                <i class="fa fa-info-circle"></i> <strong>{{trans.LBL_ERROR}}&nbsp;</strong>
+                            </div>
+                            <div class="alert alert-success alert-dismissible"
+                                style="margin-top: 3%;width: 100%;margin-left: 0%;" data-ng-if="successMessageShow">
+                                <a href="#" class="close" data-dismiss="alert" aria-label="close"
+                                    data-ng-click="sucessmsg()">&times;</a>
+                                <span>
+                                    <i class="fa fa-info-circle"></i> <span
+                                        data-ng-bind="trans.SUCCESS_MSG"><span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-left: 0%;">
+                      <div class="col-sm-6 form-group">
+                        <div>
+                          <label rowspan="2" class="gstTblHeadr m100TblHdr reg" data-ng-bind="trans.LBL_HSN_CODE"></label>
+                     
+                          <div
+                            data-ng-class="{'has-error':  newInvValidtr && (prdmstrFrm.hsn.$error.duplicate || prdmstrFrm.hsn.$error.required || prdmstrFrm.hsn.$error.minlength || prdmstrFrm.hsn.$invalid),'has-success': newInvValidtr && prdmstrFrm.hsn.$valid }">
+                            <input data-ng-model="prodMstr.hsn"  class="form-control formedit"  id="hsn" name="hsn" input-name="hsn" 
+                            placeholder={{trans.MSTR_HSN_PLACEHOLDER}} pause="500" title={{trans.HSN_HOVER_TITLE}} data-maxlength="1000"
+                            minlength="1" clear-result-after-select="false"
+                            after-select="afterselecthsnOutward(result)"
+                            min-code-length-to-display="{{minCodeLengthToDisplay}}" 
+                            show-key-in-description="true"
+                            error-msg="err_msg_hsn" data-ng-required="true"  data-ng-disabled="true">
+                          
+                            <span class="err" data-ng-show="hsnnotselected" data-ng-bind="trans.HSN_BLUR_MSG"></span>
+          
+                            <span class="err" data-ng-show="newInvValidtr && prdmstrFrm.hsn.$error.required"
+                              data-ng-bind="trans.ERR_MAND"></span>
+                           
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-6 form-group">
+                        <div>
+                          <label rowspan="2" class="gstTblHeadr m100TblHdr reg" data-ng-bind="!showHSNTabs ? trans.LBL_HSN_DESC : trans.LBL_DESCRIPTION_HSN"></label>
+                        </div>
+                        <div
+                          data-ng-class="{'has-error': prdmstrFrm.$submitted && ( prdmstrFrm.desc.$error.required && prdmstrFrm.desc.$invalid),'has-success': prdmstrFrm.$submitted && prdmstrFrm.desc.$valid }">
+                          <input type="text" class="form-control formedit" name="desc" title={{prodMstr.desc}}
+                            data-ng-required="true" data-ng-model="prodMstr.desc" disabled />
+                          <span class="err" data-ng-show="newInvValidtr && prdmstrFrm.desc.$error.required"
+                            data-ng-bind="trans.ERR_MAND"></span>
+                          <span class="err" data-ng-show="hsnnotselected" data-ng-bind="trans.DESC_ERR_MAND"></span>
+                        </div>
+          
+                      </div>
+                    </div>
+                    <div class="row" style="margin-left: 0%;">
+                      <div class="col-sm-6 form-group">
+                        <div>
+                          <label class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.LBL_PRD_NAME"></label>
+                        </div>
+                        <div
+                          data-ng-class="{'has-error': prdmstrFrm.$submitted && ( prdmstrFrm.productName.$error.required && prdmstrFrm.desc.$invalid),'has-success': prdmstrFrm.$submitted && prdmstrFrm.productName.$valid }">
+                          <input type="text" data-ng-if="suprtn" class="form-control formedit"
+                            name="productName" data-ng-model="prodMstr.productName" ng-change="duplicaterecord = false;"
+                            maxlength="99" data-ng-required="true" />
+                          <span class="err" data-ng-show="newInvValidtr && prdmstrFrm.productName.$error.required"
+                            data-ng-bind="trans.ERR_MAND"></span>
+                          <span class="err" data-ng-show="duplicaterecord" data-ng-bind="trans.LBL_Prod_name_err">
+                          </span>
+                        </div>
+                      </div>
+                      <div class="col-sm-6 form-group">
+                        <div>
+                          <label class="gstTblHeadr m100TblHdr reg" data-ng-bind="trans.LBL_IGST_RT"></label>
+                        </div>
+                        <div id="rt">
+                          <label
+                            data-ng-class="{'has-error': newInvValidtr && (prdmstrFrm.rt.$error.required  || prdmstrFrm.rt.$error.duplicate  || prdmstrFrm.rt.$invalid  || prdmstrFrm.rt.$error.pattern),'has-success': prodMstr.$submitted && newInvValidtr && prdmstrFrm.rt.$valid }"></label>
+                           <select
+                           data-ng-change="isExistingHsnUqcRate(1,prodMstr.rt,prodMstr.hsn_sc,prodMstr.uqc)"
+                           class="form-control" name="rt" ng-model="prodMstr.rt" ng-required="true" style="margin-top: -4%;"
+                           disabled>
+                           <option value="">Select</option>
+                           <option data-ng-repeat="opt in RateList.CommGST" data-ng-bind={{opt.value}}
+                               value={{opt.value}}>
+                           </option>
+                       </select>
+                          <span class="err" data-ng-show="newInvValidtr && prdmstrFrm.rt.$error.required"
+                            data-ng-bind="trans.ERR_MAND"></span>
+                          <span class="err" data-ng-show="prodMstr.rt && prdmstrFrm.rt.$error.duplicate"
+                            data-ng-bind="trans.UNIQUE_HSN_COMBINATION_ERRMESSAGE"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row" style="margin-left: 0%;">
+                      <div class="col-sm-6 form-group">
+                        <div>
+                          <label rowspan="2" class="gstTblHeadr psTblHdr reg " data-ng-class="{'m-cir':uqcrequired}"
+                            data-ng-bind="trans.LBL_UQC"></label>
+                        </div>
+                        <div id="uqc">
+                          <label
+                            data-ng-class="{'has-error':  newInvValidtr && (prdmstrFrm.uqc.$error.required  || prdmstrFrm.uqc.$error.duplicate  || prdmstrFrm.uqc.$invalid ),'has-success': newInvValidtr && prdmstrFrm.uqc.$valid }"></label>
+                          <select data-ng-change="isExistingHsnUqcRate(1,prodMstr.rt,prodMstr.hsn,prodMstr.uqc)" class="form-control"
+                            style="margin-top: -3%;" name="uqc" ng-model="prodMstr.uqc" ng-required="uqcrequired ==true" disabled>
+                            <option value="">Select</option>
+                            <option data-ng-repeat="opt in UQCList"  data-ng-bind="opt.name" value="{{opt.value}}"
+                              ng-if="!checkNA(opt.value) || (checkNA(opt.value) && checkNA(prodMstr.uqc))"></option>
+                          </select>
+                          <span class="err" data-ng-show="newInvValidtr && prdmstrFrm.uqc.$error.required"
+                            data-ng-bind="trans.ERR_MAND"></span>
+                          <span class="err" data-ng-show="prodMstr.uqc && prdmstrFrm.uqc.$error.duplicate"
+                            data-ng-bind="trans.UNIQUE_HSN_COMBINATION_ERRMESSAGE"></span>
+          
+                        </div>
+                      </div>
+                    </div>
+                    <div class="btn-toolbar" style="display:inherit; text-align:right">
+                        <button type="button" style="float: right" class="btn btn-secondary bn"
+                            data-ng-click="prdresetData()" data-dismiss="modal"
+                            data-ng-bind="trans.LBL_BACK "></button>
+                            <button type="submit" style="margin-left: 84%;
+                            height: 37px;
+                        " class="btn btn-primary" data-ng-bind="trans.LBL_SAVE"
+                            data-ng-click="saveProduct()"></button>
+
+                    </div>
+                  </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+</div>
+

@@ -1,0 +1,79 @@
+<div data-ng-controller="errorreturnsctrl">
+    <div class="tabpane">
+        <div class="table-responsive">
+            <table class="table tbl inv table-bordered" ng-show="ErrorList.length">
+                <thead>
+                    <tr>
+                        <th class="text-center">
+                            <input type="checkbox" class="chkbx" ng-model="selectAll" ng-click="checkAll()" ng-checked="allSelected()" />
+                            <label for="checkbox_all"></label>
+                        </th>
+
+                        <th class="gstTblHeadr dtTblHdr reg m-cir sort" ng-click="sort('state_cd')">Place Of Supply</th>
+                        <!--data-ng-bind="trans.LBL_REC_STATECD"-->
+                        <!-- <th class="gstTblHeadr dtTblHdr " ng-click="sort('ad_Amt')"> Gross Taxable Amount</th>-->
+                        <th class="gstTblHeadr spTblHdr reg m-cir" data-ng-bind="trans.LBL_SUPPLY_TYPE"></th>
+                        <th class="gstTblHeadr m100TblHdr">Applicable % of Tax Rate</th>
+                        <!-- <th class="gstTblHeadr">Sale from Bonded WH</th> -->
+                        <th class="gstTblHeadr">Error Message</th>
+                        <th class="gstTblHeadr m100TblHdr" data-ng-bind="trans.LBL_ACTIONS"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr dir-paginate="y in ErrorList | filter:searchInvNum | orderBy:sortBy:sortReverse | itemsPerPage: pageSize" current-page="currentPage"
+                        ng-form="invFrm" ng-init="y.old_pos=y.pos">
+
+                        <td class="text-center">
+                            <input type="checkbox" class="chkbx" ng-model="y.select" />
+                            <label for="checkbox_all"></label>
+                        </td>
+
+                        <td>
+                            <select class="form-control" ng-options="opt.cd as opt.cd+'-'+opt.nm for opt in StateList" ng-model="y.pos" data-ng-disabled="!invFrm.edb"
+                                ng-change="onCtinChange(y);onPosChange(y)">
+                                <option value="">Select</option>
+                            </select>
+                        </td>
+
+                        <td>
+                            <select class="form-control" ng-options="option.cd as option.name for option in suplyList " ng-model="y.sply_ty" data-ng-disabled="true"></select>
+                        </td>
+                        <td class="text-center pRel" title="{{trans.LBL_Diff_Percent_title_text}}">
+                            <select class="form-control" ng-options="option.value as option.name for option in differentialPercent" id="diff_percent"
+                                data-ng-change="onDiffPerChange(y);" data-ng-model="y.diff_percent" data-ng-disabled="!invFrm.edb">
+                                        <option value="">Select</option>
+                                    </select>
+                        </td>
+                        <!-- <td class="text-center pRel">
+                            <input type="checkbox" class="chkbx" ng-model="y.inv_typ" ng-true-value="'CBW'" ng-false-value="null" data-ng-disabled="!invFrm.edb"
+                                data-ng-change="onCBWChange(y)" />
+                            <label for="checkbox_all"></label>
+
+                        </td> -->
+                        <td class="text-center">
+
+                            <div class="text-center"><span data-ng-bind="y.error_msg"></span></div>
+
+                        </td>
+
+                        <td class="text-center newinv">
+                            <button type="button" class="btn btn-sm btn-primary" ng-if="invFrm.edb" data-ng-click="gotoAddItems(y)" tabindex="0" data-ng-disabled="invFrm.$invalid"><i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                            <!--<button type="button" class="btn btn-sm btn-primary" ng-if="invFrm.edb" data-ng-click="invFrm.edb=!invFrm.edb;updateInvoice(y)"
+                                tabindex="0" data-ng-disabled="invFrm.$invalid"><i class="fa fa-save" aria-hidden="true"></i></button>-->
+                            <button type="button" class="btn btn-sm btn-primary" ng-hide="invFrm.edb" data-ng-click="invFrm.edb = !invFrm.edb " tabindex="0"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+        </div>
+        <a ng-show="!ErrorList.length"> No Error Invoices for {{sectionListSelected.cd}}</a>
+        <div class="text-center">
+            <wrap-dir-pagination></wrap-dir-pagination>
+        </div>
+        <div class="btn-toolbar">
+            <button type="button" class="btn btn-primary pull-left" ng-show="ErrorList.length" ng-click="deleteSelectedRows()">Delete</button>
+        </div>
+    </div>
+
+</div>

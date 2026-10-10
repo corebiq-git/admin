@@ -1,0 +1,117 @@
+<div data-ng-controller="uploadreturnsctrl">
+    <div class="tabpane">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="table-responsive">
+                    <table class="table tbl inv table-bordered" show-filter="false">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" class="text-center">
+                                    <input type="checkbox" class="chkbx" ng-model="selectAll" ng-true-value="'Y'" ng-false-value="'N'" ng-click="checkAll(ReceiverSummaryList, selectAll)"
+                                    />
+                                    <label for="checkbox_all"></label>
+                                </th>
+                                <!--<th class="gstTblHeadr spTblHdr reg m-cir">Type</th>-->
+                                <th class="gstTblHeadr reg m-cir" data-ng-bind="trans.LBL_INVOICE_NUMBER"></th>
+                                <th class="gstTblHeadr dtTblHdr reg m-cir" data-ng-bind="trans.LBL_INVOICE_DATE"></th>
+                                <th rowspan="2" class="gstTblHeadr spTblHdr reg m-cir" data-ng-bind="trans.LBL_SUPPLY_TYPE"></th>
+                                <!-- <th rowspan="2" class="gstTblHeadr">Status</th>-->
+                                <th rowspan="2" class="gstTblHeadr m100TblHdr " data-ng-bind="trans.LBL_ACTIONS"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr dir-paginate="t in ReceiverSummaryList | filter:q | itemsPerPage: pageSize" current-page="currentPage" ng-form="invFrm">
+                                <td class="text-center">
+                                    <!--<input type="checkbox" class="chkbx" ng-model="t.select" ng-true-value="'Y'" ng-false-value="'N'" data-ng-if="!isActionTaken(y.flag)"
+                                    />-->
+                                    <input type="checkbox" class="chkbx" ng-model="t.DeleteSelect" ng-true-value="'Y'" ng-false-value="'N'" />
+                                    <label for="checkbox_all"></label>
+                                </td>
+                                <!--<td data-ng-class="{'has-error': invFrm.reg_type.$error.required}">
+                                    <select class="form-control" name="reg_type" ng-options="opt.value as opt.name for opt in typeList" ng-model="t.reg_type"
+                                        data-ng-disabled="!invFrm.edb" ng-required="true"></select>
+                                </td>-->
+
+                                <td data-ng-class="{'has-error':  (invFrm.inum.$error.pattern || invFrm.inum.$error.required)}">
+                                    <input name="inum" type="text" class="form-control formedit" data-ng-pattern="/^[a-zA-Z0-9]*$/" data-ng-model="t.i_num" maxlength="50"
+                                        ng-required="true" data-ng-disabled="true">
+                                </td>
+                                <td data-ng-class="{'has-error': (invFrm.idt.$error.pattern || invFrm.idt.$error.required)}">
+                                    <div class="datepicker-icon input-group">
+                                        <div class="datepicker-icon input-group">
+                                            <i class="fa fa-calendar"></i>
+                                            <input name="idt" class="form-control date-picker" data-ng-model="t.i_dt" data-datepicker ng-required="true" data-min-years="{{minYearsAllowed}}"
+                                                data-max-date="{{datefunc()}}" data-ng-disabled="!invFrm.edb" />
+                                            <span class="input-group-addon"><span class="fa fa-calendar" ></span></span>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <select class="form-control" name="sp_typ" ng-options="option.name for option in suplyList track by option.name" ng-model="t.sp_typ"
+                                        data-ng-disabled="!invFrm.edb"></select>
+                                </td>
+
+                                <td class="text-center newinv">
+                                    <button type="button" class="btn btn-sm btn-primary" ng-if="invFrm.edb" data-ng-click="gotoAddItems(y)" tabindex="0"
+                                        data-ng-disabled="invFrm.$invalid"><i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                                    <button type="button" class="btn btn-sm btn-primary" ng-if="invFrm.edb" data-ng-click="invFrm.edb=!invFrm.edb;updateInvoice(y)"
+                                        tabindex="0" data-ng-disabled="invFrm.$invalid"><i class="fa fa-save" aria-hidden="true"></i></button>
+                                    <button type="button" class="btn btn-sm btn-primary" ng-hide="invFrm.edb" data-ng-click="invFrm.edb = !invFrm.edb " tabindex="0"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tr ng-form="newInvFrm">
+                            <td></td>
+                            <!--<td data-ng-class="{'has-error':  newInvValidtr && (!newInvRw.reg_type),'has-success': newInvValidtr && newInvRw.reg_type }">
+                                <select name="reg_type" class="form-control" ng-options="opt.value as opt.name for opt in regList" ng-model="newInvRw.reg_type"></select>
+                                <span class="err" data-ng-show="newInvValidtr && !newInvRw.reg_type" data-ng-bind="trans.ERR_MANDATORY"></span>
+                            </td>-->
+                            <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.inum.$error.pattern || newInvFrm.inum.$error.required),'has-success': newInvValidtr && newInvFrm.inum.$valid }">
+                                <input type="text" class="form-control formedit" name="inum" data-ng-model="newInvRw.i_num" data-ng-pattern="/^[a-zA-Z0-9-/]*$/"
+                                    maxlength="50" ng-required="true" />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.inum.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.inum.$error.pattern" data-ng-bind="trans.ERR_INV_CHAR"></span>
+                            </td>
+                            <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.idt.$error.pattern || newInvFrm.idt.$error.required),'has-success': newInvValidtr && newInvFrm.idt.$valid }">
+                                <div class="datepicker-icon input-group">
+                                    <div class="datepicker-icon input-group">
+                                        <i class="fa fa-calendar"></i>
+                                        <input name="idt" class="form-control date-picker" data-ng-model="newInvRw.i_dt" data-datepicker ng-required="true" data-min-years="{{minYearsAllowed}}"
+                                            data-min-date="{{minDate()}}" data-max-date="{{datefunc()}}" />
+                                        <span class="input-group-addon"><span class="fa fa-calendar" ></span></span>
+                                    </div>
+                                </div>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.idt.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.idt.$error.pattern" data-ng-bind="trans.ERR_INV_CHAR"></span>
+                            </td>
+
+
+                            <td data-ng-class="{'has-error':  newInvValidtr && (!newInvRw.sp_typ.name),'has-success': newInvValidtr && newInvRw.sp_typ.name }">
+
+                                <select name="sp_typ" class="form-control" id="stype" ng-options="option.name for option in suplyList track by option.name"
+                                    ng-model="newInvRw.sp_typ"></select>
+                                <span class="err" data-ng-show="newInvValidtr && !newInvRw.sp_typ.name" data-ng-bind="trans.ERR_MANDATORY"></span>
+                            </td>
+
+                            <td class="text-center" colspan="2">
+                                <button type="button" class="btn btn-sm btn-primary" ng-click="gotoAddItems('add')"><i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                            </td>
+                        </tr>
+
+                    </table>
+                </div>
+                <div class="text-center">
+                    <wrap-dir-pagination></wrap-dir-pagination>
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-toolbar">
+            <button type="button" class="btn btn-primary pull-left" ng-show="ReceiverSummaryList.length" ng-click="deleteSelectedRows()">Delete</button>
+            <!--      <button type="button" class="btn btn-primary pull-left" ng-show="ReceiverSummaryList.length" ng-disabled="false" ng-click="updateSelectedRows('A')">Accept</button>
+            <button type="button" class="btn btn-primary pull-left" ng-show="ReceiverSummaryList.length" ng-disabled="false" ng-click="updateSelectedRows('R')">Reject</button>
+            <button type="button" class="btn btn-primary pull-left" ng-show="ReceiverSummaryList.length" ng-disabled="false" ng-click="updateSelectedRows('P')">Pending</button>-->
+        </div>
+    </div>
+</div>

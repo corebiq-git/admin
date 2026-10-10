@@ -1,0 +1,996 @@
+<div data-ng-controller="mastersummarycrtl" data-ng-init="initmastersummary()">
+  <div class="tabpane" style="width: 102.3%;margin-left: -1%;overflow-x: auto;">
+    <div>
+      <label data-ng-bind="trans.LBL_MSTR"></label></div>
+    <div class="row">
+      <button style="margin-left: 1.2%;" class="btn btn-primary btn-responsive iconBtn2" data-toggle="modal"
+        data-ng-click="removeData()" data-target="#deletemodal" title="Removes data from offline tool">
+        <i class="fa fa-trash fa-3x"></i>
+        <div data-ng-bind="trans.LBL_REM_TAB"></div>
+      </button>
+      <button class="btn btn-primary btn-responsive iconBtn2" data-ng-hide="disablebuttonMFD || disableSupbuttonMFD"
+        title="Click here to mark the records as 'delete'" data-ng-click="markForDelete()">
+
+        <i class="fa fa-times fa-3x"></i>
+        <div data-ng-bind="trans.LBL_MRK_DELETE"></div>
+      </button>
+      <button data-ng-show="disablebuttonMFD" class="btn btn-primary btn-responsive iconBtn2"
+        data-ng-click="undomarkForDel()" title="Click here to unmark the records as ‘delete’">
+        <i class="fa fa-undo fa-3x"></i>
+        <div data-ng-bind="trans.LBL_UNDO_MRK_DELETE"></div>
+      </button>
+      <button data-ng-show="disableSupbuttonMFD" class="btn btn-primary btn-responsive iconBtn2"
+      data-ng-click="undomarkForDel()" title="Click here to unmark the records as ‘delete’">
+      <i class="fa fa-undo fa-3x"></i>
+      <div data-ng-bind="trans.LBL_UNDO_MRK_DELETE"></div>
+    </button>
+      <button class="btn btn-primary btn-responsive iconBtn2" title="Click here to generate Json file" id="btn-save"
+        data-ng-click="generateJson()">
+        <i class="fa fa-upload fa-3x"></i>
+        <div data-ng-bind="trans.LBL_JSON"></div>
+      </button>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-sm-6" style="margin-left: -0.9%;">
+        <button class="btn" style="width: 40%;"
+          ng-class="{'btn btn-primary': view === 'product','btn btn-secondary': view != 'prduct'}"
+          ng-click="toggle_view('product')" data-ng-bind="trans.LBL_PRD_MASTR"></button>
+        <button class="btn" ng-class="{'btn btn-primary': view === 'supplier','btn btn-secondary': view != 'supplier'}"
+          ng-click="toggle_view('supplier')" data-ng-bind="trans.LBL_SUP_REC_MSTR" style="margin-left: -2%;"></button>
+      </div>
+      <div class="row">
+        <div class="alert alert-success alert-dismissible" style="margin-top: 5%;width: 96%;margin-left: 2%;"
+          data-ng-if="successMessageShow">
+          <a href="#" class="close" data-dismiss="alert" aria-label="close" data-ng-click="sucessmsg()">&times;</a>
+          <span>
+            <i class="fa fa-info-circle"></i> <span data-ng-bind="trans.SUCCESS_MSG"><span></span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="alert alert-success alert-dismissible" style="margin-top: 2%;width: 96%;margin-left: 2%;"
+          data-ng-if="successMarkForDel">
+          <a href="#" class="close" data-dismiss="alert" aria-label="close" data-ng-click="sucessMFD()">&times;</a>
+          <span>
+            <i class="fa fa-info-circle"></i> <span data-ng-bind="trans.SUCCESS_MFD_MSG"><span></span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="alert alert-success alert-dismissible" style="margin-top: 2%;width: 96%;margin-left: 2%;"
+          data-ng-if="singlesuccessMarkForDel">
+          <a href="#" class="close" data-dismiss="alert" aria-label="close" data-ng-click="sucessMFD()">&times;</a>
+          <span>
+            <i class="fa fa-info-circle"></i> <span data-ng-bind="trans.SINGLE_SUCCESS_MFD_MSG"><span></span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="alert alert-success alert-dismissible" style="margin-top: 2%;width: 96%;margin-left: 2%;"
+          data-ng-if="successundoMark">
+          <a href="#" class="close" data-dismiss="alert" aria-label="close" data-ng-click="sucessUMFD()">&times;</a>
+          <span>
+            <i class="fa fa-info-circle"></i> <span data-ng-bind="trans.SUCCESS_UMFD_MSG"><span></span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="alert alert-danger alert-dismissible" style="margin-top: 1.5%;width: 96%;margin-left: 2%;"
+          data-ng-if="dataMsgshow">
+          <a href="#" class="close" data-dismiss="alert" aria-label="close" data-ng-click="noDatamsg()">&times;</a>
+          <span>
+            <i class="fa fa-warning"></i> <span data-ng-bind="trans.NO_DATA_MSG"><span></span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="alert alert-success alert-dismissible" style="margin-top: 1.5%;width: 96%;margin-left: 2%;"
+          data-ng-if="jsonMsgshow">
+          <a href="#" class="close" data-dismiss="alert" aria-label="close" data-ng-click="jsonMessage()">&times;</a>
+          <span>
+            <i class="fa fa-info"></i> <span data-ng-bind="trans.SUCCES_MSG_JSON"><span></span>
+        </div>
+      </div>
+      <div ng-show="view === 'product'">
+        <div class="row">
+          <div class="col-sm-12 head padding10x10" style="margin-left: 1.0%;">
+            <button class="btn btn-primary pull-left" data-ng-click='mastersummary()'
+              style="margin-left: 0px;width: 13%;">Summary
+              <span data-ng-hide="tog">
+                <i class="fa fa-fw fa-chevron-down"></i>
+              </span>
+              <span data-ng-show="tog">
+                <i class="fa fa-fw fa-chevron-up"></i>
+              </span>
+            </button>
+          </div>
+
+          <!--Summary Table-->
+          <div class="row" style="width: 75%;">
+            <div class="col-sm-12" ng-show="tog" style="margin-left: 2.6%;">
+              <div class="table-responsive">
+                <table class="table tbl inv table-bordered" style="width: 115%;">
+                  <thead>
+                    <tr style="background-color: #dddd;">
+                      <th class="text-center" style="width:20%">Tax Rate<br><br>1</th>
+                      <th class="text-center" style="width:20%">No. of Records<br><br>2</th>
+                      <th class="text-center" style="width:20%">No. of records marked for delete (out of 2)<br><br>3
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr data-ng-repeat="summ in summaryData">
+                      <td class="text-center" data-ng-class="{bold : summ.igst == 'Total'}">{{summ.igst }}</td>
+                      <td class="text-center">{{summ.count}}</td>
+                      <td class="text-center">{{summ.actncnt}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12" style="margin-left: 2.4%;">
+              <h4 style="color: #0b1e59;"><b data-ng-bind="trans.LBL_AD_PRD"></b></h4>
+              <b><span class="pull-right red" style="margin-right: 5%;color: red;"
+                  data-ng-bind=trans.LBL_Field_Mand></span></b>
+            </div>
+          </div>
+        </div>
+        <!--Product Table-->
+        <form name="mstrFrm">
+          <div class="row" style="margin-left: 0%;">
+            <div class="col-sm-6 form-group">
+              <div>
+                <label rowspan="2" class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.LBL_HSN_CODE"></label>
+                <div
+                  data-ng-class="{'has-error':  newInvValidtr && (mstrFrm.hsn.$error.duplicate || mstrFrm.hsn.$error.required || mstrFrm.hsn.$error.minlength || mstrFrm.hsn.$invalid),'has-success': newInvValidtr && mstrFrm.hsn.$valid }">
+
+                  <mstr-autocomplete-hsn ng-model="newmstr.hsn" id="hsn" name="hsn" input-name="hsn"
+                    placeholder={{trans.MSTR_HSN_PLACEHOLDER}} pause="500" remote-url="/listHSNData/"
+                    second-url="/listHSNData/" title-field="n" title={{trans.HSN_HOVER_TITLE}} data-maxlength="1000"
+                    description-field="c" minlength="1" clear-result-after-select="false"
+                    after-select="afterHACselecthsnOutward(result)"
+                    min-code-length-to-display="{{minCodeLengthToDisplay}}" disable-after-select="{{hsnsaveedit}}"
+                    reset-results="clearHSNInput()" after-blur="hsnBlurvalidation()" show-key-in-description="true"
+                    error-msg="err_msg_hsn" data-ng-required="true">
+                  </mstr-autocomplete-hsn>
+                  <span class="err" data-ng-show="hsnnotselected" data-ng-bind="trans.HSN_BLUR_MSG"></span>
+
+                  <span class="err" data-ng-show="newInvValidtr && mstrFrm.hsn.$error.required"
+                    data-ng-bind="trans.ERR_MAND"></span>
+                
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 form-group">
+              <div>
+                <label rowspan="2" class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.LBL_HSN_DESC"></label>
+              </div>
+              <div
+                data-ng-class="{'has-error': mstrFrm.$submitted && ( mstrFrm.desc.$error.required && mstrFrm.desc.$invalid),'has-success': mstrFrm.$submitted && mstrFrm.desc.$valid }">
+                <input type="text" class="form-control formedit" name="desc" title={{newmstr.desc}}
+                  data-ng-required="true" data-ng-model="newmstr.desc" disabled />
+                <span class="err" data-ng-show="newInvValidtr && mstrFrm.desc.$error.required"
+                  data-ng-bind="trans.ERR_MAND"></span>
+                <span class="err" data-ng-show="hsnnotselected" data-ng-bind="trans.DESC_ERR_MAND"></span>
+              </div>
+
+            </div>
+          </div>
+          <div class="row" style="margin-left: 0%;">
+            <div class="col-sm-6 form-group">
+              <div>
+                <label class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.LBL_PRD_NAME"></label>
+              </div>
+              <div
+                data-ng-class="{'has-error': mstrFrm.$submitted && ( mstrFrm.productName.$error.required && mstrFrm.desc.$invalid),'has-success': mstrFrm.$submitted && mstrFrm.productName.$valid }">
+                <input data-ng-disabled="editprdnamedisabled" type="text" class="form-control formedit"
+                  name="productName" data-ng-model="newmstr.productName" ng-change="duplicaterecord = false;"
+                  maxlength="99" data-ng-required="true" />
+                <span class="err" data-ng-show="newInvValidtr && mstrFrm.productName.$error.required"
+                  data-ng-bind="trans.ERR_MAND"></span>
+                <span class="err" data-ng-show="duplicaterecord" data-ng-bind="trans.LBL_Prod_name_err">
+                </span>
+              </div>
+            </div>
+            <div class="col-sm-6 form-group">
+              <div>
+                <label class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.LBL_IGST_RT"></label>
+              </div>
+              <div id="rate">
+                <label
+                  data-ng-class="{'has-error': newInvValidtr && (mstrFrm.rt.$error.required  || mstrFrm.rt.$error.duplicate  || mstrFrm.rt.$invalid  || mstrFrm.rt.$error.pattern),'has-success': newmstr.$submitted && newInvValidtr && mstrFrm.rt.$valid }"></label>
+                <select data-ng-change="isExistingHsnUqcRate(1,newmstr.rt,newmstr.hsn,newmstr.uqc)" class="form-control"
+                  name="rt" ng-model="newmstr.rt" data-ng-required="true" style="margin-top: -3%;"
+                  data-ng-options="opt.value as opt.value for opt in RateList.CommGST">
+                  <option value="">Select</option>
+                </select>
+                <span class="err" data-ng-show="newInvValidtr && mstrFrm.rt.$error.required"
+                  data-ng-bind="trans.ERR_MAND"></span>
+                <span class="err" data-ng-show="newmstr.rt && mstrFrm.rt.$error.duplicate"
+                  data-ng-bind="trans.UNIQUE_HSN_COMBINATION_ERRMESSAGE"></span>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="margin-left: 0%;">
+            <div class="col-sm-6 form-group">
+              <div>
+                <label rowspan="2" class="gstTblHeadr psTblHdr reg " data-ng-class="{'m-cir':uqcrequired}"
+                  data-ng-bind="trans.LBL_UQC"></label>
+              </div>
+              <div id="uqc">
+                <label
+                  data-ng-class="{'has-error':  newInvValidtr && (mstrFrm.uqc.$error.required  || mstrFrm.uqc.$error.duplicate  || mstrFrm.uqc.$invalid ),'has-success': newInvValidtr && mstrFrm.uqc.$valid }"></label>
+                <select data-ng-change="isExistingHsnUqcRate(1,newmstr.rt,newmstr.hsn,newmstr.uqc)" class="form-control"
+                  style="margin-top: -3%;" name="uqc" ng-model="newmstr.uqc" ng-required="uqcrequired ==true">
+                  <option value="">Select</option>
+                  <option data-ng-repeat="opt in mstrUQCList" data-ng-bind="opt.name" value="{{opt.value}}"
+                    ng-if="!checkNA(opt.value) || (checkNA(opt.value) && checkNA(newmstr.uqc))"></option>
+                </select>
+                <span class="err" data-ng-show="newInvValidtr && mstrFrm.uqc.$error.required"
+                  data-ng-bind="trans.ERR_MAND"></span>
+                <span class="err" data-ng-show="newmstr.uqc && mstrFrm.uqc.$error.duplicate"
+                  data-ng-bind="trans.UNIQUE_HSN_COMBINATION_ERRMESSAGE"></span>
+
+              </div>
+            </div>
+          </div>
+        </form>
+        <div class="row" style="margin-left: 0%;">
+          <div class="col-sm-12">
+            <div class="pull-right btn-toolbar" data-ng-hide="updatebtn">
+              <button type="button" class="btn btn-default" data-ng-bind="trans.LBL_BACK" data-ng-show="addbtn"
+                data-ng-click="backFuncUpload()"></button>
+              <button type="submit" class="btn btn-primary accpt" data-ng-click="addHsnDetails()"
+                data-ng-bind="trans.LBL_ADD"></button>
+              <button type="submit" class="btn btn-primary" data-ng-bind="trans.LBL_SAVE"
+                data-ng-click="saveProduct()"></button>
+            </div>
+            <div class="col-sm-12" data-ng-show="updatebtn">
+              <div class="pull-right btn-toolbar">
+                <button type="submit" class="btn btn-primary" data-ng-hide="editsaveenable"
+                  data-ng-bind="trans.LBL_SAVE" data-ng-click="updateProd(idx)"></button>
+                <button type="submit" class="btn btn-primary" data-ng-show="editsaveenable"
+                  data-ng-bind="trans.LBL_SAVE" data-ng-click="addEditProduct(idx)"></button>
+                <button type="submit" class="btn btn-primary" data-ng-bind="trans.LBL_CANCEL"
+                  data-ng-click="cancelbtn()"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--Add Table-->
+
+        <div class="row" data-ng-show="addTable">
+          <div style="overflow-x: auto;">
+            <table class="table tbl inv table-bordered" style="margin-left: 2.3%;width: 96%">
+              <thead>
+                <tr style="background-color: #dddd;">
+                  <th style="vertical-align: top" data-ng-bind="trans.LBL_Prod_name_tbl"></th>
+                  <th style="vertical-align: top" data-ng-bind="trans.LBL_HSN_Code_tbl"></th>
+                  <th style="vertical-align: top" data-ng-bind="trans.LBL_HSN_DESC_tbl"></th>
+                  <th style="vertical-align: top" data-ng-bind="trans.LBL_UQC"></th>
+                  <th style="vertical-align: top" data-ng-bind="trans.LBL_Igst_tbl"></th>
+                  <th style="vertical-align: top" data-ng-bind="trans.LBL_cgst_tbl"></th>
+                  <th style="vertical-align: top" data-ng-bind="trans.LBL_sgst_tbl"></th>
+                  <th style="vertical-align: top" data-ng-bind="trans.LBL_ACTION"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr data-ng-repeat="product in addmstr track by $index">
+                  <td class="text-left" title="{{product.productName ? product.productName:''}}">
+                    {{ product.productName ? product.productName.substr(0,25):"" }}</td>
+                  <td class="text-left">{{ product.hsn }}</td>
+                  <td class="text-left" title="{{product.productDescription ? product.productDescription:''}}">{{
+            product.productDescription ? product.productDescription.substr(0,30):'' }}</td>
+                  <td class="text-left">{{ product.uqc }}</td>
+                  <td class="text-right">{{ product.igst }}</td>
+                  <td class="text-right">{{ product.igst / 2 }}</td>
+                  <td class="text-right">{{ product.igst / 2 }}</td>
+                  <td class="btn-toolbar record-action-btn" style="width: 8%;">
+                    <button class="btn btn-sm btn-primary" data-ng-click="addEditTable(product,$index)"><i
+                        class="fa fa-pencil-square-o"></i></button>
+                    <button class="btn btn-sm btn-danger" title={{trans.TIT_REM_RCRD}}
+                      data-ng-disabled="product.addeditdisablebtn" data-ng-click="addsingleDelete(product)"><i
+                        class="fa fa-trash-o"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="row">
+            <div class="btn-toolbar pull-right" style="margin-right: 2.5%;">
+              <button type="button" class="btn btn-default" data-ng-bind="trans.LBL_BACK"
+              data-ng-show="btnshow" data-ng-click="backFuncUpload()"></button>
+              <button type="button" class="btn btn-primary" data-ng-bind="trans.LBL_RESET"
+                data-ng-click="resetbtn()"></button>
+              <button type="button" class="btn btn-primary" data-ng-bind="trans.LBL_SAVE"
+                data-ng-click="mulitiplesaveProduct()"></button>
+            </div>
+          </div>
+        </div>
+
+        <!--Added table-->
+        <hr style="margin-left: 1.2%;">
+
+        <div data-ng-show="savemstr.length>0 || searchEnabled">
+          <div class="row" style="margin-left: 1.2%;margin-top: 2%;">
+            <div class="">
+              <h4 style="color: #0b1e59;"><b data-ng-bind="trans.LBL_ADD_PROD"></b></h4>
+            </div>
+          </div>
+          <div class="row" style="margin-left: 35%;margin-top: -2%;">
+            <div class="col-md-3 form-group">
+              <label data-ng-bind="trans.LBL_REC_PAGE"></label>
+            </div>
+
+            <div class="col-md-3 form-group" style="margin-left: -7%;width: 13%;">
+              <select class="form-control drpdwn" ng-model="pageSize" ng-change="recordsPerPage()">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </div>
+            <div class="col-xs-3 form-group" style="width: 35%;">
+              <div class="input-group">
+                <input placeholder="Search..." type="text" class="form-control" ng-model="searchTxt"
+                  ng-keyup="search($event)">
+                <span class="input-group-addon">
+                  <i class="fa fa-search cursor" ng-click="search($event)"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="table-responsive" style="margin-left: 1.2%;">
+                <table class="table tbl inv table-bordered">
+                  <thead>
+                    <tr style="background-color: #dddd;">
+                      <th style="vertical-align:inherit">
+                        <input type="checkbox" class="chkbx" name="checkboxName" id="checkboxid" ng-model="selectAll"
+                          style="width: 16px;height: 16px;
+                " data-ng-disabled="selectalldisabled" ng-click="checkAll(savemstr, selectAll)" />
+                        <label for="checkboxLabl"></label>
+
+                      </th>
+                      <th style="vertical-align: inherit;cursor: pointer;" ng-click="sortProductMstr('productName')">
+                        <span data-ng-bind="trans.LBL_Prod_name_tbl"></span>
+                        <span>
+                          <i class="fa fa-sort-asc" aria-hidden="true"
+                            ng-style="{ 'color' : (isActive=='productName'? '#00f' : '#212121')}"
+                            ng-if="sortCount.productName"></i>
+                        </span>
+                        <span>
+                          <i class="fa fa-sort-desc" aria-hidden="true"
+                            ng-style="{ 'color' : (isActive=='productName'? '#00f' : '#212121')}"
+                            ng-if="!sortCount.productName"></i>
+                        </span>
+                      </th>
+                      <th style="vertical-align: inherit;cursor: pointer;" ng-click="sortProductMstr('hsn')"><span
+                          data-ng-bind="trans.LBL_HSN_Code_tbl"></span>
+                        <span>
+                          <i class="fa fa-sort-asc" aria-hidden="true"
+                            ng-style="{ 'color' : (isActive=='hsn'? '#00f' : '#212121')}" ng-if="sortCount.hsn"></i>
+                        </span>
+                        <span>
+                          <i class="fa fa-sort-desc" aria-hidden="true"
+                            ng-style="{ 'color' : (isActive=='hsn'? '#00f' : '#212121')}" ng-if="!sortCount.hsn"></i>
+                        </span>
+
+                      </th>
+                      <th style="vertical-align: inherit;cursor: pointer;"
+                        ng-click="sortProductMstr('productDescription')"><span
+                          data-ng-bind="trans.LBL_HSN_DESC_tbl"></span>
+                        <span>
+                          <i class="fa fa-sort-asc" aria-hidden="true"
+                            ng-style="{ 'color' : (isActive=='productDescription'? '#00f' : '#212121')}"
+                            ng-if="sortCount.productDescription"></i>
+                        </span>
+                        <span>
+                          <i class="fa fa-sort-desc" aria-hidden="true"
+                            ng-style="{ 'color' : (isActive=='productDescription'? '#00f' : '#212121')}"
+                            ng-if="!sortCount.productDescription"></i>
+                        </span>
+
+                      </th>
+                      <th style="vertical-align: inherit;cursor: pointer;" ng-click="sortProductMstr('uqc')"><span
+                          data-ng-bind="trans.LBL_UQC"></span>
+                        <span>
+                          <i class="fa fa-sort-asc" aria-hidden="true"
+                            ng-style="{ 'color' : (isActive=='uqc'? '#00f' : '#212121')}" ng-if="sortCount.uqc"></i>
+                        </span>
+                        <span>
+                          <i class="fa fa-sort-desc" aria-hidden="true"
+                            ng-style="{ 'color' : (isActive=='uqc'? '#00f' : '#212121')}" ng-if="!sortCount.uqc"></i>
+                        </span>
+
+                      </th>
+                      <th style="vertical-align: inherit;cursor: pointer;" ng-click="sortProductMstr('igst')"><span
+                          data-ng-bind="trans.LBL_Igst_tbl"></span>
+                        <span>
+                          <i class="fa fa-sort-asc" aria-hidden="true"
+                            ng-style="{ 'color' : (isActive=='igst'? '#00f' : '#212121')}" ng-if="sortCount.igst"></i>
+                        </span>
+                        <span>
+                          <i class="fa fa-sort-desc" aria-hidden="true"
+                            ng-style="{ 'color' : (isActive=='igst'? '#00f' : '#212121')}" ng-if="!sortCount.igst"></i>
+                        </span>
+
+                      </th>
+                      <th style="vertical-align: inherit;cursor: pointer;" ng-click="sortProductMstr('cgst')"><span
+                          data-ng-bind="trans.LBL_cgst_tbl"></span>
+                        <span>
+                          <i class="fa fa-sort-asc" aria-hidden="true"
+                            ng-style="{ 'color' : (isActive=='cgst'? '#00f' : '#212121')}" ng-if="sortCount.cgst"></i>
+                        </span>
+                        <span>
+                          <i class="fa fa-sort-desc" aria-hidden="true"
+                            ng-style="{ 'color' : (isActive=='cgst'? '#00f' : '#212121')}" ng-if="!sortCount.cgst"></i>
+                        </span>
+
+                      </th>
+                      <th style="vertical-align: inherit;cursor: pointer;" ng-click="sortProductMstr('sgst')"><span
+                          data-ng-bind="trans.LBL_sgst_tbl"></span>
+                        <span>
+                          <i class="fa fa-sort-asc" aria-hidden="true"
+                            ng-style="{ 'color' : (isActive=='sgst'? '#00f' : '#212121')}" ng-if="sortCount.sgst"></i>
+                        </span>
+                        <span>
+                          <i class="fa fa-sort-desc" aria-hidden="true"
+                            ng-style="{ 'color' : (isActive=='sgst'? '#00f' : '#212121')}" ng-if="!sortCount.sgst"></i>
+                        </span>
+
+                      </th>
+                      <th style="vertical-align: inherit;cursor: pointer;" ng-click="sortProductMstr('actionFlag')">
+                        <span data-ng-bind="trans.LBL_MSTR_STATUS"></span>
+                        <span>
+                          <i class="fa fa-sort-asc" aria-hidden="true"
+                            ng-style="{ 'color' : (isActive=='actionFlag'? '#00f' : '#212121')}"
+                            ng-if="sortCount.actionFlag"></i>
+                        </span>
+                        <span>
+                          <i class="fa fa-sort-desc" aria-hidden="true"
+                            ng-style="{ 'color' : (isActive=='actionFlag'? '#00f' : '#212121')}"
+                            ng-if="!sortCount.actionFlag"></i>
+                        </span>
+                      </th>
+                      <th style="vertical-align: inherit" data-ng-bind="trans.LBL_ACTION"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td rowspan="1" colspan="10" data-ng-if="!(savemstr.length  > 0) && searchEnabled"
+                        class="text-center">NO RECORDS FOUND
+                      </td>
+                    </tr>
+                    <tr dir-paginate="prodsave in savemstr | itemsPerPage: pageSize" current-page="currentPage">
+                      <td> <input type="checkbox" class="chkbx" style="width: 16px;height: 16px;"
+                          data-ng-click="checkSelected()" ng-model="prodsave.select"
+                          data-ng-disabled="prodsave.disabled" />
+                        <label for="checkbox_all"></label></td>
+                      <td class="text-left" title="{{prodsave.productName ? prodsave.productName:''}}">
+                        {{ prodsave.productName ? prodsave.productName.substr(0,25):"" }}</td>
+                      <td class="text-left">{{ prodsave.hsn }}</td>
+                      <td class="text-left" title="{{prodsave.productDescription ? prodsave.productDescription:''}}"
+                        style="width: 30%;">{{
+                  prodsave.productDescription ? prodsave.productDescription.substr(0,30):'' }}</td>
+                      <td class="text-left">{{ prodsave.uqc }}</td>
+                      <td class="text-right">{{ prodsave.igst }}</td>
+                      <td class="text-right">{{ prodsave.igst / 2 }}</td>
+                      <td class="text-right">{{ prodsave.igst / 2 }}</td>
+                      <td class="text-center">{{prodsave.actionFlag}}</td>
+                      <td class="btn-toolbar record-action-btn" style="width: 8%;">
+                        <button class="btn btn-sm btn-primary" data-ng-click="updateProduct(prodsave)"><i
+                            class="fa fa-pencil-square-o"></i></button>
+                        <button class="btn btn-sm btn-warning" data-keyboard="false"
+                          data-ng-if="prodsave.actionFlag =='U'" title={{trans.SING_MAR_DEL}}
+                          data-ng-click="singleMarkForDel(prodsave)"><i class="fa fa-close"></i></button>
+                        <button class="btn btn-sm btn-warning" data-keyboard="false" title={{trans.UN_SING_MAR_DEL}}
+                          data-ng-click="singleundoMarkForDel($index)" data-ng-if="prodsave.actionFlag =='D'"><i
+                            class="fa fa-undo"></i></button>
+                        <button data-ng-disabled="prodsave.disablebtn" class="btn btn-sm btn-danger"
+                          title={{trans.TIT_REM_RCRD}}
+                          data-ng-if="prodsave.actionFlag==null || prodsave.actionFlag=='E'"
+                          data-ng-click="singleDeleteproduct(prodsave)"><i class="fa fa-trash-o"></i></button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="text-center">
+                <wrap-dir-pagination></wrap-dir-pagination>
+              </div>
+
+              <div class="text-center" ng-if="(savemstr.length > 0) && (pageSize >= savemstr.length)">
+                <ul class="pagination">
+                  <li class="disabled">
+                    <a href="">&laquo;</a>
+                  </li>
+                  <li class="disabled">
+                    <a href="">&lsaquo;</a>
+                  </li>
+                  <li class="active">
+                    <a href="">1</a>
+                  </li>
+
+                  <li class="disabled">
+                    <a href="">&rsaquo;</a>
+                  </li>
+                  <li class="disabled">
+                    <a href="">&raquo;</a>
+                  </li>
+                </ul>
+              </div>
+
+            </div>
+          </div>
+          <div class="row" style="margin-right: 0%;">
+            <div class="btn-toolbar pull-right">
+              <button type="button" class="btn btn-default" data-ng-bind="trans.LBL_BACK" data-ng-show="buttonshow"
+                data-ng-click="backFuncUpload()"></button>
+              <button type="button" data-ng-show="showDel()" data-ng-click="multipleDelete(savemstr)"
+                class="btn btn-primary bn" data-ng-disabled="deletedisable" title={{trans.TIT_REM_RCRDS}}
+                data-ng-bind="trans.LBL_REMOVE"></button>
+              <button type="button" class="btn btn-primary bn" title={{trans.TIT_MAR_DEL}}
+                data-ng-disabled="prodsave.actionFlag=='D' || mfdisable" data-ng-click="multiselectMFD(savemstr)"
+                data-ng-bind="trans.LBL_DELETE"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--Supplier Recipient-->
+      <div class="" ng-show="view === 'supplier'">
+
+        <div class="row">
+          <div class="col-sm-12 head padding10x10" style="margin-left: 1.0%;">
+            <button class="btn btn-primary pull-left" data-ng-click='supsummary()'
+              style="margin-left: 0px;width: 13%;">Summary
+              <span data-ng-hide="suptog">
+                <i class="fa fa-fw fa-chevron-down"></i>
+              </span>
+              <span data-ng-show="suptog">
+                <i class="fa fa-fw fa-chevron-up"></i>
+              </span>
+            </button>
+          </div>
+
+          <!--Summary Table-->
+          <div class="row" style="width: 75%;">
+            <div class="col-sm-12" ng-show="suptog" style="margin-left: 2.6%;">
+              <p><b>Note:</b><span data-ng-bind="trans.MSG_TAXPYR"></span></p>
+              <div class="table-responsive">
+                <table class="table tbl inv table-bordered" style="width: 115%;">
+                  <thead>
+                    <tr style="background-color: #dddd;">
+                      <th class="text-center" style="width:20%">No. of taxpayers<br><br>1</th>
+                      <th class="text-center" style="width:20%">Supplier(s) (out of 1)<br><br>2</th>
+                      <th class="text-center" style="width:20%">Recipient(s) (out of 1)<br><br>3</th>
+                      <th class="text-center" style="width:27%">No. of records marked for delete (out of 1)<br><br>4
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    <tr >
+                      <td class="text-center"> {{sumSupData.sumcount}}</td>
+                      <td class="text-center"> {{sumSupData.supcount}}</td>
+                      <td class="text-center"> {{sumSupData.recount}}</td>
+                      <td class="text-center">{{sumSupData.mcount}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12" style="margin-left: 2.4%;">
+              <h4 style="color: #0b1e59;"><b data-ng-bind="trans.LBL_SUP_REC"></b></h4>
+              <b><span class="pull-right red" style="margin-right: 5%;color: red;"
+                  data-ng-bind=trans.LBL_Field_Mand></span></b>
+            </div>
+          </div>
+        </div>
+
+        <!--Supplier Recipient table main table-->
+        <form name="suprecFrm" novalidate>
+          <div class="row" style="margin-left: 0%;">
+            <div class="col-sm-6 form-group">
+
+              <label rowspan="2" class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.LBL_GSTN"></label>
+              <div
+                data-ng-class="{'has-error': validator && ( suprecFrm.gstin.$error.required || suprecFrm.gstin.$error.pattern ||  suprecFrm.gstin.$error.duplicate || suprecFrm.gstin.$error.minlength),'has-success': validator && suprecFrm.gstin.$valid }">
+                <input type="text" name="gstin" class="form-control formedit" data-ng-blur="gstinValid()"
+                  data-ng-change="suprecFrm.gstin.$setValidity('pattern', true); sameGstin=false; duprecord = false;" data-ng-disabled="gstndisabled"
+                  maxlength="{{::validations.maxlength.gstin}}" data-ng-model="newsuprecmstr.gstin"
+                  data-ng-required="true" />
+                <span class="err"
+                  data-ng-show="validator && suprecFrm.gstin.$error.required && !sameGstin && !duprecord"
+                  data-ng-bind="trans.ERR_MAND"></span>
+                <span class="err" data-ng-show="validator  && suprecFrm.gstin.$error.pattern"
+                  data-ng-bind="trans.ERR_INVALID_GSTIN"></span>
+                <span class="err" data-ng-show="sameGstin && !duprecord" data-ng-bind="trans.ERR_SAME_GSTIN"></span>
+                <span class="err" data-ng-show="duprecord" data-ng-bind="trans.DUP_GSTIN"></span>
+              </div>
+
+            </div>
+
+            <div class="col-sm-6 form-group">
+              <div>
+                <label rowspan="2" class="gstTblHeadr m100TblHdr" data-ng-bind="trans.LBL_TRD_NAME"></label>
+              </div>
+              <div>
+                <input type="text" class="form-control formedit" maxlength="99"
+                  data-ng-model="newsuprecmstr.tradeName" />
+              </div>
+            </div>
+          </div>
+
+          <div class="row" style="margin-left: 0%;">
+            <div class="col-sm-6 form-group">
+              <div>
+                <label class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.LBL_SUP_REC_NAME"></label>
+              </div>
+              <div
+                data-ng-class="{'has-error': validator && ( suprecFrm.supplierRecipientName.$error.required && suprecFrm.supplierRecipientName.$invalid),'has-success': validator && suprecFrm.supplierRecipientName.$valid }">
+                <input type="text" class="form-control formedit" name="supplierRecipientName" data-ng-change="dupsupName = false;"
+                  data-ng-model="newsuprecmstr.supplierRecipientName" maxlength="99" data-ng-required="true" />
+                <span class="err" data-ng-show="validator &&suprecFrm.supplierRecipientName.$error.required && !dupsupName"
+                  data-ng-bind="trans.ERR_MAND"></span>
+                <span class="err" data-ng-show="dupsupName" data-ng-bind="trans.DUP_SRNAME"></span>
+              </div>
+            </div>
+            <div style="margin-top: 2%;">
+              <div class="col-sm-3">
+                <div data-ng-class="{'has-error': validator && ( suprecFrm.recipient.$error.required &&
+                suprecFrm.desc.$invalid),'has-success': validator && suprecFrm.recipient.$valid }">
+                <input type="checkbox" class="chkbx1" name="recipient" id="recipient" value="R"
+                data-ng-model="newsuprecmstr.recipient" data-ng-true-value="'R'"
+                data-ng-checked="newsuprecmstr.recipient == 'R'" data-ng-false-value="'N'"
+                data-ng-required="!newsuprecmstr.supplier ||newsuprecmstr.supplier==''">
+                <label class="gstTblHeadr psTblHdr reg"
+                data-ng-class="{'m-cir': (newsuprecmstr.supplier !='S'|| (newsuprecmstr.supplier =='S' && newsuprecmstr.recipient =='R') )}"
+                data-ng-bind="trans.LBL_REC"></label><br>
+                  <span class="err" data-ng-show="validator &&suprecFrm.recipient.$error.required"
+                    data-ng-bind="trans.LBL_SEL_MAND"></span>
+              
+                </div>
+              </div>
+
+              <div class="col-sm-3">
+                <div data-ng-class="{'has-error': validator && ( suprecFrm.supplier.$error.required &&
+                suprecFrm.desc.$invalid),'has-success': validator && suprecFrm.supplier.$valid }">
+                <input type="checkbox" class="chkbx1" name="supplier" id="supplier" value="S"
+                data-ng-model="newsuprecmstr.supplier" data-ng-true-value="'S'" data-ng-false-value="'N'"
+                data-ng-checked="newsuprecmstr.supplier == 'S'"
+                data-ng-required="!newsuprecmstr.recipient ||newsuprecmstr.recipient==''">
+              <label class="gstTblHeadr m100TblHdr reg"
+                data-ng-class="{'m-cir': !supplierdisable && (newsuprecmstr.recipient !='R' || (newsuprecmstr.supplier =='S' && newsuprecmstr.recipient =='R') )}"
+                data-ng-bind="trans.LBL_SUPLR"></label><br>
+                  <span class="err" data-ng-show="validator &&suprecFrm.supplier.$error.required && !supplierdisable"
+                    data-ng-bind="trans.LBL_SEL_MAND"></span>
+                 </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="pull-right btn-toolbar" data-ng-hide="supupdatebtn">
+                <button type="button" class="btn btn-default" data-ng-bind="trans.LBL_BACK" data-ng-show="addsubtn" ng-click="toggle_view('product')"></button>
+                <button type="submit" class="btn btn-primary" data-ng-bind="trans.LBL_ADD"
+                  data-ng-click="addSupMasterDetails()"></button>
+                <button type="submit" class="btn btn-primary" data-ng-bind="trans.LBL_SAVE"
+                  data-ng-click="saveSupRec()"></button>
+              </div>
+              <div class="col-sm-12" data-ng-show="supupdatebtn">
+                <div class="pull-right btn-toolbar">
+                  <button type="submit" class="btn btn-primary" data-ng-hide="editSupenable"
+                    data-ng-bind="trans.LBL_SAVE" data-ng-click="updateSupTable(idx)"></button>
+                  <button type="submit" class="btn btn-primary" data-ng-show="editSupenable"
+                    data-ng-bind="trans.LBL_SAVE" data-ng-click="addSupEdit(idx)"></button>
+                  <button type="submit" class="btn btn-primary" data-ng-bind="trans.LBL_CANCEL"
+                    data-ng-click="cancelSupBtn()"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+        <hr style="margin-left: 1.3%;">
+        <div class="row" data-ng-show="addSuprecTable">
+          <div style="overflow-x: auto;">
+            <table class="table tbl inv table-bordered" style="margin-left: 2.3%;width: 96%">
+              <thead>
+                <tr style="background-color: #dddd;">
+                  <th style="vertical-align: top" data-ng-bind="trans.LBL_SUP_REC_NAME"></th>
+                  <th style="vertical-align: top" data-ng-bind="trans.LBL_GSTN"></th>
+                  <th style="vertical-align: top" data-ng-bind="trans.LBL_TRD_NAME"></th>
+                  <th style="vertical-align: top" data-ng-bind="trans.LBL_SUPLR"></th>
+                  <th style="vertical-align: top" data-ng-bind="trans.LBL_REC"></th>
+                  <th style="vertical-align: top" data-ng-bind="trans.LBL_ACTION"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr data-ng-repeat="suprec in addsuprecmstr track by $index">
+                  <td>{{ suprec.supplierRecipientName? suprec.supplierRecipientName.substr(0,30):"" }}</td>
+                  <td>{{ suprec.gstin }}</td>
+                  <td>{{ suprec.tradeName ? suprec.tradeName.substr(0,30):'' }}</td>
+                  <td style="text-align: center;">
+                    <input type="checkbox" class="chkbx1"
+                      ng-checked="suprec.supplierRecipientFlag=='S' || suprec.supplierRecipientFlag=='SR'"
+                      data-ng-disabled="true"
+                      data-ng-model="suprec.supplier">
+                  </td>
+                  <td style="text-align: center;">
+                    <input type="checkbox" class="chkbx1"
+                      ng-checked="suprec.supplierRecipientFlag=='R' || suprec.supplierRecipientFlag=='SR'"
+                      data-ng-disabled="true"
+                      data-ng-model="suprec.recipient">
+                  </td>
+
+                  <td class="btn-toolbar record-action-btn" style="width: 8%;">
+                    <button class="btn btn-sm btn-primary" data-ng-click="addEditSupTable(suprec,$index)"><i
+                        class="fa fa-pencil-square-o"></i></button>
+                    <button class="btn btn-sm btn-danger"  data-ng-disabled="suprec.addsupdeldisable"
+                      title={{trans.TIT_REM_RCRD}} data-ng-click="addSupSingleDel(suprec)"><i
+                        class="fa fa-trash-o"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="row">
+            <div class="btn-toolbar pull-right" style="margin-right: 2.5%;"> 
+              <button type="button" class="btn btn-default" data-ng-bind="trans.LBL_BACK" data-ng-show="pendingBtn"
+              data-ng-click="supbackFunc()"></button>
+
+              <button type="button" class="btn btn-primary" data-ng-bind="trans.LBL_RESET"
+                data-ng-click="supresetbtn()"></button>
+              <button type="button" class="btn btn-primary" data-ng-click="multisaveSupplier()"
+                data-ng-bind="trans.LBL_SAVE"></button>
+            </div>
+          </div>
+        </div>
+
+
+        <!--Added Table for Supplier-->
+        <div data-ng-show="suprecmstr.length>0 || searchEnabled">
+          <div class="row" style="margin-left: 1.3%;">
+            <h4 style="color: #0b1e59;"><b data-ng-bind="trans.LBL_ADD_SUP"></b></h4>
+          </div>
+
+          <div class="row" style="margin-left: 35%;margin-top: -2%;">
+            <div class="col-md-3 form-group">
+              <label data-ng-bind="trans.LBL_REC_PAGE"></label>
+            </div>
+
+            <div class="col-md-3 form-group" style="margin-left: -7%;width: 13%;">
+              <select class="form-control drpdwn" ng-model="pageSize" ng-change="recordsPerPage()">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </div>
+            <div class="col-xs-3 form-group" style="width: 35%;">
+              <div class="input-group">
+                <input placeholder="Search..." type="text" class="form-control" ng-model="searchTxt"
+                  ng-keyup="searchSR($event)">
+                <span class="input-group-addon">
+                  <i class="fa fa-search cursor" ng-click="searchSR($event)"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="table-responsive" style="margin-left: 1.2%;">
+            <table class="table tbl table-bordered">
+              <thead>
+                <tr style="background-color: #dddd;">
+                  <th style="vertical-align:inherit">
+                    <input type="checkbox" class="chkbx" name="checkbxName" id="checkbxid" ng-model="selectsupAll"
+                      data-ng-disabled="selalldisable" ng-click="checkAllSup(suprecmstr, selectsupAll)" />
+                    <label for="checkbxLabl"></label>
+                  </th>
+                  <th style="vertical-align: inherit;cursor: pointer;" 
+                  nowrap ng-click="sortSupRecMstr('supplierRecipientName')">
+                    <span data-ng-bind="trans.LBL_SUP_REC_NAME"></span>
+                    <span>
+                      <i class="fa fa-sort-asc" aria-hidden="true"
+                        ng-style="{ 'color' : (isActive=='supplierRecipientName'? '#00f' : '#212121')}"
+                        ng-if="sortCountSR.supplierRecipientName"></i>
+                    </span>
+                    <span>
+                      <i class="fa fa-sort-desc" aria-hidden="true"
+                        ng-style="{ 'color' : (isActive=='supplierRecipientName'? '#00f' : '#212121')}"
+                        ng-if="!sortCountSR.supplierRecipientName"></i>
+                    </span>
+                  </th>
+
+                 
+                  <th style="vertical-align: inherit;cursor: pointer;" nowrap ng-click="sortSupRecMstr('gstin')">
+                    <span data-ng-bind="trans.LBL_GSTN"></span>
+                    <span>
+                      <i class="fa fa-sort-asc" aria-hidden="true"
+                        ng-style="{ 'color' : (isActive=='gstin'? '#00f' : '#212121')}" ng-if="sortCountSR.gstin"></i>
+                    </span>
+                    <span>
+                      <i class="fa fa-sort-desc" aria-hidden="true"
+                        ng-style="{ 'color' : (isActive=='gstin'? '#00f' : '#212121')}" ng-if="!sortCountSR.gstin"></i>
+                    </span>
+                  </th>
+
+                  
+                  <th style="vertical-align: inherit;cursor: pointer;" nowrap  ng-click="sortSupRecMstr('tradeName')">
+                    <span data-ng-bind="trans.LBL_TRD_NAME"></span>
+                    <span>
+                      <i class="fa fa-sort-asc" aria-hidden="true"
+                        ng-style="{ 'color' : (isActive=='tradeName'? '#00f' : '#212121')}"
+                        ng-if="sortCountSR.tradeName"></i>
+                    </span>
+                    <span>
+                      <i class="fa fa-sort-desc" aria-hidden="true"
+                        ng-style="{ 'color' : (isActive=='tradeName'? '#00f' : '#212121')}"
+                        ng-if="!sortCountSR.tradeName"></i>
+                    </span>
+                  </th>
+                  <th style="vertical-align: inherit;cursor: pointer;" nowrap  ng-click="sortSupRecMstr('registrationStatus')">
+                    <span data-ng-bind="trans.LBL_REG_STATUS"></span>
+                    <span>
+                      <i class="fa fa-sort-asc" aria-hidden="true"
+                        ng-style="{ 'color' : (isActive=='registrationStatus'? '#00f' : '#212121')}"
+                        ng-if="sortCountSR.registrationStatus"></i>
+                    </span>
+                    <span>
+                      <i class="fa fa-sort-desc" aria-hidden="true"
+                        ng-style="{ 'color' : (isActive=='registrationStatus'? '#00f' : '#212121')}"
+                        ng-if="!sortCountSR.registrationStatus"></i>
+                    </span>
+                  </th>
+              
+                  <th style="vertical-align: inherit;cursor: pointer;" nowrap ng-click="sortSupRecMstr('taxpayerType')">
+                    <span data-ng-bind="trans.LBL_TAX_PAY"></span>
+                    <span>
+                      <i class="fa fa-sort-asc" aria-hidden="true"
+                        ng-style="{ 'color' : (isActive=='taxpayerType'? '#00f' : '#212121')}"
+                        ng-if="sortCountSR.taxpayerType"></i>
+                    </span>
+                    <span>
+                      <i class="fa fa-sort-desc" aria-hidden="true"
+                        ng-style="{ 'color' : (isActive=='taxpayerType'? '#00f' : '#212121')}"
+                        ng-if="!sortCountSR.taxpayerType"></i>
+                    </span>
+                  </th>
+                 
+                  <th style="vertical-align: inherit;cursor: pointer;" nowrap ng-click="sortSupRecMstr('isSupplier')">
+                    <span data-ng-bind="trans.LBL_SUPLR"></span>
+                    <span>
+                      <i class="fa fa-sort-asc" aria-hidden="true"
+                        ng-style="{ 'color' : (isActive=='supplier'? '#00f' : '#212121')}"
+                        ng-if="sortCountSR.supplier"></i>
+                    </span>
+                    <span>
+                      <i class="fa fa-sort-desc" aria-hidden="true"
+                        ng-style="{ 'color' : (isActive=='supplier'? '#00f' : '#212121')}"
+                        ng-if="!sortCountSR.supplier"></i>
+                    </span>
+                  </th>
+                  
+                  <th style="vertical-align: inherit;cursor: pointer;" nowrap ng-click="sortSupRecMstr('isRecipient')">
+                    <span data-ng-bind="trans.LBL_REC"></span>
+                    <span>
+                      <i class="fa fa-sort-asc" aria-hidden="true"
+                        ng-style="{ 'color' : (isActive=='recipient'? '#00f' : '#212121')}"
+                        ng-if="sortCountSR.recipient"></i>
+                    </span>
+                    <span>
+                      <i class="fa fa-sort-desc" aria-hidden="true"
+                        ng-style="{ 'color' : (isActive=='recipient'? '#00f' : '#212121')}"
+                        ng-if="!sortCountSR.recipient"></i>
+                    </span>
+                  </th>
+                 
+                  <th style="vertical-align: inherit;cursor: pointer;" nowrap ng-click="sortSupRecMstr('actionFlag')"
+                    data-ng-show="statusSupcol"><span data-ng-bind="trans.LBL_MSTR_STATUS"></span>
+                    <span>
+                      <i class="fa fa-sort-asc" aria-hidden="true"
+                        ng-style="{ 'color' : (isActive=='actionFlag'? '#00f' : '#212121')}"
+                        ng-if="sortCount.actionFlag"></i>
+                    </span>
+                    <span>
+                      <i class="fa fa-sort-desc" aria-hidden="true"
+                        ng-style="{ 'color' : (isActive=='actionFlag'? '#00f' : '#212121')}"
+                        ng-if="!sortCount.actionFlag"></i>
+                    </span>
+                  </th>
+
+                  <th style="vertical-align: inherit" nowrap data-ng-bind="trans.LBL_ACTION"></th>
+                </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td rowspan="1" colspan="9" data-ng-if="!(suprecmstr.length  > 0) && searchEnabled && !statuscol"
+                  class="text-center">NO RECORDS FOUND
+                </td>
+                <td rowspan="1" colspan="10" data-ng-if="!(suprecmstr.length  > 0) && searchEnabled && statuscol"
+                  class="text-center">NO RECORDS FOUND
+                </td>
+              </tr>  
+              <tr dir-paginate="supData in suprecmstr | itemsPerPage: pageSize" current-page="currentPage" pagination-id="paginationId">
+                  <td> <input type="checkbox" class="chkbx" style="width: 16px;height: 16px;"
+                    data-ng-click="checkSelSup()" ng-model="supData.select"
+                    data-ng-disabled="supData.disabled" />
+                  <label for="checkbox_all"></label></td>
+                  <td  title="{{ supData.supplierRecipientName? supData.supplierRecipientName :'' }}">{{ supData.supplierRecipientName? supData.supplierRecipientName.substr(0,30):"" }}</td>
+                  <td data-ng-style="gstinUser(supData.registrationStatus)">{{ supData.gstin }}</td>
+                  <td title="{{ supData.tradeName ? supData.tradeName: supData.legalName}}">
+                    {{ supData.tradeName ? supData.tradeName.substr(0,30): supData.legalName.substr(0,30) }}</td>
+                  <td>{{regStatusArray[supData.registrationStatus] }}</td>
+                  <td ng-attr-title="{{txpTypeArray[supData.taxpayerType].val}}">{{txpTypeArray[supData.taxpayerType].lbl}}</td>
+                  <td style="text-align: center;">
+                    <input type="checkbox" class="chkbx1" ng-checked="supData.supplierRecipientFlag=='S' ||
+                    supData.supplierRecipientFlag=='SR'"
+                      data-ng-disabled="true"
+                      data-ng-model="supData.supplier">
+                  </td>
+                  <td style="text-align: center;">
+                    <input type="checkbox" class="chkbx1"
+                      ng-checked="supData.supplierRecipientFlag=='R' || supData.supplierRecipientFlag=='SR'"
+                      data-ng-disabled="true"
+                      data-ng-model="supData.recipient">
+                  </td>
+                  <td class="text-center">{{supData.actionFlag}}</td>
+                  <td class="btn-toolbar record-action-btn" style="width: 8%;">
+                    <button class="btn btn-sm btn-primary" data-ng-click="updateforSup(supData)"><i
+                        class="fa fa-pencil-square-o"></i></button>
+                        <button class="btn btn-sm btn-warning" data-keyboard="false" data-ng-if="supData.actionFlag =='U'"
+                        title={{trans.SING_MAR_DEL}} data-ng-click="singleSupMarkForDel(supData)"><i
+                          class="fa fa-close"></i></button>
+                      <button class="btn btn-sm btn-warning" data-keyboard="false" title={{trans.UN_SING_MAR_DEL}}
+                        data-ng-click="singleSupundoMarkForDel($index)" data-ng-if="supData.actionFlag =='D'"><i
+                          class="fa fa-undo"></i></button>
+                      <button class="btn btn-sm btn-danger" data-ng-disabled="supData.addedSupdisable" data-ng-if="supData.actionFlag==null || supData.actionFlag=='E'"
+                        data-ng-click="singleDelSup(supData)" title={{trans.TIT_REM_RCRD}} data-toggle="modal"
+                        data-backdrop="static" data-keyboard="false"><i class="fa fa-trash-o"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="text-center">
+            <wrap-dir-pagination-supplier ></wrap-dir-pagination-supplier>
+          </div>
+      
+          <div class="text-center" ng-if="(suprecmstr.length > 0) && (pageSize >= suprecmstr.length)">
+            <ul class="pagination">
+              <li class="disabled">
+                <a href="">&laquo;</a>
+              </li>
+              <li class="disabled">
+                <a href="">&lsaquo;</a>
+              </li>
+              <li class="active">
+                <a href="">1</a>
+              </li>
+
+              <li class="disabled">
+                <a href="">&rsaquo;</a>
+              </li>
+              <li class="disabled">
+                <a href="">&raquo;</a>
+              </li>
+            </ul>
+          </div>
+          <div class="row" style="margin-right: 0%;">
+            <div class="btn-toolbar pull-right">
+              <button type="button" class="btn btn-default" data-ng-bind="trans.LBL_BACK" data-ng-show="showBtn"
+                data-ng-click="supbackFunc()"></button>
+              <button type="button" data-ng-show="showSupDel()"  data-ng-click="multiRemove(suprecmstr)" class="btn btn-primary bn"
+                data-ng-disabled="delsupdisable" data-ng-bind="trans.LBL_REMOVE"></button>
+              <button type="button" class="btn btn-primary bn" data-ng-show="delSupfunc()" title={{trans.TIT_MAR_DEL}}
+                data-ng-disabled="supData.actionFlag=='D' || mfsupdisable" data-ng-click="multisupselectMFD(suprecmstr)"
+                data-ng-bind="trans.LBL_DELETE"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

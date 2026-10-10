@@ -1,0 +1,127 @@
+<div data-ng-controller="errorreturnsctrl" data-ng-init="validateUserMstrRtnPrd();getSupplierDetails();">
+    <div class="tabpane">
+        <div class="row">
+            <div class="col-sm-12">
+               
+                <div class="table-responsive">
+
+                    <table class="table tbl inv table-bordered" ng-show="ErrorList.length">
+                        <thead>
+                            <tr>
+                                <th class="text-center">
+                                    <input type="checkbox" class="chkbx" ng-model="selectAll" ng-click="checkAll()" ng-checked="allSelected()" />
+                                    <label for="checkbox_all"></label>
+                                </th>
+                                <th rowspan="1" class="gstTblHeadr psTblHdr reg m-cir"
+                                    data-ng-bind="trans.LBL_NAT_SUPP_R1"></th>
+                                <th rowspan="1" class="gstTblHeadr psTblHdr reg m-cir"
+                                    data-ng-bind="trans.LBL_GST_ECOM_OPT_R1" ng-click="sort('etin')"></th>
+                                <th rowspan="1" class="gstTblHeadr spTblHdr reg m-cir"
+                                    data-ng-bind="trans.LBL_NT_VAL_SUPP" ng-click="sort('suppval')"></th>
+                                <th class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.LBL_IGST_R1"></th>
+                                <th colspan="1" class="gstTblHeadr m100TblHdr reg m-cir"
+                                    data-ng-bind="trans.LBL_CGST_R1"></th>
+                                <th colspan="1" class="gstTblHeadr m100TblHdr reg m-cir"
+                                    data-ng-bind="trans.LBL_SGST_R1"></th>
+                                <th colspan="1" class="gstTblHeadr m100TblHdr" data-ng-bind="trans.LBL_CESS_R1"></th>
+                                <th class="gstTblHeadr errMsg" data-ng-bind="trans.LBL_Error_Message"></th>
+                                <th rowspan="1" class="gstTblHeadr psTblHdr" data-ng-bind="trans.LBL_ACT_R1"></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr dir-paginate="y in ErrorList | filter:searchInvNum | orderBy:sortBy:sortReverse | itemsPerPage: pageSize"
+                                current-page="currentPage" ng-form="invFrm" ng-init="oldInv=y">
+
+
+                                <td class="text-center">
+                                    <input type="checkbox" class="chkbx" ng-model="y.select"/>
+                                    <label for="checkbox_all"></label>
+                                </td>
+                                <td>
+                                    <select name="nat_supp" id="nat_supp" class="form-control "
+                                        data-ng-model="y.nat_supp" style="width:200px;"
+                                        data-ng-disabled="true || !invFrm.edb" ng-required="true">
+                                        <option value="clttx">{{trans.LBL_LIAB_CLCT_TAX_TCS}}</option>
+                                        <option value="paytx">{{trans.LBL_LIAB_PAY_TAX}}</option>
+                                    </select>
+                                </td>
+                                <td
+                                    data-ng-class="{'has-error':  (invFrm.etin.$error.pattern || invFrm.etin.$error.required)}">
+                                    <input type="text" style="margin-left: 0%; width:290px;" capitalize="toUpperCase"
+                                        class="form-control formedit" name="etin"
+                                        data-ng-model-options="{updateOn:'blur'}" data-ng-model="y.etin"
+                                        data-ng-class="y.obj" ng-required="true" ng-change="onEtinChange(y.etin,invFrm);isEtinAsSuppGstn(0,y.etin,invFrm);"
+                                        data-ng-disabled="!invFrm.edb"  />
+                                        <span class="err" data-ng-show=" invFrm.etin.$error.required"
+                                        data-ng-bind="trans.ERR_MANDATORY"></span>
+                                        <span class="err" data-ng-show="invFrm.etin.$error.pattern"
+                                        data-ng-bind="trans.LBL_VALID_GSTINN"></span>
+                                </td>
+                                <td data-ng-class="{'has-error': (invFrm.suppval.$error.required)}">
+                                    <input type="text" id="val" class="form-control text-right" name="suppval" isNeg="true"
+                                        data-fraction="2" ng-model="y.suppval"
+                                        data-formatting="currency" ng-required="true" data-ng-disabled="!invFrm.edb" />
+                                        <span class="err" data-ng-show="invFrm.suppval.$error.required"
+                                        data-ng-bind="trans.ERR_MANDATORY"></span>
+                                </td>
+                                <td data-ng-class="{'has-error': (invFrm.igst.$error.required)}">
+                                    <input type="text" class="form-control text-right" name="igst" ng-model="y.igst"
+                                        isNeg="true" data-fraction="2" id="val" data-formatting="currency" ng-required="true"
+                                        data-ng-disabled="!invFrm.edb">
+                                        <span class="err" data-ng-show="invFrm.igst.$error.required"
+                                    data-ng-bind="trans.ERR_MANDATORY"></span>
+                                </td>
+                                <!--CGST-->
+                                <td data-ng-class="{'has-error': (invFrm.cgst.$error.required)}">
+                                    <input type="text" class="form-control text-right" name="cgst" ng-model="y.cgst"
+                                        isNeg="true" data-fraction="2" id="val" data-formatting="currency" ng-required="true"
+                                        data-ng-disabled="!invFrm.edb" ng-change="update14SGST(y);">
+                                        <span class="err" data-ng-show="invFrm.cgst.$error.required"
+                                    data-ng-bind="trans.ERR_MANDATORY"></span>
+                                </td>
+                                <!--SGST-->
+                                <td data-ng-class="{'has-error': (invFrm.sgst.$error.required)}">
+                                    <input type="text" class="form-control text-right" name="sgst" ng-model="y.sgst"
+                                        isNeg="true" data-fraction="2" id="val" data-formatting="currency" ng-required="true"
+                                        data-ng-disabled="!invFrm.edb" ng-change="update14CGST(y);">
+                                        <span class="err" data-ng-show="invFrm.sgst.$error.required"
+                                    data-ng-bind="trans.ERR_MANDATORY"></span>
+                                </td>
+                                <!--CESS-->
+                                <td>
+                                    <input type="text" class="form-control text-right" name="cess" ng-model="y.cess"
+                                        data-fraction="2" isNeg="true"
+                                        id="val" data-formatting="currency" ng-required="true" data-ng-disabled="!invFrm.edb">
+                                </td>
+                                <td class="text-center">
+                                    <div class="text-center"><span data-ng-bind="y.error_msg"></span></div>
+                                </td>
+                                <td class="text-center newinv">
+                                    <button type="button" class="btn btn-sm btn-primary" ng-hide="invFrm.edb"
+                                        data-ng-click="invFrm.edb = !invFrm.edb" tabindex="0"><i class="fa fa-pencil"
+                                            aria-hidden="true"></i></button>
+
+                                    <button type="button" class="btn btn-sm btn-primary" ng-if="invFrm.edb"
+                                        data-ng-click="invFrm.edb=!invFrm.edb;updateInvoice(y);"
+                                        tabindex="0"><i class="fa fa-save" aria-hidden="true"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <span ng-show="!ErrorList.length"> No Invoices for {{sectionListSelected.nm}}</span>
+                <div class="text-center">
+
+                    <wrap-dir-pagination></wrap-dir-pagination>
+
+                </div>
+            </div>
+        </div>
+        <div class="btn-toolbar">
+            <button type="button" class="btn btn-primary pull-left" ng-show="ErrorList.length"
+                ng-click="deleteSelectedRows()">Delete</button>
+
+        </div>
+    </div>
+</div>

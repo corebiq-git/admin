@@ -1,0 +1,100 @@
+<div data-ng-controller="errorreturnsctrl">
+    <div class="tabpane">
+        <div class="row">
+            <div class="col-sm-12">
+                <!--<div class="row">
+                    <div class="col-sm-12 pull-right">
+                        <div class="pull-right mLeft5" wrap-csv-import callback="onpastedone"></div>
+                        <button type="button" class="btn btn-primary mA0 pull-right" ctrl-paste-btn callback="onpastedone">Copy Excel </button>
+                    </div>
+                </div>
+                <br>-->
+                <div class="table-responsive">
+
+                    <table class="table tbl inv table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center">
+                                    <input type="checkbox" class="chkbx" ng-model="selectAll" ng-click="checkAll()" ng-checked="allSelected()" />
+                                    <label for="checkbox_all"></label>
+                                </th>
+                                <th class="gstTblHeadr reg m-cir sort" ng-click="sort('port_code')">Port Code</th>
+                                <th class="gstTblHeadr m100TblHdr reg m-cir sort" data-ng-bind="trans.LBL_BOE_NO" ng-click="sort('boe_num')"></th>
+                                <th class="gstTblHeadr dtTblHdr reg m-cir sort" data-ng-bind="trans.LBL_BOE_DT" ng-click="sort('boe_dt')"></th>
+                                <th class="gstTblHeadr m100TblHdr reg m-cir sort" ng-click="sort('boe_val')">Bill of Entry Value</th>
+                                <th class="gstTblHeadr">Imports from SEZ</th>
+                                <th class="gstTblHeadr ctnTblHdr reg m-cir sort" data-ng-bind="trans.LBL_SUPPLIERS_GSTIN_UIN" ng-click="sort('ctin')"></th>
+                                <th class="gstTblHeadr errMsg">Error Message</th>
+
+                                <th class="gstTblHeadr m100TblHdr" data-ng-bind="trans.LBL_ACTIONS"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr dir-paginate="y in ErrorList | filter:searchInvNum | orderBy:sortBy:sortReverse | itemsPerPage: pageSize" current-page="currentPage"
+                                ng-form="invFrm">
+                                <td class="text-center">
+                                    <input type="checkbox" class="chkbx" ng-model="y.select" />
+                                    <label for="checkbox_all"></label>
+                                </td>
+                                <td data-ng-class="{'has-error': (invFrm.port_code.$error.required)}">
+
+                                    <input type="text" name="port_code" class="form-control" data-ng-model="y.port_code" ng-required="true" data-ng-disabled="true"
+                                    />
+                                </td>
+                                <td data-ng-class="{'has-error': (invFrm.boe_num.$error.pattern || invFrm.boe_num.$error.required)}">
+                                    <input type="text" class="form-control formedit" name="boe_num" data-ng-model="y.boe_num" data-ng-pattern="/^[a-zA-Z0-9-/]*$/"
+                                        maxlength="50" ng-required="true" data-ng-disabled="true" />
+                                </td>
+                                <td data-ng-class="{'has-error': (invFrm.boe_dt.$error.pattern || invFrm.boe_dt.$error.required)}">
+
+                                    <div class="datepicker-icon input-group">
+                                        <i class="fa fa-calendar"></i>
+                                        <input name="boe_dt" class="form-control date-picker" data-ng-model="y.boe_dt" data-datepicker ng-required="true" data-min-years="{{minYearsAllowed}}"
+                                            data-min-date="{{minDate()}}" data-max-date="{{datefunc()}}" data-ng-disabled="!invFrm.edb"
+                                        />
+                                        <span class="input-group-addon"><span class="fa fa-calendar" ></span></span>
+                                    </div>
+                                </td>
+
+                                <td data-ng-class="{'has-error': (invFrm.boe_val.$error.required)}">
+
+                                    <input type="text" class="form-control text-right" name="boe_val" data-ng-model="y.boe_val" data-format="currency" ng-required="true"
+                                        data-ng-disabled="!invFrm.edb" />
+                                </td>
+                                <td class="text-center pRel">
+                                    <input type="checkbox" class="chkbx" ng-model="y.is_sez" ng-true-value="'Y'" ng-false-value="'N'" data-ng-disabled="!invFrm.edb"
+                                        ng-change="sezimp(y)" />
+                                    <label for="checkbox_all"></label>
+                                </td>
+                                <td data-ng-class="{'has-error':  (invFrm.ctin.$error.pattern || invFrm.ctin.$error.required)}">
+                                    <input type="text" class="form-control formedit" name="ctin" data-ng-model="y.ctin" maxlength="15" ng-required="y.is_sez=='Y'" data-ng-change="onGstinChange(y.ctin);"
+                                        data-ng-disabled="!sezflag || !invFrm.edb" />
+                                </td>
+
+                                <td class="text-center">
+
+                                    <div class="text-center"><span data-ng-bind="y.error_msg"></span></div>
+
+                                </td>
+
+
+                                <td class="text-center newinv">
+                                    <button type="button" class="btn btn-sm btn-primary" ng-if="invFrm.edb" data-ng-click="gotoAddItems(y)" tabindex="0" data-ng-disabled="invFrm.$invalid"><i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                                    <button type="button" class="btn btn-sm btn-primary" ng-if="invFrm.edb" data-ng-click="invFrm.edb = !invFrm.edb;updateInvoice(y)"
+                                        tabindex="0" data-ng-disabled="invFrm.$invalid"><i class="fa fa-save" aria-hidden="true"></i></button>
+                                    <button type="button" class="btn btn-sm btn-primary" ng-hide="invFrm.edb" data-ng-click="sezimp(y);invFrm.edb = !invFrm.edb" tabindex="0"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center">
+                    <wrap-dir-pagination></wrap-dir-pagination>
+                </div>
+            </div>
+        </div>
+        <div class="btn-toolbar">
+            <button type="button" class="btn btn-primary pull-left" ng-show="ErrorList.length" ng-click="deleteSelectedRows()">Delete</button>
+        </div>
+    </div>
+</div>

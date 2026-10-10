@@ -1,0 +1,242 @@
+<div class="card text-center">
+    <div class="row">
+        <div class="col-sm-4 col-xs-12">
+            <a data-ng-click="page('/gstr/dashboard')">
+                <div class="hd">
+                    <p class="inv">Upload new invoice/other data for return</p>
+                </div>
+            </a>
+            <div class="ct">
+                <div class="row">
+                    <div class="col-xs-offset-3 col-xs-6">
+                        <button class="btn btn-primary" data-ng-click="newreturn()" data-toggle="tooltip"
+                            title="Upload new invoice/other data" data-placement="bottom">New</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4 col-xs-12">
+            <a data-ng-href="">
+                <div class="hd">
+                    <p class="inv">Open Downloaded Return file from GST portal</p>
+                </div>
+            </a>
+            <div class="ct">
+                <div class="row">
+                    <div class="col-xs-offset-3 col-xs-6">
+                        <div class="fileUpload btn btn-primary" data-placement="bottom" data-ng-disabled="false">
+                            Open
+                            <input type="file" name="File" class="upload" multiple file-read
+                                on-file-load="onImportReturnFileLoad" accept=".zip" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4 col-xs-12">
+            <a data-ng-href="">
+                <div class="hd">
+                    <p class="inv">Open Downloaded Error file from GST portal</p>
+                </div>
+            </a>
+            <div class="ct">
+                <div class="row">
+                    <div class="col-xs-offset-3 col-xs-6" data-toggle="tooltip" title="" data-placement="bottom">
+                        <div class="fileUpload btn btn-primary">
+                            Open
+                            <input type="file" name="File" class="upload" file-read on-file-load="onErrorFileLoad"
+                                accept=".zip" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4 col-xs-12">
+            <a data-ng-href="">
+                <div class="hd">
+                    <p class="inv">My Masters</p>
+                </div>
+            </a>
+            <div class="ct">
+                <div class="row">
+                    <div class="col-xs-offset-3 col-xs-6">
+                        <button class="btn btn-primary" style="width: 155%;margin-left: -27%;"
+                            data-ng-click="materreturn()" data-toggle="tooltip"
+                            data-placement="bottom">PREPARE/VIEW</button>
+                    </div>
+
+                    <div class="col-xs-offset-3 col-xs-6" style="margin-left: 11%;" data-toggle="tooltip" title=""
+                        data-placement="bottom">
+                        <div class="fileUpload btn btn-primary" data-placement="bottom" data-ng-disabled="false">
+                            OPEN DOWNLOADED JSON FILE
+
+                            <input type="file" name="File" class="upload" multiple file-read file_modelup
+                                on-file-load="handleFilecall" accept=".json" />
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ct">
+                <h3>Instructions</h3>
+                <table class="table-centered table-bordered">
+                    <tr>
+                        <td class="col-lg-4" style="text-align: left;"><b>NEW button:</b> To upload new invoice/other
+                            data for return. Taxpayer can upload invoice data as many times as needed. </td>
+                        <td class="col-lg-4" style="text-align: left;"><b>OPEN button:</b> To open return file
+                            downloaded from GST portal to accept, reject, modify and add missing invoice details.</td>
+                        <td class="col-lg-4" style="text-align: left;"><b>OPEN button:</b> To open error file downloaded
+                            from GST portal to correct the invoice data rejected by GST system. </td>
+                    </tr>
+                </table>
+                <br><br>
+                <button class="accordion">Overview</button>
+                <div class="panel">
+                    <br><b style="float: left !important;text-align: left">
+                        <p>The Offline Tool version 3.2.4 has been designed to enable taxpayers to prepare GSTR-1 by
+                            adding invoices and other
+                            document details. Taxpayers can use this tool to open GSTR-2A JSON file to view auto-drafted
+                            inward supplies.</p>
+                    </b>
+                </div>
+                <button class="accordion">Version Information</button>
+                <div class="panel">
+                    <p><br><b style="float: left;">The Offline Tool version 3.2.4 supports</b>
+                        <br><br><b style="float: left;text-align: left">GSTR-1: New Invoice and Other document details
+                            Addition/Deletion</b>
+                        <br>
+                    <p style="text-align: left">Taxpayer can add or delete details in various tables of GSTR-1.</p>
+                    <br><b style="float: left;">GSTR-2A: </b>
+                    <br>
+                    <p style="text-align: left">Recipient can view details of auto-drafted details of document in
+                        GSTR-2A.
+                    </p>
+                    </p>
+                </div>
+                <button class="accordion">Features</button>
+                <div class="panel">
+                    <p>
+                        <br><b style="float: left;"> Main features of Offline Tool:</b>
+
+                        <br>
+                    <ul style="text-align: left;padding-left: 20px;">
+                        <li>
+                            Direct data entry of invoice and other document details in the tool.
+                        </li>
+                        <li>
+                            The tool has functionality to check duplicate records in file created for the lot.
+                        </li>
+                        <li>
+                            Taxpayer can input data of invoices using Excel Workbook (*.xlsx/xls) with separate
+                            worksheet for each section of return for entering invoice data and import the same into
+                            the tool. Data of all sections can be imported in the tool in one go.
+                        </li>
+                        <li>
+                            Data can also be copied from the excel template in the window provided in the offline
+                            tool.
+                        </li>
+                        <li>
+                            Taxpayer can also use the CSV file (*.csv) to import section wise invoice details into
+                            the tool.
+                        </li>
+                        <li>
+                            Tool generates a file in JSON format, which needs to be saved for uploading on the GST
+                            Portal.
+                        </li>
+                        <li>
+                            Uploaded details can be corrected by downloading and editing or deleting the invoices.
+                            Invoices can be deleted through bulk selection. All data of a section can also be
+                            deleted in one go.
+                        </li>
+                        <li>
+                            The file generated by tool will have to be uploaded on the GST portal. At this time
+                            internet connectivity will be required.
+                        </li>
+                        <li>
+                            Auto-drafted inward supplies in Form GSTR-2A statement can be imported into the tool to
+                            view.
+                        </li>
+                    </ul>
+
+                    </p>
+                </div>
+                <button class="accordion">E-filing Steps</button>
+                <div class="panel">
+                    <p>
+                        <br><b style="float: left;">
+                            E-filing of your return (GSTR-1 and GSTR-2) consist of following steps:
+                        </b>
+                        <br>
+
+                    <ul style="text-align: left;padding-left: 20px;">
+
+
+
+                        <li>
+                            Generation of JSON file with invoice data and other details as per the selected return
+                            type in the offline tool.
+
+                        </li>
+                        <li>
+                            Upload of generated JSON file to GST Portal <a href="https://www.GST.GOV.IN/"
+                                target="_blank">(www.GST.GOV.IN)</a>
+                        </li>
+
+                        <li>
+                            Creation of your return summary for all data, uploaded in multiple tranches, on GST
+                            Portal and this will be an online activity.
+                        </li>
+                        <li>
+                            Verifying the summary on the Portal through preview and if correct submitting the return
+                        </li>
+                        <li>
+                            Filing the return with applicable electronic signature ( DSC/EVC)
+                        </li>
+                        <br>
+                        <br>
+                    </ul>
+                    </p>
+                </div>
+
+                <b style="text-align: left;padding-left: 20px;">Important Note:</b> If the JSON file size is more than
+                5MB the tool creates multiple JSON files. The JSON files can be downloaded and need to be uploaded on
+                the portal, one at a time.
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div ng-show='newVersionAvailable' class="newVersion">
+    <!-- // UPDATE CHECK - DOWNLOAD URL -->
+    <a href="#" ng-click="closeVersionCheckBtn()" class="cls_btn"
+        style=" position: absolute; top: 3px; right: 3px; color: #fff; font-size: 17px; background: #0b1e59; padding: 0px 8px; line-height: 30px; text-align: center; ">X</a>
+    <span>
+        New Version for GST Offline tool is available. <a ng-click="openDownloadWindow()" href="#">Download Now</a>
+    </span>
+
+</div>
+
+<script>
+    var acc = document.getElementsByClassName("accordion");
+    var index;
+
+    for (index = 0; index < acc.length; index++) {
+        acc[index].addEventListener("click", function () {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel.style.maxHeight) {
+                panel.style.maxHeight = null;
+            } else {
+                panel.style.maxHeight = panel.scrollHeight + "px";
+            }
+        });
+    }
+</script>

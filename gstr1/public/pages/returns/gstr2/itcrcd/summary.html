@@ -1,0 +1,255 @@
+<div data-ng-controller="returnsctrl">
+    <div class="tabpane">
+        <div class="row">
+            <div class="col-sm-12">
+                <!--<div class="row">
+                    <div class="col-sm-12 pull-right">
+                        <div class="pull-right mLeft5" wrap-csv-import callback="onpastedone"></div>
+                        <button type="button" class="btn btn-primary mA0 pull-right" ctrl-paste-btn callback="onpastedone">Copy Excel </button>
+                    </div>
+                </div>
+                <br>-->
+                <div class="table-responsive">
+                    <table class="table tbl inv table-bordered">
+                        <thead>
+                            <tr>
+                                <th rowspan="3" class="text-center">
+                                    <input type="checkbox" class="chkbx" ng-model="selectAll" ng-true-value="'Y'" ng-false-value="'N'" ng-click="checkAll(ReturnsList, selectAll)"
+                                    />
+                                    <label for="checkbox_all"></label>
+                                </th>
+                                <th rowspan="3" class="gstTblHeadr ctnTblHdr reg m-cir sort" data-ng-bind="trans.LBL_SUPPLIERS_GSTIN_UIN" ng-click="sort('stin')"></th>
+
+                                <th rowspan="3" class="gstTblHeadr m100TblHdr reg m-cir sort" data-ng-bind="trans.LBL_INVOICE_NUMBER" ng-click="sort('inv_doc_num')"></th>
+                                <th rowspan="3" class="gstTblHeadr dtTblHdr reg m-cir sort" data-ng-bind="trans.LBL_INVOICE_DATE" ng-click="sort('inv_doc_dt')"></th>
+                                <th rowspan="3" class="gstTblHeadr spTblHdr reg m-cir" data-ng-bind="trans.LBL_SUPPLY_TYPE"></th>
+                                <th colspan="4" class="gstTblHeadr spTblHdr reg m-cir" data-ng-bind="trans.LBL_AVAILD_EARLIER"></th>
+                                <th colspan="4" class="gstTblHeadr spTblHdr reg m-cir" data-ng-bind="trans.LBL_AVAILD_MNTH"></th>
+                                <th rowspan="3" class="gstTblHeadr m100TblHdr" data-ng-bind="trans.LBL_ACTIONS"></th>
+                            </tr>
+                            <tr>
+                                <th data-ng-bind="trans.HEAD_IGST" class="gstTblHeadr"></th>
+                                <th data-ng-bind="trans.HEAD_SGST" class="gstTblHeadr"></th>
+                                <th data-ng-bind="trans.HEAD_CGST" class="gstTblHeadr"></th>
+                                <th data-ng-bind="trans.HEAD_CESS" class="gstTblHeadr"></th>
+                                <th data-ng-bind="trans.HEAD_IGST" class="gstTblHeadr"></th>
+                                <th data-ng-bind="trans.HEAD_SGST" class="gstTblHeadr"></th>
+                                <th data-ng-bind="trans.HEAD_CGST" class="gstTblHeadr"></th>
+                                <th data-ng-bind="trans.HEAD_CESS" class="gstTblHeadr"></th>
+                            </tr>
+                            <tr>
+                                <th data-ng-bind="trans.HEAD_AMOUNT" class="gstTblHeadr m100TblHdr"></th>
+                                <th data-ng-bind="trans.HEAD_AMOUNT" class="gstTblHeadr m100TblHdr"></th>
+                                <th data-ng-bind="trans.HEAD_AMOUNT" class="gstTblHeadr m100TblHdr"></th>
+                                <th data-ng-bind="trans.HEAD_AMOUNT" class="gstTblHeadr m100TblHdr"></th>
+                                <th data-ng-bind="trans.HEAD_AMOUNT" class="gstTblHeadr m100TblHdr"></th>
+                                <th data-ng-bind="trans.HEAD_AMOUNT" class="gstTblHeadr m100TblHdr"></th>
+                                <th data-ng-bind="trans.HEAD_AMOUNT" class="gstTblHeadr m100TblHdr"></th>
+                                <th data-ng-bind="trans.HEAD_AMOUNT" class="gstTblHeadr m100TblHdr"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr dir-paginate="y in ReturnsList | filter:searchInvNum | orderBy:sortBy:sortReverse | itemsPerPage: pageSize" current-page="currentPage"
+                                ng-form="invFrm">
+                                <td class="text-center">
+                                    <input type="checkbox" class="chkbx" ng-model="y.select" ng-true-value="'Y'" ng-false-value="'N'" />
+                                    <label for="checkbox_all"></label>
+                                </td>
+                                <!--  -->
+                                <td data-ng-class="{'has-error':  (invFrm.stin.$error.pattern || invFrm.stin.$error.required)}">
+                                    <input type="text" class="form-control formedit" name="stin" data-ng-pattern="validations.formats.gstin" data-ng-model="y.stin"
+                                        ng-required="true" data-ng-disabled="true || !invFrm.edb" data-ng-change="onCtinChange(y)"
+                                    />
+                                </td>
+                                <!--<td data-ng-class="{'has-error':  (invFrm.etin.$error.pattern)}">
+                                    <input type="text" class="form-control formedit" name="etin" data-ng-pattern="/^[A-Za-z0-9]{15}$/" data-ng-model="y.etin"
+                                        data-ng-disabled="!invFrm.edb" />
+                                </td>-->
+                                <td data-ng-class="{'has-error': (invFrm.inv_doc_num.$error.pattern || invFrm.inv_doc_num.$error.required)}">
+                                    <input type="text" class="form-control formedit" name="inv_doc_num" data-ng-model="y.inv_doc_num" data-ng-pattern="/^[a-zA-Z0-9]*$/"
+                                        maxlength="50" ng-required="true" data-ng-disabled="true || !invFrm.edb" />
+                                </td>
+                                <td data-ng-class="{'has-error': (invFrm.inv_doc_dt.$error.pattern || invFrm.inv_doc_dt.$error.required)}">
+                                    <div class="datepicker-icon input-group">
+                                        <div class="datepicker-icon input-group">
+                                            <i class="fa fa-calendar"></i>
+                                            <input name="inv_doc_dt" class="form-control date-picker" data-ng-model="y.inv_doc_dt" data-datepicker ng-required="true"
+                                                data-min-date="{{minDate()}}" data-min-years="{{minYearsAllowed}}" data-max-date="{{datefunc()}}"
+                                                data-ng-disabled="!invFrm.edb" />
+                                            <span class="input-group-addon"><span class="fa fa-calendar" ></span></span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <select class="form-control" ng-options="option.name for option in suplyList track by option.name" ng-model="y.sp_typ" data-ng-change="spTypChange(0,y)"
+                                        spTypChange data-ng-disabled="!invFrm.edb"></select>
+                                </td>
+
+                                <!-- IGST -->
+                                <td data-ng-class="{'has-error': (invFrm.o_ig.$error.pattern || invFrm.o_ig.$error.required)}">
+                                    <input type="text" class="form-control text-right" name="o_ig" ng-model="y.o_ig" data-fraction="2" data-format="currency"
+                                        ng-required="true" data-ng-disabled="!invFrm.edb || isIntraState(0,y)">
+                                </td>
+                                <!-- SGST -->
+                                <td data-ng-class="{'has-error': (invFrm.o_sg.$error.pattern || invFrm.o_sg.$error.required)}">
+                                    <input type="text" class="form-control text-right" name="o_sg" ng-model="y.o_sg" data-fraction="2" data-format="currency"
+                                        ng-required="true" data-ng-disabled="!invFrm.edb || !isIntraState(0,y)">
+                                </td>
+                                <!-- CGST -->
+                                <td data-ng-class="{'has-error': (invFrm.o_cg.$error.pattern || invFrm.o_cg.$error.required)}">
+                                    <input type="text" class="form-control text-right" name="o_cg" ng-model="y.o_cg" data-fraction="2" data-format="currency"
+                                        ng-required="true" data-ng-disabled="!invFrm.edb || !isIntraState(0,y)">
+                                </td>
+                                <!-- CESS -->
+
+                                <td data-ng-class="{'has-error': (invFrm.o_cs.$error.pattern || invFrm.o_cs.$error.required)}">
+                                    <input type="text" class="form-control text-right" name="o_cs" ng-model="y.o_cs" data-fraction="2" data-format="currency"
+                                        ng-required="true" data-ng-disabled="!invFrm.edb">
+                                </td>
+
+                                <!-- IGST -->
+                                <td data-ng-class="{'has-error': (invFrm.n_ig.$error.pattern || invFrm.n_ig.$error.required)}">
+                                    <input type="text" class="form-control text-right" name="n_ig" ng-model="y.n_ig" data-fraction="2" data-format="currency"
+                                        ng-required="true" data-ng-disabled="!invFrm.edb || isIntraState(0,y)" data-ng-change="validityForItc_rcd(0,y,invFrm)">
+                                </td>
+                                <!-- SGST -->
+                                <td data-ng-class="{'has-error': (invFrm.n_sg.$error.pattern || invFrm.n_sg.$error.required)}">
+                                    <input type="text" class="form-control text-right" name="n_sg" ng-model="y.n_sg" data-fraction="2" data-format="currency"
+                                        ng-required="true" data-ng-disabled="!invFrm.edb || !isIntraState(0,y)" data-ng-change="validityForItc_rcd(0,y,invFrm)">
+                                </td>
+                                <!-- CGST -->
+                                <td data-ng-class="{'has-error': (invFrm.n_cg.$error.pattern || invFrm.n_cg.$error.required)}">
+                                    <input type="text" class="form-control text-right" name="n_cg" ng-model="y.n_cg" data-fraction="2" data-format="currency"
+                                        ng-required="true" data-ng-disabled="!invFrm.edb || !isIntraState(0,y)" data-ng-change="validityForItc_rcd(0,y,invFrm)">
+                                </td>
+                                <!-- CESS -->
+
+                                <td data-ng-class="{'has-error': (invFrm.n_cs.$error.pattern || invFrm.n_cs.$error.required)}">
+                                    <input type="text" class="form-control text-right" name="n_cs" ng-model="y.n_cs" data-fraction="2" data-format="currency"
+                                        ng-required="true" data-ng-disabled="!invFrm.edb" data-ng-change="validityForItc_rcd(0,y,invFrm)">
+                                </td>
+
+                                <td class="text-center newinv">
+                                    <button type="button" class="btn btn-sm btn-primary" ng-hide="invFrm.edb" data-ng-click="invFrm.edb = !invFrm.edb" tabindex="0"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                                    <button type="button" class="btn btn-sm btn-primary" data-ng-if="invFrm.edb" data-ng-click="invFrm.edb = !invFrm.edb;updateInvoice(y)"
+                                        tabindex="0" data-ng-disabled="invFrm.$invalid"><i class="fa fa-save" aria-hidden="true"></i></button>
+
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tr ng-form="newInvFrm">
+                            <td></td>
+                            <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.stin.$error.pattern || newInvFrm.stin.$error.required || newInvFrm.stin.$invalid),'has-success': newInvValidtr && newInvFrm.etin.$valid }">
+                                <input type="text" class="form-control formedit" name="stin" data-ng-pattern="validations.formats.gstin" data-ng-model="newInvRw.stin"
+                                    ng-required="true" ng-change="onCtinChange(newInvRw);isRecGstnAsSupGstn(1,newInvRw.ctin)" 
+                                />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.stin.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.stin.$error.pattern" data-ng-bind="trans.ERR_INV_CHAR"></span>
+                                <span class="err" data-ng-show="newInvRw.stin && newInvFrm.stin.$invalid" data-ng-bind="trans.ERR_INV_SUP_CTIN"></span>
+                            </td>
+                            <!--<td>
+                                <input type="text" class="form-control formedit" name="etin" data-ng-model="newInvRw.etin" />
+                            </td>-->
+                            <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.inv_doc_num.$error.pattern || newInvFrm.inv_doc_num.$error.required),'has-success': newInvValidtr && newInvFrm.inv_doc_num.$valid }">
+                                <input type="text" class="form-control formedit" name="inv_doc_num" data-ng-model="newInvRw.inv_doc_num" data-ng-pattern="/^[a-zA-Z0-9]*$/"
+                                    maxlength="50" ng-required="true" />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.inv_doc_num.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.inv_doc_num.$error.pattern" data-ng-bind="trans.ERR_INV_CHAR"></span>
+                            </td>
+                            <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.inv_doc_dt.$error.pattern || newInvFrm.inv_doc_dt.$error.required),'has-success': newInvValidtr && newInvFrm.inv_doc_dt.$valid }">
+                                <div class="datepicker-icon input-group">
+                                    <i class="fa fa-calendar"></i>
+                                    <input name="inv_doc_dt" class="form-control date-picker" data-ng-model="newInvRw.inv_doc_dt" data-datepicker ng-required="true"
+                                        data-min-date="{{minDate()}}" data-min-years="{{minYearsAllowed}}" data-max-date="{{datefunc()}}">
+                                    <span class="input-group-addon"><span class="fa fa-calendar" ></span></span>
+                                </div>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.inv_doc_dt.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.inv_doc_dt.$error.pattern" data-ng-bind="trans.ERR_INV_CHAR"></span>
+                            </td>
+
+                            <td data-ng-class="{'has-error':  newInvValidtr && (!newInvRw.sp_typ.name),'has-success': newInvValidtr && newInvRw.sp_typ.name }">
+                                <select name="sp_typ" class="form-control" id="stype" ng-options="option.name for option in suplyList track by option.name"
+                                    ng-model="newInvRw.sp_typ" data-ng-change="spTypChange(0,y)"></select>
+                                <span class="err" data-ng-show="newInvValidtr && !newInvRw.sp_typ.name" data-ng-bind="trans.ERR_MANDATORY"></span>
+                            </td>
+                            <!-- IGST -->
+                            <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.o_ig.$error.pattern || newInvFrm.o_ig.$error.required),'has-success': newInvValidtr && newInvFrm.o_ig.$valid }">
+                                <input type="text" class="form-control text-right" name="o_ig" ng-model="newInvRw.o_ig" ng-required="true" data-format="currency"
+                                    data-fraction="2" data-ng-disabled="isIntraState(1)" />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.o_ig.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.o_ig.$error.pattern" data-ng-bind="trans.ERR_INV_CHAR"></span>
+                            </td>
+                            <!-- SGST -->
+
+                            <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.o_sg.$error.pattern || newInvFrm.o_sg.$error.required),'has-success': newInvValidtr && newInvFrm.o_sg.$valid }">
+                                <input type="text" class="form-control text-right" name="o_sg" ng-model="newInvRw.o_sg" ng-required="true" data-format="currency"
+                                    data-fraction="2" data-ng-disabled="!isIntraState(1)" />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.o_sg.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.o_sg.$error.pattern" data-ng-bind="trans.ERR_INV_CHAR"></span>
+                            </td>
+                            <!-- CGST -->
+                            <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.o_cg.$error.pattern || newInvFrm.o_cg.$error.required),'has-success': newInvValidtr && newInvFrm.o_cg.$valid }">
+                                <input type="text" class="form-control text-right" name="o_cg" ng-model="newInvRw.o_cg" ng-required="true" data-format="currency"
+                                    data-fraction="2" data-ng-disabled="!isIntraState(1)" />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.o_cg.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.o_cg.$error.pattern" data-ng-bind="trans.ERR_INV_CHAR"></span>
+                            </td>
+                            <!-- CESS -->
+
+                            <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.o_cs.$error.pattern || newInvFrm.o_cs.$error.required),'has-success': newInvValidtr && newInvFrm.o_cs.$valid }">
+                                <input type="text" class="form-control text-right" name="o_cs" ng-model="newInvRw.o_cs" ng-required="true" data-format="currency"
+                                    data-fraction="2" />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.o_cs.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.o_cs.$error.pattern" data-ng-bind="trans.ERR_INV_CHAR"></span>
+                            </td>
+                            <!-- IGST -->
+                            <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.n_ig.$error.pattern || newInvFrm.n_ig.$error.required),'has-success': newInvValidtr && newInvFrm.n_ig.$valid }">
+                                <input type="text" class="form-control text-right" name="n_ig" ng-model="newInvRw.n_ig" ng-required="true" data-format="currency" data-ng-change="validityForItc_rcd(1,newInvRw)"
+                                    data-fraction="2" data-ng-disabled="isIntraState(1)" />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.n_ig.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.n_ig.$error.pattern">ITC availed this month(IGST) can't be exceed ITC availed Earlier(IGST)</span>
+                            </td>
+                            <!-- SGST -->
+
+                            <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.n_sg.$error.pattern || newInvFrm.n_sg.$error.required),'has-success': newInvValidtr && newInvFrm.n_sg.$valid }">
+                                <input type="text" class="form-control text-right" name="n_sg" ng-model="newInvRw.n_sg" ng-required="true" data-format="currency" data-ng-change="validityForItc_rcd(1,newInvRw)"
+                                    data-fraction="2" data-ng-disabled="!isIntraState(1)" />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.n_sg.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.n_sg.$error.pattern">ITC availed this month(SGST) can't be exceed ITC availed Earlier(SGST)</span>
+                            </td>
+                            <!-- CGST -->
+                            <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.n_cg.$error.pattern || newInvFrm.n_cg.$error.required),'has-success': newInvValidtr && newInvFrm.n_cg.$valid }">
+                                <input type="text" class="form-control text-right" name="n_cg" ng-model="newInvRw.n_cg" ng-required="true" data-format="currency" data-ng-change="validityForItc_rcd(1,newInvRw)"
+                                    data-fraction="2" data-ng-disabled="!isIntraState(1)" />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.n_cg.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.n_cg.$error.pattern">ITC availed this month(CGST) can't be exceed ITC availed Earlier(CGST)</span>
+                            </td>
+                            <!-- CESS -->
+
+                            <td data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.n_cs.$error.pattern || newInvFrm.n_cs.$error.required),'has-success': newInvValidtr && newInvFrm.n_cs.$valid }">
+                                <input type="text" class="form-control text-right" name="n_cs" ng-model="newInvRw.n_cs" ng-required="true" data-format="currency" data-ng-change="validityForItc_rcd(1,newInvRw)"
+                                    data-fraction="2" />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.n_cs.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.n_cs.$error.pattern">ITC availed this month(CESS) can't be exceed ITC availed Earlier(CESS)</span>
+                            </td>
+
+
+                            <td class="text-center" colspan="2">
+                                <button type="button" class="btn btn-sm btn-primary" ng-click="savePayload()"><i class="fa fa-save" aria-hidden="true"></i></button>
+                            </td>
+                            <!-- <td class="text-center">
+                                    <button type="button" class="btn btn-sm btn-primary" data-ng-click="updateInvoice($index)" tabindex="0"><i class="fa fa-save" aria-hidden="true"></i></button>
+                                </td> -->
+                        </tr>
+                    </table>
+                </div>
+                <div class="text-center">
+                    <wrap-dir-pagination></wrap-dir-pagination>
+                </div>
+            </div>
+        </div>
+        <div class="btn-toolbar">
+            <button type="button" class="btn btn-primary pull-left" ng-show="ReturnsList.length" ng-click="deleteSelectedRows()">Delete</button>
+        </div>
+    </div>
+</div>

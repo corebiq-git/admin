@@ -1,0 +1,144 @@
+<div data-ng-controller="errorreturnsctrl">
+    <div class="tabpane">
+        <div class="row">
+            <div class="col-sm-12">
+                <i class="fa fa-info-circle" aria-hidden="true"></i> <span>For E-COMMERCE type, Please add E-Commerce GSTIN</span>
+                <div class="table-responsive">
+
+                    <table class="table tbl inv table-bordered" ng-show="ErrorList.length">
+                        <thead>
+                            <tr>
+                                <th rowspan="1" class="text-center">
+                                    <input type="checkbox" class="chkbx" ng-model="selectAll" ng-click="checkAll()" ng-checked="allSelected()" />
+                                    <label for="checkbox_all"></label>
+                                </th>
+                                <th rowspan="1" class="gstTblHeadr spTblHdr reg m-cir">Type</th>
+                                <th rowspan="1" class="gstTblHeadr psTblHdr reg m-cir sort" data-ng-bind="trans.LBL_REC_STATECD" ng-click="sort('state_cd')"></th>
+                                <th rowspan="1" class="gstTblHeadr m100TblHdr reg m-cir sort" data-ng-bind="trans.LBL_TAXABLE_VALUE" ng-click="sort('txval')"></th>
+                                <th rowspan="1" class="gstTblHeadr spTblHdr reg m-cir" data-ng-bind="trans.LBL_SUPPLY_TYPE"></th>
+                                <!-- <th colspan="1" class="gstTblHeadr">Sale from Bonded WH</th> -->
+                                <th class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_RATE"></th>
+                                <th colspan="1" class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_IGST"></th>
+                                <th colspan="1" class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_CGST"></th>
+                                <th colspan="1" class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_SGST"></th>
+                                <th colspan="1" class="gstTblHeadr m100TblHdr reg" reg m-cir data-ng-bind="trans.HEAD_CESS"></th>
+                                <!--                                <th rowspan="1" class="gstTblHeadr">Prov. Assmnt.</th>-->
+                                <th rowspan="1" class="gstTblHeadr ctnTblHdr" data-ng-bind="trans.E_COMM_GSTN"></th>
+                                <th rowspan="1" class="gstTblHeadr m100TblHdr">Applicable % of Tax Rate</th>
+                                <th rowspan="1" class="gstTblHeadr errMsg">Error Message</th>
+
+                                <th rowspan="1" class="gstTblHeadr">Actions</th>
+                            </tr>
+                            <!--
+                            <th class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_RATE"></th>
+                            <th class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_AMOUNT"></th>
+                            <th class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_RATE"></th>
+                            <th class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_AMOUNT"></th>
+                            <th class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_RATE"></th>
+                            <th class="gstTblHeadr m100TblHdr reg m-cir" data-ng-bind="trans.HEAD_AMOUNT"></th>
+                            <th class="gstTblHeadr m100TblHdr reg " data-ng-bind="trans.HEAD_RATE"></th>
+                            <th class="gstTblHeadr m100TblHdr reg " data-ng-bind="trans.HEAD_AMOUNT"></th>
+-->
+                        </thead>
+                        <tbody>
+                            <!--                            <tr data-ng-repeat="y in ErrorList" ng-form="invFrm">-->
+                            <tr dir-paginate="y in ErrorList | filter:searchInvNum | orderBy:sortBy:sortReverse | itemsPerPage: pageSize track by $index"
+                                current-page="currentPage" ng-form="invFrm">
+                                <td class="text-center">
+                                    <input type="checkbox" class="chkbx" ng-model="y.select" />
+                                    <label for="checkbox_all"></label>
+                                </td>
+                                <td data-ng-class="{'has-error': (invFrm.type.$error.required)}">
+                                    <select class="form-control" name="typ" ng-options="opt.value as opt.name for opt in typeList" ng-model="y.typ" data-ng-disabled="!invFrm.edb"
+                                        ng-required="true"> </select>
+                                </td>
+
+                                <td>
+                                    <select class="form-control" ng-options="opt.cd as opt.cd+'-'+opt.nm for opt in StateList" ng-model="y.pos" data-ng-disabled="!invFrm.edb"
+                                        ng-change="onPosChangeB2CS(y)">
+                                        <option value="">Select</option>
+                                    </select>
+                                </td>
+                                <td data-ng-class="{'has-error': (invFrm.txval.$error.required)}">
+                                    <input type="text" class="form-control text-right" name="txval" data-fraction="2" ng-model="y.txval" ng-change="onRtChange(y, isIntraStateB2CS(y)?4:3)"
+                                        data-ng-focus="freezeOrder('txval')" isNeg="true" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value='₹0.00' " data-format="currency" ng-required="true" data-ng-disabled="!invFrm.edb" />
+</td>
+<td>
+    <select class="form-control" name="sp_typ" ng-options="option.cd as option.name for option in suplyList" ng-model="y.sply_ty"
+        disabled></select>
+</td>
+<!-- <td class="text-center pRel">
+    <input type="checkbox" class="chkbx" ng-model="y.inv_typ" ng-true-value="'CBW'" ng-false-value="null" data-ng-disabled="!invFrm.edb" data-ng-change="onPosChangeB2CS(y)"
+    />
+    <label for="checkbox_all"></label>
+    
+</td> -->
+<!--                                RATE-->
+<td data-ng-class="{'has-error': (invFrm.rt.$error.required || invFrm.rt.$error.pattern)}">
+    <select class="form-control" name="rt" ng-options="opt.value as opt.value for opt in RateList.CommGST" ng-model="y.rt" ng-change="onRtChange(y, isIntraStateB2CS(y)?4:3)"
+        ng-required="true" data-ng-disabled="!invFrm.edb"></select>
+</td>
+<!--                                data-ng-class="{'has-error': (invFrm.iamt.$error.required)}"-->
+<td>
+    <input type="text" class="form-control text-right" name="iamt" ng-model="y.iamt" data-fraction="2" data-format="currency"
+        isNeg="true" ng-required="true" data-ng-disabled="!invFrm.edb  || isIntraStateB2CS(y)" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value=0;" data-ng-init="(!y.iamt)?y.iamt=0:y.iamt" data-ng-model-options="{updateOn:'blur'}" data-ng-change="y.camt=0;y.samt=0">
+</td>
+<!--CGST-->
+<td>
+    <input type="text" class="form-control text-right" name="camt" ng-model="y.camt" data-fraction="2" data-format="currency"
+        isNeg="true" ng-required="true" data-ng-disabled="!invFrm.edb  || !isIntraStateB2CS(y)" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value=0;" data-ng-init="(!y.camt)?y.camt=0:y.camt" data-ng-model-options="{updateOn:'blur'}" data-ng-change="y.iamt=0;">
+</td>
+<!--SGST-->
+<td>
+    <input type="text" class="form-control text-right" name="samt" ng-model="y.samt" data-fraction="2" data-format="currency"
+        isNeg="true" ng-required="true" data-ng-disabled="!invFrm.edb  || !isIntraStateB2CS(y)" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value=0;" data-ng-init="(!y.samt)?y.samt=0:y.samt" data-ng-model-options="{updateOn:'blur'}" data-ng-change="y.iamt=0;">
+</td>
+
+<!--CESS-->
+<td>
+    <input type="text" class="form-control text-right" name="csamt" ng-model="y.csamt" data-fraction="2" data-format="currency"
+        isNeg="true" ng-required="true" data-ng-disabled="!invFrm.edb" onfocus="if (this.value=='₹0.00') this.value='';" onblur="if (this.value=='') this.value=0;" data-ng-value="{{(!y.csamt)?0:y.csamt}}">
+</td>
+<td data-ng-class="{'has-error':  (invFrm.etin.$error.pattern || (invFrm.etin.$invalid && y.etin) )}" data-ng-if="!isEcom(y.typ)">
+    <input type="text" class="form-control formedit" name="etin" data-ng-model="y.etin" data-ng-pattern="/^[A-Za-z0-9]{15}$/"
+        data-ng-change="isEtinAsSupRecGstin(0,y,invFrm)" data-ng-disabled="!invFrm.edb || true" />
+</td>
+<td data-ng-class="{'has-error':  (invFrm.etin.$error.pattern || invFrm.etin.$error.required || (invFrm.etin.$invalid && y.etin))}">
+    <input type="text" class="form-control formedit" name="etin" data-ng-model="y.etin" data-ng-required="!isEcom(0,y,invFrm)"
+        data-ng-disabled="!invFrm.edb || y.typ=='OE' || true" data-ng-pattern="validations.formats.etin" data-ng-change="isEtinAsSupRecGstin(0,y,invFrm)"
+    />
+</td>
+
+<td class="text-center pRel" title="{{trans.LBL_Diff_Percent_title_text}}">
+    <select class="form-control" ng-options="option.value as option.name for option in differentialPercent" id="diff_percent"
+        data-ng-change="onRtChange(y, isIntraStateB2CS(y)?4:3)" data-ng-model="y.diff_percent" data-ng-disabled="!invFrm.edb">
+        <option value="">Select</option>
+    </select>
+</td>
+<td class="text-center">
+
+    <div class="text-center"><span data-ng-bind="y.error_msg"></span></div>
+
+</td>
+<td class="text-center newinv">
+    <button type="button" class="btn btn-sm btn-primary" ng-hide="invFrm.edb" data-ng-click="invFrm.edb = !invFrm.edb" tabindex="0"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+    <button type="button" class="btn btn-sm btn-primary" data-ng-if="invFrm.edb" data-ng-click="invFrm.edb = !invFrm.edb;updateInvoice(y)"
+        tabindex="0"><i class="fa fa-save" aria-hidden="true"></i></button>
+    <!-- data-ng-disabled="invFrm.$invalid"-->
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span ng-show="!ErrorList.length"> No Invoices for {{sectionListSelected.cd}}</span>
+<div class="text-center">
+    <wrap-dir-pagination></wrap-dir-pagination>
+</div>
+</div>
+</div>
+<div class="btn-toolbar">
+    <button type="button" class="btn btn-primary pull-left" ng-show="ErrorList.length" ng-click="deleteSelectedRows()">Delete</button>
+
+</div>
+</div>
+</div>

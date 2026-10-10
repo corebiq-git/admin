@@ -12,11 +12,29 @@ Use Node.js 22 or later.
 
 ## Deploy from GitHub
 
-1. Push this project to a GitHub repository.
-2. In Render, create a new Blueprint from that repository and apply `render.yaml`.
-3. Provide `FIREBASE_SERVICE_ACCOUNT_JSON` when Render requests the secret value.
-4. In Firebase Authentication's authorized domains, add the Render service domain.
+1. Install Git for Windows if `git --version` is not recognized, then open a new terminal.
+2. Create an empty GitHub repository and, from this project folder, run:
 
-The Render disk stores generated and working files below `/var/data/corebiq`, separated by Firebase user ID. Authenticated requests must carry a valid Firebase ID token. The health check and public static application assets do not expose taxpayer files.
+   ```powershell
+   git init
+   git branch -M main
+   git add -A
+   git status --short
+   ```
+
+   Review the staged files before committing. Do not force-add ignored files: local taxpayer files, uploads/downloads, spreadsheets, logs, and secrets must stay out of Git. Then run:
+
+   ```powershell
+   git commit -m "Prepare COREBIQ GSTR1 web deployment"
+   git remote add origin https://github.com/YOUR-ACCOUNT/YOUR-REPOSITORY.git
+   git push -u origin main
+   ```
+
+3. In Render, create a Blueprint from that repository and set the Blueprint file path to `gstr1/render.yaml`. The Blueprint sets the service root to `gstr1`. With `autoDeployTrigger: commit`, later pushes to the linked branch trigger a deployment.
+4. Provide `FIREBASE_SERVICE_ACCOUNT_JSON` when Render requests the secret value.
+5. Configure the reverse proxy for `/gstr1/*` to forward to the Render service **with the `/gstr1` path preserved**. Do not strip the prefix. The Blueprint sets `BASE_PATH=/gstr1`; the Node app serves the page, assets, and API below that path.
+6. In Firebase Authentication's authorized domains, add `admin.corebiq.com`.
+
+The Render disk stores generated and working files below `/var/data/corebiq`, separated by Firebase user ID. Authenticated requests must carry a valid Firebase ID token. The Render health check is at `/health`; the public site health check through the proxy is `/gstr1/health`. Static application assets are served below `/gstr1` and do not expose taxpayer files.
 
 The old offline data under `public/userData` is not migrated automatically; it remains in place and is not served as public content. Export and import existing returns using the tool's supported workflows after signing in.

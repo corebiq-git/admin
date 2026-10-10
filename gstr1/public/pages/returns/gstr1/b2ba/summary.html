@@ -1,0 +1,535 @@
+<div data-ng-controller="returnsctrl" data-ng-init="validateUserMstrRtnPrd();">
+    <div class="tabpane">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="table-responsive">
+                    <table class="table tbl inv table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center">
+                                    <input type="checkbox" class="chkbx" ng-model="selectAll" ng-true-value="'Y'"
+                                        ng-false-value="'N'" ng-click="checkAll(ReturnsList, selectAll)" />
+                                    <label for="checkbox_all"></label>
+                                </th>
+
+                                <th class="gstTblHeadr ctnTblHdr reg m-cir sort" data-ng-bind="trans.LBL_RECEIVER_GSTIN"
+                                    ng-click="sort('ctin')"></th>
+                                <th class="gstTblHeadr psTblHdr sort" data-ng-bind="trans.LBL_RECEIVER_NAME"
+                                    ng-click="sort('cname')"></th>
+                                    <th data-ng-show="suprtn" class="gstTblHeadr suptblHdr sort" data-ng-bind="trans.LBL_SUPP_RECIP_NAME" ng-click="sort('supplierRecipientName')"></th>
+                                <th class="gstTblHeadr m100TblHdr reg m-cir sort" data-ng-bind="trans.LBL_ORG_INV_NO"
+                                    ng-click="sort('oinum')"></th>
+                                <th class="gstTblHeadr dtTblHdr reg m-cir sort" data-ng-bind="trans.LBL_ORG_INV_DATE"
+                                    ng-click="sort('oidt')"></th>
+                                <th class="gstTblHeadr m100TblHdr reg m-cir sort"
+                                    data-ng-bind="trans.LBL_REV_INVOICE_NUMBER" ng-click="sort('inum')"></th>
+                                <th class="gstTblHeadr dtTblHdr reg m-cir sort"
+                                    data-ng-bind="trans.LBL_REV_INVOICE_DATE" ng-click="sort('idt')"></th>
+                                <th class="gstTblHeadr m100TblHdr reg m-cir sort" data-ng-bind="trans.LBL_INVOICE_VALUE"
+                                    ng-click="sort('val')"></th>
+                                <th class="gstTblHeadr psTblHdr reg m-cir sort" data-ng-bind="trans.LBL_POS"
+                                    ng-click="sort('pos')"></th>
+                                <th class="gstTblHeadr spTblHdr reg m-cir" data-ng-bind="trans.LBL_SUPPLY_TYPE"></th>
+                                <th class="gstTblHeadr spTblHdr reg m-cir" data-ng-bind="trans.LBL_INVOICE_TYPE" style="min-width: 320px;"></th>
+                                <th class="gstTblHeadr" data-ng-bind="trans.LBL_RECHRG"></th>
+                                <th class="gstTblHeadr m100TblHdr" data-ng-bind="trans.LBL_Diff_Percentage"></th>
+                                <th class="gstTblHeadr ctnTblHdr" data-ng-bind="trans.E_COMM_GSTN"></th>
+                                <th class="gstTblHeadr m100TblHdr" data-ng-bind="trans.LBL_ACTIONS"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr dir-paginate="b2basavedList in ReturnsList  | itemsPerPage: pageSize" current-page="currentPage"
+                                total-items="totalAvailable" ng-form="invFrm"
+                                ng-init="b2basavedList.old_inum=.b2basavedList.inum;;b2basavedList.old_val=b2basavedList.val">
+                                <td class="text-center">
+                                    <input type="checkbox" class="chkbx" ng-model="b2basavedList.select" ng-true-value="'Y'"
+                                        ng-false-value="'N'" />
+                                    <label for="checkbox_all"></label>
+                                </td>
+                                <td data-ng-class="{'has-error':  (invFrm.ctin.$error.required)}">
+                                    <input type="text" style="width: 67%; margin-top: 3%;" class="form-control formedit" name="ctin"  
+                                    data-ng-model-options="{updateOn:'blur'}" data-ng-model="b2basavedList.ctin"   data-ng-class="b2basavedList.obj"
+                                    ng-required="true" ng-change="onCtinChange(b2basavedList);"
+                                    data-ng-disabled="true || !invFrm.edb" />
+                                    <div ng-if="showAutocomplete && supenabled">
+                                   <span data-ng-if="b2basavedList.isNotAdded">
+                                            <img border="0" width="100" style="width: 8%;height: 3%;margin-top: -20%;margin-left: 70%;"
+                                                title="Add to Master" ng-click="showSupMaster(b2basavedList.ctin)"
+                                                src="../../../../images/addbtn.jpg"></span>
+                                    </div>
+                                  
+                                </td>
+                                <td data-ng-class="{'has-error':  (invFrm.cname.$error.pattern)}">
+                                    <input type="text" class="form-control formedit" name="cname"
+                                        data-ng-model="b2basavedList.cname"
+                                        data-ng-pattern="/^[a-zA-Z0-9\_&'\-\.\/\,()?@!#%$~*;+= ]{1,99}$/"
+                                        ng-required="false" data-ng-disabled="true || !invFrm.edb" />
+                                </td>
+                                <td data-ng-show="suprtn" data-ng-class="{'has-error':  (invFrm.srname.$error.pattern)}"><input type="text" name="b2basup_name" class="form-control formedit" 
+                                    title="{{b2basavedList.supplierRecipientName}}" data-ng-model="b2basavedList.supplierRecipientName" disabled>
+                            </td>
+                                <td
+                                    data-ng-class="{'has-error': (invFrm.oinum.$error.pattern || invFrm.oinum.$error.required)}">
+                                    <input type="text" class="form-control formedit" name="oinum"
+                                        data-ng-model="b2basavedList.oinum" data-ng-model-options="{updateOn:'blur'}"
+                                        data-ng-pattern="validations.formats.invoiceregex"
+                                        data-ng-change="isDuplicateInvoice(0,b2basavedList,'oinum',invFrm)" maxlength="50"
+                                        ng-required="true" data-ng-disabled="true" />
+                                </td>
+                                <td
+                                    data-ng-class="{'has-error': (invFrm.oidt.$error.pattern || invFrm.oidt.$error.required || invFrm.oidt.$invalid)}">
+                                    <div class="datepicker-icon input-group">
+                                        <div class="datepicker-icon input-group">
+                                            <i class="fa fa-calendar"></i>
+                                            <input name="oidt" class="form-control date-picker" data-ng-model="b2basavedList.oidt"
+                                                data-datepicker ng-required="true"
+                                                data-ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])[\-](0?[1-9]|1[012])[\-\-]\d{4}$/"
+                                                data-ng-change="oldDateLimit(0,b2basavedList.oidt,invFrm)"
+                                                data-min-years="{{minYearsAllowed}}" data-min-date="{{minDate()}}"
+                                                data-max-date="{{datefunc()}}" data-ng-disabled="!invFrm.edb || true" />
+                                            <span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+                                        </div>
+                                    </div>
+                                </td>
+
+
+                                <td
+                                    data-ng-class="{'has-error': (invFrm.inum.$error.pattern || invFrm.inum.$error.required || invFrm.inum.$invalid)}">
+                                    <input type="text" class="form-control formedit" name="inum" data-ng-model="b2basavedList.inum"
+                                        data-ng-model-options="{updateOn:'blur'}"
+                                        data-ng-pattern="validations.formats.invoiceregex"
+                                        data-ng-change="isDuplicateInvoice(0,b2basavedList,'inum',invFrm)" maxlength="16"
+                                        ng-required="true" data-ng-disabled="!invFrm.edb" />
+                                </td>
+                                <td
+                                    data-ng-class="{'has-error': (invFrm.idt.$error.pattern || invFrm.idt.$error.required || invFrm.idt.$invalid)}">
+                                    <div class="datepicker-icon input-group">
+                                        <div class="datepicker-icon input-group">
+                                            <i class="fa fa-calendar"></i>
+                                            <input name="idt" class="form-control date-picker" data-ng-model="b2basavedList.idt"
+                                                data-datepicker ng-required="true" data-min-years="{{minYearsAllowed}}"
+                                                data-ng-model-options="{updateOn:'blur'}" placeholder="DD-MM-YYYY"
+                                                data-ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])[\-](0?[1-9]|1[012])[\-\-]\d{4}$/"
+                                                data-datepicker ng-required="true"
+                                                data-ng-change="dateLimit(0,b2basavedList.idt,invFrm)" data-min-date="{{minDate()}}"
+                                                data-max-date="{{datefunc()}}" data-ng-disabled="!invFrm.edb" />
+                                            <span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td data-ng-class="{'has-error': (invFrm.val.$error.required)}">
+                                    <div class="datepicker-icon input-group">
+                                        <input type="text" class="form-control text-right" name="val"
+                                            data-ng-model="b2basavedList.val" data-format="currency" data-id="invval"
+                                            data-ng-change="setPristine(b2basavedList,invFrm)" data-fraction="2" ng-required="true"
+                                            data-ng-disabled="!invFrm.edb" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <select name="pos" class="form-control"
+                                        ng-options="opt.cd as opt.cd+'-'+opt.nm for opt in StateList" ng-model="b2basavedList.pos"
+                                        ng-change="onCtinChange(b2basavedList);onPosChange(b2basavedList);"
+                                        data-ng-disabled="!invFrm.edb">
+                                        <option value="">Select</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-control"
+                                        ng-options="option.value as option.name for option in suplyList track by option.name"
+                                        ng-model="b2basavedList.sp_typ" data-ng-disabled="!invFrm.edb || b2basavedList.pos">
+                                        <option value="">Select</option>
+                                    </select>
+                                </td>
+                                <td data-ng-class="{'has-error':(!b2basavedList.inv_typ || invFrm.inv_typ.$error.required || invFrm.inv_typ.$invalid)}">
+
+                                    <select class="form-control"
+                                        ng-options="type.c as type.n for type in InvTypeListForB2b.b2b" ng-model="b2basavedList.inv_typ"
+                                        data-ng-disabled="!invFrm.edb"
+                                        data-ng-change="onCtinChange(b2basavedList);onPosChange(b2basavedList);validateNoteType('inv_typ',0,b2basavedList,invFrm)"
+                                        ng-required="true" name="inv_typ"></select>
+                                        <span class="err" data-ng-show="b2basavedList.inv_typ && invFrm.inv_typ.$invalid"
+                                        data-ng-bind="trans.ERR_INVALID_INV_TYPE"></span>
+                                </td>
+                                <td class="text-center pRel">
+                                    <input type="checkbox" class="chkbx" ng-model="b2basavedList.rchrg" ng-true-value="'Y'"
+                                        ng-false-value="'N'" data-ng-disabled="!invFrm.edb || b2basavedList.inv_typ=='DE'"  data-ng-change="validateNoteType('rchrg',0,b2basavedList,invFrm)"/>
+                                    <label for="checkbox_all"></label>
+                                </td>
+                                <td class="text-center pRel"
+                                title="{{trans.LBL_Diff_Percent_title_text}}">
+                                    <select class="form-control"
+                                        ng-options="option.value as option.name for option in differentialPercent"
+                                        id="diff_percent" data-ng-change="onDiffPerChange(b2basavedList);"
+                                        data-ng-model="b2basavedList.diff_percent" data-ng-disabled="!invFrm.edb">
+                                        <option value="">Select</option>
+                                    </select>
+                                </td>
+                                <td
+                                    data-ng-class="{'has-error':  (invFrm.etin.$error.pattern || (invFrm.etin.$invalid && b2basavedList.etin))}">
+                                    <input type="text" class="form-control formedit" name="etin" data-ng-model="b2basavedList.etin"
+                                        data-ng-pattern="validations.formats.etin"
+                                        data-ng-change="isEtinAsSupRecGstin(0,b2basavedList,invFrm)"
+                                        data-ng-disabled="!invFrm.edb || b2basavedList.inv_typ!='R' || true" />
+                                </td>
+                                <td class="text-center newinv">
+                                    <button type="button" class="btn btn-sm btn-primary" ng-if="invFrm.edb"
+                                        data-ng-click="gotoAddItems(b2basavedList)" tabindex="0"
+                                        data-ng-disabled="invFrm.$invalid"><i class="fa fa-plus-circle"
+                                            aria-hidden="true"></i></button>
+                                    <button type="button" class="btn btn-sm btn-primary" ng-if="invFrm.edb"
+                                        data-ng-click="invFrm.edb=!invFrm.edb;invFrm.$setPristine();updateInvoice(b2basavedList)"
+                                        tabindex="0" data-ng-disabled="invFrm.$invalid || invFrm.$pristine"><i
+                                            class="fa fa-save" aria-hidden="true"></i></button>
+                                    <button type="button" class="btn btn-sm btn-primary" ng-hide="invFrm.edb"
+                                        data-ng-click="invFrm.edb = !invFrm.edb " tabindex="0"><i class="fa fa-pencil"
+                                            aria-hidden="true"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tr ng-form="newInvFrm" ng-show="isLastPage(currentPage, pageSize)">
+                            <td></td>
+                            <td
+                                data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.ctin.$error.required || newInvFrm.ctin.$error.pattern || newInvFrm.ctin.$invalid),'has-success': newInvValidtr && newInvFrm.ctin.$valid }">
+                                <div class="row"  ng-if="showAutocomplete && supenabled">
+                                    <div  class="col-lg-10" style ="margin-top: 17%;margin-left: 0%;" autocomplete-gstin ng-model="newInvRw.ctin" id="ctin"    name="ctin" 
+                                    style="margin-top: 6%;"
+                                    input-name="ctin" placeholder={{trans.LBL_SUPP4_GSTIN_PLACEHOLDER}} pause="500" 
+                                    title-field="supplierRecipientName" title={{trans.SUPP4_GSTIN_HOVER_TITLE}}
+                                    data-maxlength="15" description-field="gstin" minlength="1"
+                                    min-code-length-to-display="15" clear-result-after-select="false"
+                                    after-select="afterGSTINSelected(result)"
+                                    
+                                    disable-after-select="{{isGSTINSelected}}" reset-results="clearGSTINInput()"
+                                    ng-change="getNotAddedGSTIN(newGstin);" show-key-in-description="true"
+                                    no-data-flag="gstinNotAvailable(flag)" data-ng-required="true"
+                                    disable-for-edit={{isB2BEdit}}>
+                                    </div> 
+                                     
+                                    <span class="col-lg-2" data-ng-if="gstinRecordAdd">
+                                        <img width="100%"  style="width: 110%;height: 3%;margin-top:310%;;margin-left:-115%;" title="Add to Master" ng-click="showSupMaster(newInvRw.ctin)" src="../../../../images/addbtn.jpg">
+                                          
+                                             
+                                    </span>
+                                </div>
+                                <input type="text" class="form-control formedit capitalize" name="ctin"  data-ng-if="!supenabled" 
+                                    data-ng-model="newInvRw.ctin" data-ng-model-options="{updateOn:'blur'}" style=" display: block;
+                                    margin-bottom: -24%;"
+                                    maxlength="15" ng-required="true"
+                                    ng-change="onGstinChange(newInvRw.ctin);getPosBasedOnCtin(newInvRw);;isRecGstnAsSupGstn(1,newInvRw.ctin);" />
+                                <span class="err"
+                                    data-ng-show="newInvValidtr && newInvFrm.ctin.$error.required" data-ng-bind="trans.LBL_REC_GSTIN_REQ"></span>
+                                    
+                                    <br><br>
+                                <span class="err" data-ng-show="newInvRw.ctin && newInvFrm.ctin.$error.pattern && !showDropdown" data-ng-bind="trans.LBL_VALID_GSTIN"></span>
+                                &nbsp;
+                                <span class="err" style="
+                                margin-left: -5%;"
+                                    data-ng-show="newInvRw.ctin && newInvFrm.ctin.$invalid && !newInvFrm.ctin.$error.pattern"
+                                    data-ng-bind="trans.ERR_INV_CTIN"></span>
+                            </td>
+                            <td
+                                data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.cname.$error.pattern),'has-success': newInvValidtr && newInvFrm.cname.$valid }">
+                                <input type="text" class="form-control formedit capitalize" name="cname"
+                                    data-ng-model="newInvRw.cname" maxlength="15" ng-required="false"
+                                    data-ng-pattern="/^[a-zA-Z0-9\_&'\-\.\/\,()?@!#%$~*;+= ]{1,99}$/" />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.cname.$error.pattern"
+                                    data-ng-bind="trans.ERR_INV_CHAR"></span>
+                            </td>
+                            <td data-ng-show="suprtn"><input type="text" name="b2basup_name" class="form-control formedit" 
+                                title="{{newInvRw.supplierRecipientName}}" data-ng-model="newInvRw.supplierRecipientName" disabled>
+                        </td>
+                            <td
+                                data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.oinum.$error.pattern || newInvFrm.oinum.$error.required),'has-success': newInvValidtr && newInvFrm.oinum.$valid }">
+                                <input type="text" class="form-control formedit" name="oinum"
+                                    data-ng-model="newInvRw.oinum" data-ng-model-options="{updateOn:'blur'}"
+                                    data-ng-pattern="validations.formats.invoiceregex" maxlength="50" ng-required="true"
+                                    data-ng-change="isDuplicateInvoice(1,newInvRw,'oinum')" />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.oinum.$error.required"
+                                    data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.oinum.$error.pattern"
+                                    data-ng-bind="trans.ERR_INV_CHAR"></span>
+                                <span class="err"
+                                    data-ng-show="newInvRw.oinum && isInvalidOriginalNumber && newInvFrm.oinum.$invalid"
+                                    data-ng-bind="trans.ERR_INVALID_INV"></span>
+                                <span class="err"
+                                    data-ng-show="newInvRw.oinum && isDuplicateOriginalNumber && newInvFrm.oinum.$invalid"
+                                    data-ng-bind="trans.ERR_DUPLICATE_INV"></span>
+                            </td>
+                            <td
+                                data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.oidt.$error.pattern || newInvFrm.oidt.$error.required),'has-success': newInvValidtr && newInvFrm.oidt.$valid }">
+                                <div class="datepicker-icon input-group">
+                                    <i class="fa fa-calendar"></i>
+                                    <input name="oidt" class="form-control date-picker" data-ng-model="newInvRw.oidt"
+                                        data-datepicker ng-required="true" data-min-years="{{minYearsAllowed}}"
+                                        data-ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])[\-](0?[1-9]|1[012])[\-\-]\d{4}$/"
+                                        data-ng-change="oldDateLimit(1,newInvRw.oidt)" data-min-date="{{minDate()}}"
+                                        data-max-date="{{datefunc()}}" placeholder="DD-MM-YYYY" />
+                                    <span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+                                </div>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.oidt.$error.required"
+                                    data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.oidt.$error.pattern"
+                                    data-ng-bind="trans.ERR_INV_CHAR"></span>
+                                <span class="err"
+                                    data-ng-show="newInvRw.oidt && newInvFrm.oidt.$invalid">{{invdtmsg}}</span>
+                            </td>
+
+                            <td
+                                data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.inum.$error.pattern  || newInvFrm.inum.$error.required || newInvFrm.inum.$invalid),'has-success': newInvValidtr && newInvFrm.inum.$valid }">
+                                <input type="text" class="form-control formedit" name="inum"
+                                    data-ng-model="newInvRw.inum" data-ng-model-options="{updateOn:'blur'}"
+                                    data-ng-pattern="validations.formats.invoiceregex" maxlength="16"
+                                    data-ng-change="isDuplicateInvoice(1,newInvRw,'inum')" ng-required="true" />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.inum.$error.required"
+                                    data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.inum.$error.pattern"
+                                    data-ng-bind="trans.ERR_INV_CHAR"></span>
+                                <span class="err"
+                                    data-ng-show="newInvRw.inum && isInvalidNumber && newInvFrm.inum.$invalid"
+                                    data-ng-bind="trans.ERR_INVALID_INV"></span>
+                                <span class="err"
+                                    data-ng-show="newInvRw.inum && isDuplicateNumber && newInvFrm.inum.$invalid"
+                                    data-ng-bind="trans.ERR_DUPLICATE_INV"></span>
+                            </td>
+                            <td
+                                data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.idt.$error.pattern || newInvFrm.idt.$error.required || newInvFrm.idt.$invalid),'has-success': newInvValidtr && newInvFrm.idt.$valid }">
+                                <div class="datepicker-icon input-group">
+                                    <i class="fa fa-calendar"></i>
+                                    <input name="idt" class="form-control date-picker" data-ng-model="newInvRw.idt"
+                                        data-ng-model-options="{updateOn:'blur'}"
+                                        data-ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])[\-](0?[1-9]|1[012])[\-\-]\d{4}$/"
+                                        data-ng-change="dateLimit(1,newInvRw.idt)" data-datepicker ng-required="true"
+                                        data-min-years="{{minYearsAllowed}}" placeholder="DD-MM-YYYY"
+                                        data-min-date="{{minDate()}}" data-max-date="{{datefunc()}}">
+                                    <span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+                                </div>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.idt.$error.required"
+                                    data-ng-bind="trans.ERR_MANDATORY"></span>
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.idt.$error.pattern"
+                                    data-ng-bind="trans.ERR_INV_CHAR"></span>
+                                <span class="err"
+                                    data-ng-show="newInvRw.idt && newInvFrm.idt.$invalid">{{invdtmsg}}</span>
+                            </td>
+                            <td
+                                data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.val.$error.required),'has-success': newInvValidtr && newInvFrm.val.$valid }">
+                                <input type="text" class="form-control text-right" name="val"
+                                    data-ng-model="newInvRw.val" data-format="currency" ng-required="true"
+                                    data-id="invval" data-fraction="2" />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.val.$error.required"
+                                    data-ng-bind="trans.ERR_MANDATORY"></span>
+                            </td>
+                            <td
+                                data-ng-class="{'has-error':  newInvValidtr && (!newInvRw.pos || newInvFrm.pos.$invalid),'has-success': newInvValidtr && newInvRw.pos }">
+                                <select class="form-control" name="pos" ng-model="newInvRw.pos"
+                                    ng-change="onCtinChange(newInvRw);onPosChange(newInvRw);">
+                                    <option value="">Select</option>
+                                    <option data-ng-repeat="opt in StateList" data-ng-bind="opt.cd+'-'+opt.nm"
+                                        value="{{opt.cd}}"></option>
+                                </select>
+                                <span class="err" data-ng-show="newInvValidtr && !newInvRw.pos"
+                                    data-ng-bind="trans.ERR_MANDATORY"></span>
+                            </td>
+                            <td
+                                data-ng-class="{'has-error':  newInvValidtr && (!newInvRw.sp_typ.name),'has-success': newInvValidtr && newInvRw.sp_typ.name }">
+                                <select name="sp_typ" class="form-control" id="stype"
+                                    ng-options="option.name for option in suplyList track by option.name"
+                                    ng-model="newInvRw.sp_typ" disabled>
+                                    <option value="">Select</option>
+                                </select>
+                                <span class="err" data-ng-show="newInvValidtr && !newInvRw.sp_typ.name"
+                                    data-ng-bind="trans.ERR_MANDATORY"></span>
+                            </td>
+
+
+                            <td
+                                data-ng-class="{'has-error':  newInvValidtr && (!newInvRw.inv_typ),'has-success': newInvValidtr && newInvRw.inv_typ }">
+                                <select class="form-control" ng-options="type.c as type.n for type in InvTypeListForB2b.b2b"
+                                    ng-model="newInvRw.inv_typ"
+                                    data-ng-change="onCtinChange(newInvRw);onPosChange(newInvRw);validateNoteType('inv_typ',1,newInvRw)"
+                                    required name="inv_typ">
+                                    <option value="">Select</option>
+                                    <option data-ng-repeat="type in InvTypeListForB2b.b2b" data-ng-bind="type.n"
+                                        value="{{type.c}}"></option>
+                                </select>
+                                <span class="err" data-ng-show="newInvRw.inv_typ && newInvFrm.inv_typ.$invalid"
+                                    data-ng-bind="trans.ERR_INVALID_INV_TYPE"></span>
+                                <span class="err" data-ng-show="newInvValidtr && !newInvRw.inv_typ"
+                                    data-ng-bind="trans.ERR_MANDATORY"></span>
+                            </td>
+
+
+                            <td class="text-center pRel">
+                                <input type="checkbox" class="chkbx" ng-model="newInvRw.rchrg" ng-true-value="'Y'"
+                                    ng-false-value="'N'" data-ng-change="validateNoteType('rchrg',1,newInvRw)" data-ng-disabled="newInvRw.inv_typ=='DE'"/>
+                                <label for="checkbox_all"></label>
+                            </td>
+                            <td class="text-center pRel"
+                            title="{{trans.LBL_Diff_Percent_title_text}}">
+                                <select class="form-control" ng-options="opt.name for opt in differentialPercent"
+                                    data-ng-change="onDiffPerChange(newInvRw);" id="diff_percent"
+                                    data-ng-model="newInvRw.diff_percent">
+                                    <option value="">Select</option>
+                                </select>
+                            </td>
+                            <td
+                                data-ng-class="{'has-error':  newInvValidtr && (newInvFrm.etin.$error.pattern),'has-success': newInvValidtr && newInvFrm.etin.$valid && newInvRw.etin }">
+                                <input type="text" class="form-control formedit capitalize" name="etin"
+                                    data-ng-pattern="validations.formats.etin" data-ng-model="newInvRw.etin"
+                                    data-ng-change="isEtinAsSupRecGstin(1,newInvRw)"
+                                    data-ng-disabled="newInvRw.inv_typ!='R' || true" />
+                                <span class="err" data-ng-show="newInvValidtr && newInvFrm.etin.$error.pattern"
+                                    data-ng-bind="trans.ERR_INV_ETIN_CHAR"></span>
+                                <span class="err"
+                                    data-ng-show="newInvValidtr && newInvRw.etin && newInvFrm.etin.$invalid"
+                                    data-ng-bind="trans.ERR_INV_ETIN"></span>
+
+                            </td>
+                            <td class="text-center" colspan="2">
+                                <button type="button" class="btn btn-sm btn-primary" ng-click="gotoAddItems('add')"><i
+                                        class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="text-center">
+                    <wrap-dir-pagination></wrap-dir-pagination>
+                </div>
+            </div>
+        </div>
+        <div class="btn-toolbar">
+            <button type="button" class="btn btn-primary pull-left" ng-show="ReturnsList.length"
+                ng-click="deleteSelectedRows()">Delete</button>
+        </div>
+    </div>
+    <!-- <div data-ng-include="'/pages/returns/gstr1/comIntegration.html'"></div> -->
+    <div id="suppMastAdd" class="modal fade fade-scale" role="dialog">
+        <div class="modal-dialog sweet" style="width:1250px;" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title font-weight-bold" style="font-weight: bold;" id="exampleModalLabel" ng-bind="trans.LBL_ADD_MSTR">
+                  </h4>
+                </div>
+                <div class="modal-body" style=" overflow-y: auto; max-height: calc(100vh - 160px);padding-top: 0px;">
+                    <form name="suprecFrm" novalidate>
+                        <div class="row">
+                            <div class="col-sm-12 pull-left head" style="margin-top: 8px;">
+                                <div class="row" style="padding-left: 26px">
+                                    <div class="col-4">
+    
+                                    </div>
+                                    <div class="col-4 pull-right font-weight-bold redlink" class=""
+                                        style="margin-top: 10px;margin-right: 2.2%;">
+                                        <b><span class="pull-right red" style="margin-left: -5%;color: red;"
+                                            data-ng-bind=trans.LBL_Field_Mand></span></b>
+                                    </div>
+                                </div>
+                                <div class="alert alert-msg alert-danger" data-ng-if="addSupErrMsgShow">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                    <i class="fa fa-info-circle"></i> <strong>{{trans.LBL_ERROR}}&nbsp;</strong>
+                                </div>
+                                <div class="alert alert-success alert-dismissible"
+                                    style="margin-top: 3%;width: 100%;margin-left: 0%;" data-ng-if="successMessageShow">
+                                    <a href="#" class="close" data-dismiss="alert" aria-label="close"
+                                        data-ng-click="sucessmsg()">&times;</a>
+                                    <span>
+                                        <i class="fa fa-info-circle"></i> <span
+                                            data-ng-bind="trans.SUCCESS_MSG"><span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin-top: -5px;">
+                                <div class="row">
+                                    <div class="col-sm-6"
+                                        data-ng-class="{'has-error': validator && ( suprecFrm.gstin.$error.required || suprecFrm.gstin.$error.pattern ||  suprecFrm.gstin.$error.duplicate || suprecFrm.gstin.$error.minlength),'has-success': validator && suprecFrm.gstin.$valid }">
+                                        <label rowspan="2" class="gstTblHeadr m100TblHdr reg m-cir"
+                                            data-ng-bind="trans.LBL_GSTN"></label>
+                                        <input type="text" name="gstin" class="form-control formedit"
+                                            data-ng-blur="gstinValid()"
+                                            data-ng-change="suprecFrm.gstin.$setValidity('pattern', true); sameGstin=false; duprecord = false;supDisable()"
+                                            data-ng-disabled="gstndisabled" maxlength="{{::validations.maxlength.gstin}}"
+                                            data-ng-model="newsuprecmstr.gstin" data-ng-required="true" />
+                                        <span class="err"
+                                            data-ng-show="validator && suprecFrm.gstin.$error.required && !sameGstin && !duprecord"
+                                            data-ng-bind="trans.ERR_MAND"></span>
+                                        <span class="err" data-ng-show="validator  && suprecFrm.gstin.$error.pattern"
+                                            data-ng-bind="trans.ERR_INVALID_GSTIN"></span>
+                                        <span class="err" data-ng-show="sameGstin && !duprecord"
+                                            data-ng-bind="trans.ERR_SAME_GSTIN"></span>
+                                        <span class="err" data-ng-show="duprecord" data-ng-bind="trans.DUP_GSTIN"></span>
+                                    </div>
+    
+                                    <div class="col-sm-6">
+                                        <label rowspan="2" class="gstTblHeadr m100TblHdr"
+                                            data-ng-bind="trans.LBL_TRD_NAME"></label>
+                                        <input type="text" class="form-control formedit" maxlength="99"
+                                            data-ng-model="newsuprecmstr.tradeName" />
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+    
+                                    <div class="col-sm-6"
+                                        data-ng-class="{'has-error': validator && ( suprecFrm.supplierRecipientName.$error.required && suprecFrm.supplierRecipientName.$invalid),'has-success': validator && suprecFrm.supplierRecipientName.$valid }">
+                                        <label class="gstTblHeadr m100TblHdr reg m-cir"
+                                            data-ng-bind="trans.LBL_SUP_REC_NAME"></label>
+                                        <input type="text" class="form-control formedit" name="supplierRecipientName"
+                                            data-ng-change="dupsupName = false;"
+                                            data-ng-model="newsuprecmstr.supplierRecipientName" maxlength="99"
+                                            data-ng-required="true" />
+                                        <span class="err"
+                                            data-ng-show="validator &&suprecFrm.supplierRecipientName.$error.required && !dupsupName"
+                                            data-ng-bind="trans.ERR_MAND"></span>
+                                        <span class="err" data-ng-show="dupsupName" data-ng-bind="trans.DUP_SRNAME"></span>
+                                    </div>
+    
+                                    <div class="col-sm-3" data-ng-class="{'has-error': validator && ( suprecFrm.recipient.$error.required &&
+                                    suprecFrm.desc.$invalid),'has-success': validator && suprecFrm.recipient.$valid }"
+                                        style="margin-top: 2em;">
+                                        <input type="checkbox" class="chkbx1" name="recipient" id="recipient" value="R"
+                                            data-ng-model="newsuprecmstr.recipient" data-ng-true-value="'R'"
+                                            data-ng-checked="newsuprecmstr.recipient == 'R'" data-ng-false-value="'N'"
+                                            data-ng-required="!newsuprecmstr.supplier ||newsuprecmstr.supplier==''">
+                                        <label class="gstTblHeadr psTblHdr reg"
+                                            data-ng-class="{'m-cir': (newsuprecmstr.supplier !='S'|| (newsuprecmstr.supplier =='S' && newsuprecmstr.recipient =='R') )}"
+                                            data-ng-bind="trans.LBL_REC"></label><br>
+                                        <span class="err" data-ng-show="validator &&suprecFrm.recipient.$error.required"
+                                            data-ng-bind="trans.LBL_SEL_MAND"></span>
+                                    </div>
+                                    <div class="col-sm-3" data-ng-class="{'has-error': validator && ( suprecFrm.supplier.$error.required &&
+                                    suprecFrm.desc.$invalid),'has-success': validator && suprecFrm.supplier.$valid }"
+                                        style="margin-top: 2em;">
+                                        <input type="checkbox" class="chkbx1" name="supplier" id="supplier" value="S"
+                                            data-ng-disabled="supplierdisable" data-ng-model="newsuprecmstr.supplier"
+                                            data-ng-true-value="'S'" data-ng-false-value="'N'"
+                                            data-ng-checked="newsuprecmstr.supplier == 'S'"
+                                            data-ng-required="!newsuprecmstr.recipient ||newsuprecmstr.recipient==''">
+                                        <label class="gstTblHeadr m100TblHdr reg"
+                                            data-ng-class="{'m-cir': !supplierdisable && (newsuprecmstr.recipient !='R'  || (newsuprecmstr.supplier =='S' && newsuprecmstr.recipient =='R') )}"
+                                            data-ng-bind="trans.LBL_SUPLR"></label><br>
+                                        <span class="err"
+                                            data-ng-show="validator &&suprecFrm.supplier.$error.required && !supplierdisable"
+                                            data-ng-bind="trans.LBL_SEL_MAND"></span> </div>
+    
+                                </div>
+                                <br>
+                                <div class="btn-toolbar" style="display:inherit; text-align:right">
+                                    <button type="button" style="float: right" class="btn btn-secondary bn"
+                                        data-ng-click="resetData()" data-dismiss="modal"
+                                        data-ng-bind="trans.LBL_BACK "></button>
+                                    <button type="submit" style="float: right" class="btn btn-primary bn"
+                                        data-ng-click="saveSupplierRecord()" data-ng-bind="trans.LBL_SAVE ">
+                                    </button>
+    
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+    
+            </div>
+        </div>
+    </div>
+</div>

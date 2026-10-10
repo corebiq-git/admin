@@ -1,0 +1,58 @@
+<div class="container w100 pad0 over" data-ng-init="validateUserMstrRtnPrd();onSectionChange()">
+<!--    <button type="button" class="btn btn-default active" data-ng-click="page('gstr/summary')">Dashboard</button>-->
+    <button type="button" class="btn btn-primary" data-ng-click="goToSumPage()" data-toggle="tooltip" title="" data-original-title="Import additional data">Import Files</button>&nbsp;
+    <button type="button" class="btn btn-primary" data-conf-click="deleteReturn()">Delete All Data</button>
+    <button type="button" class="btn btn-primary" data-conf-click="deleteSectionData()">Clear Section Data</button>
+    <button type="button" class="btn btn-primary" data-ng-click="page('/gstr/preview')">View Summary</button>
+    <!-- <div class="pull-right" data-ng-if="supaddenabled && addbtnenabled" style="
+    margin-right: -44%;margin-top: 1%;"><b><span style="margin:right" > GSTIN not present in master, click </span><img title="Add to Master" style="width: 2%;height: 3%;" 
+     src="../../../../images/addbtn.jpg"> to add</a></b></div>
+     <div class="pull-right" data-ng-if="prodaddbtnenabled" style="
+    margin-right: -44%;margin-top: 1%;"><b><span style="margin:right" > HSN,UQC,IGST combination not present in master, click </span><img title="Add to Master" style="width: 2%;height: 3%;" 
+     src="../../../../images/addbtn.jpg"> to add</a></b></div> -->
+</div>
+<div ng-if="sectionList">
+    <form class="form-inline" name="dashboard" novalidate="">
+        <div class="tabpane padBt0 summaryForm" data-ng-init="sectiondisable()">
+            <div class="form-group">
+                <label for="fin" class="reg m-cir">Select Section</label>
+                <select name="mon" class="form-control summaryDrp" data-ng-model="sectionListSelected" data-ng-options="item.nm disable when item.disabled for item in sectionList" ng-required="true" data-ng-change="onSectionChange(sectionListSelected)"></select>
+            </div>
+            <div class="form-group input-group" ng-hide="sectionListSelected.cd=='nil' || sectionListSelected.cd=='impg' || sectionListSelected.cd=='impgsez'">
+                <div class="input-group-addon"><i class="fa fa-search"></i></div>
+                <input type="text" class="form-control summaryDrp summaryFilterInput" placeholder="Search Invoices" data-ng-model="search_filter_value.val" ng-change="filterChanged()" ng-model-options="{ debounce: 500 }">
+            </div>
+<!--
+            <div class="form-group">
+                <input type="button" class="btn btn-primary mA0" value="Import Files" data-ng-click="page('gstr/invoices/import')" />
+            </div>
+-->
+              <p class="mand-text req-field">indicates required fields</p>
+        </div>
+        
+    </form>
+    <div class="tabpane" ng-if="!templateLoaded">
+      <alert-message title="{{sectionListSelected.nm}}" type="info" message="{{trans.LBL_NOT_AVL}}"></alert-message>
+       
+    </div>
+    <div ng-include="sectionListSelected.url" onload="finishLoading()"></div>
+    <div class="text-right next-tab-nav">
+        <p class="pull-left" data-ng-if="dashBoardDt.form=='GSTR1' && (dashBoardDt.tbl_cd=='b2b' || dashBoardDt.tbl_cd=='b2cl'|| dashBoardDt.tbl_cd=='b2cs' || dashBoardDt.tbl_cd=='b2ba' || dashBoardDt.tbl_cd=='b2cla'|| dashBoardDt.tbl_cd=='b2csa')"> <b >Note:</b> Please do not mention the E Commerce Tin  while declaring your outward supplies in the worksheets b2b,sez,de,  b2cl, b2cs, b2ba, b2cla, b2csa as the related provisions are  not yet notified.</p>
+ 
+        <button type="button" class="btn btn-default" data-ng-click="goToBackPage()">Back</button>
+    </div>
+<!--
+    <div class="text-right next-tab-nav">
+        <button type="button" class="btn btn-primary" data-ng-click="deleteReturn()">Delete Return</button>
+        <button type="button" class="btn btn-primary" data-ng-click="page('/gstr/preview')">View Summary</button>
+    </div>
+-->
+
+</div>
+
+<div ng-if="!sectionList">
+    <br> 
+  <!-- <alert-message title="{{info.form}}" type="info" message="{{trans.LBL_NOT_AVL}}"></alert-message>-->
+     <alert-message type="info" message="{{trans.LBL_NOT_LOAD}}"></alert-message>
+</div>
+<br/>

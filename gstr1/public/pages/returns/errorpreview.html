@@ -1,0 +1,78 @@
+<br>
+<div>
+    <div class="tabpane">
+        <div class="row">
+            <div class="col-sm-12">
+                <h4 class="m0">Summary </h4>
+                <!--                <hr>-->
+            </div>
+        </div>
+        <div class="row">
+            <!--
+            <div class="col-sm-3 col-xs-12">
+                <label for="fin" class="reg">Section : <span class="capz">{{dashBoardDt.tbl_cd}}</span></label>
+            </div>
+-->
+
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="table-responsive">
+                    <table class="table tbl inv table-bordered" ng-show="previewModel.length">
+                        <thead>
+                            <tr>
+                                <th class="text-center" data-ng-if="!isGstr2Prvw()">Section Name</th>
+                                <th class="text-center" data-ng-if="!isGstr2Prvw()">No. of Invoices </th>
+                                <th class="text-center" data-ng-bind="trans.LBL_TOTAL_CGST" data-ng-if="!isGstr2Prvw()"></th>
+                                <th class="text-center" data-ng-bind="trans.LBL_TOTAL_SGST" data-ng-if="!isGstr2Prvw()"></th>
+                                <th class="text-center" data-ng-bind="trans.LBL_TOTAL_IGST" data-ng-if="!isGstr2Prvw()"></th>
+                                <th class="text-center" data-ng-bind="trans.LBL_TOTAL_CESS" data-ng-if="!isGstr2Prvw()"></th>
+                                <th class="text-center" rowspan="2" data-ng-if="isGstr2Prvw()">Section Name</th>
+                                <th class="text-center" rowspan="2" data-ng-if="isGstr2Prvw()">No. of Invoices </th>
+                                <th class="text-center " data-ng-bind="trans.LBL_TOTAL_CGST" rowspan="2" data-ng-if="isGstr2Prvw()"></th>
+                                <th class="text-center " data-ng-bind="trans.LBL_TOTAL_SGST" rowspan="2" data-ng-if="isGstr2Prvw()"></th>
+                                <th class="text-center " data-ng-bind="trans.LBL_TOTAL_IGST" rowspan="2" data-ng-if="isGstr2Prvw()"></th>
+                                <th class="text-center " data-ng-bind="trans.LBL_TOTAL_CESS" rowspan="2" data-ng-if="isGstr2Prvw()"></th>
+                                <th class="text-center " data-ng-bind="trans.LBL_TOTAL_IGST_AVAILABLE_ITC" colspan="4" data-ng-if="isGstr2Prvw()"></th>
+                            </tr>
+                            <tr data-ng-if="isGstr2Prvw()">
+                                <th class="text-center m80TblHdr" data-ng-bind="trans.LBL_TOTAL_CGST"></th>
+                                <th class="text-center m80TblHdr" data-ng-bind="trans.LBL_TOTAL_SGST"></th>
+                                <th class="text-center m80TblHdr" data-ng-bind="trans.LBL_TOTAL_IGST"></th>
+                                <th class="text-center m80TblHdr" data-ng-bind="trans.LBL_TOTAL_CESS"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="t in previewModel">
+                                <td class="text-left">
+                                    <a data-ng-click="openSection(t.cd)">{{t.name}}</a>
+                                </td>
+                                <td class="text-center">{{t.count}}</td>
+                                <td class="text-center">{{t.result.cgTl| number:2}}</td>
+                                <td class="text-center">{{t.result.sgTl| number:2}}</td>
+                                <td class="text-center">{{t.result.igTl| number:2}}</td>
+                                <td class="text-center">{{t.result.csTl| number:2}}</td>
+                                <td class="text-center" data-ng-if="isGstr2Prvw()">{{t.result.itc_cgTl|INR}}</td>
+                                <td class="text-center" data-ng-if="isGstr2Prvw()">{{t.result.itc_sgTl|INR}}</td>
+                                <td class="text-center" data-ng-if="isGstr2Prvw()">{{t.result.itc_igTl|INR}}</td>
+                                <td class="text-center" data-ng-if="isGstr2Prvw()">{{t.result.itc_csTl|INR}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <a ng-hide="previewModel.length">No records</a>
+                </div>
+            </div>
+        </div>
+        <div class="btn-toolbar">
+
+            <button type="button" class="btn btn-default pull-right btn-primary" data-ng-disabled="!previewModel.length" ng-click="generateCorrectedErrorJson()"
+                data-toggle="tooltip" title="Create JSON File to Upload in GST Portal" data-placement="top" data-toggle="tooltip"
+                title="Generate Json">Generate File</button>
+            <!--<button type="button" class="btn btn-default pull-right btn-primary" ng-click="generateExcel()" data-ng-disabled="!previewModel.length"
+                data-toggle="tooltip" title="Export To Excel">Export To Excel</button>-->
+            <button type="button" class="btn btn-default pull-right " ng-click="goToSumryPage()">Back</button>
+
+
+        </div>
+    </div>
+</div>

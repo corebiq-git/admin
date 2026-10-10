@@ -1,0 +1,52 @@
+<br>
+      <div>
+    <div class="tabpane">
+        <div class="row">
+            <div class="col-sm-12">
+                <h4 class="m0">Summary </h4>
+<!--                <hr>-->
+            </div>
+        </div>
+        <div class="row">
+            <!--
+            <div class="col-sm-3 col-xs-12">
+                <label for="fin" class="reg">Section : <span class="capz">{{dashBoardDt.tbl_cd}}</span></label>
+            </div>
+-->
+
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="table-responsive">
+                    <table class="table tbl inv table-bordered" ng-show="previewModel">
+                        <thead>
+                            <tr>
+                                <th class="text-center" >Reason</th>
+                                <th class="text-center" >No. Of Invoices </th>
+                                <th class="text-center">Total Value(₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="t in previewModel">
+                                <td class="text-center">{{t.result.rsn}}
+                                    <!-- <a data-ng-click="openSection(t.cd)">{{t.result.rsn}}</a> -->
+                                </td>
+                                <td class="text-center">{{t.count}}</td>
+                                <td class="text-center" >{{t.result.iTl|INR}}</td>
+</tr>
+                        </tbody>
+                    </table>
+                    <a ng-hide="previewModel" data-ng-click="page('gstr/invoices/import')">No records</a>
+                </div>
+            </div>
+        </div>
+        <div class="btn-toolbar">
+
+           <button type="button" class="btn btn-default pull-right btn-primary" data-ng-disabled="!previewModel" ng-click="generateRefund()"
+                data-toggle="tooltip" title="Create JSON File to Upload in GST Portal" data-placement="top">Generate File</button>
+            <button type="button" class="btn btn-default pull-right " data-ng-click="page('/refunds/summary')">Back</button>
+
+
+        </div>
+    </div>
+</div>

@@ -3,9 +3,11 @@ services:
     name: corebiq-gstr1-tool
     runtime: node
     plan: starter
+    rootDir: gstr1
+    autoDeployTrigger: commit
     buildCommand: npm ci
     startCommand: npm start
-    healthCheckPath: /health
+    healthCheckPath: /gstr1/health
     disk:
       name: corebiq-gstr1-data
       mountPath: /var/data/corebiq
@@ -17,6 +19,8 @@ services:
         value: "true"
       - key: DATA_ROOT
         value: /var/data/corebiq
+      - key: BASE_PATH
+        value: /gstr1
       - key: FIREBASE_PROJECT_ID
         value: hexa-5d208
       - key: FIREBASE_SERVICE_ACCOUNT_JSON

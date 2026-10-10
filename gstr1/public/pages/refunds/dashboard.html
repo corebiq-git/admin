@@ -1,0 +1,91 @@
+<br>
+<form name="dashboard" novalidate="" data-ng-submit="refundsStatement()" ng-init="forlabel(formNum)">
+    <div class="tabpane">
+        <div class="row">
+            <div class="col-sm-12">
+                <h4>Statement of Refunds</h4>
+                <hr>
+            </div>
+        </div>
+        <!-- <p class="mand-text">Indicates Mandatory Fields</p> -->
+        <!-- <div class="rettbl-format"> -->
+        <div class="row">
+            <div class="col-sm-4 col-xs-12">
+                <label for="formNum" class="reg m-cir">GST Statement of Refunds</label>
+                <select class="form-control" ng-options="option.cd as option.nm for option in StmtForms" ng-model="formNum" ng-change="forlabel(formNum);changeReasonByStmt(formNum);" ng-disabled="true"></select>
+            </div>
+            <div class="col-sm-4 col-xs-12">
+                <label for="formNum" class="reg m-cir">Reason</label>
+                <select class="form-control" ng-options="option.id as option.name for option in StmtRsnList" ng-model="rfdRsn" ng-disabled="true"></select>
+            </div>
+            <div class="col-sm-4 col-xs-12" data-ng-class="{'has-error': dashboard.$submitted && !validGstin,'has-success': dashboard.$submitted && validGstin }">
+                <label for="gstinNum" class="reg m-cir">{{nameAsPerFormSelected}}</label>
+                <input type="text" name="gstinNum" data-ng-model="gstinNum" class="form-control" ng-keyup="onGstinChange()" maxlength="{{::validations.maxlength.gstin}}" />
+                <span class="err" data-ng-show="dashboard.$submitted && !gstinNum" data-ng-bind="trans.ERR_MANDATORY"></span>
+                <span class="err" data-ng-show="dashboard.$submitted && gstinNum && !validGstin" data-ng-bind="trans.ERR_INV_GSTN"></span>
+            </div>
+        </div>
+
+        <!-- <div class="row">
+                <div class="col-sm-3 col-xs-12">
+                    <label for="fin" class="reg m-cir">Financial Year</label>
+                    <select name="fin" class="form-control" data-ng-options="item.year for item in dropdown " data-ng-model="yearSelected" data-ng-change="onYearChage()" required>
+                        </select>
+                </div>
+                <div class="col-sm-3 col-xs-12">
+                    <label for="mon" class="reg m-cir">Month</label>
+                    <select name="mon" class="form-control" data-ng-model="monthSelected" data-ng-options="item.month for item in yearSelected.months" required>
+                        </select>
+                </div>
+            </div> -->
+
+        <div class="row" style="margin-top: 5px;">
+            <div class="col-xs-12">
+                <h4>Tax Period</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-xs-6">
+                <h4 data-ng-if="tohide">From:</h4>
+                <div class="row">
+                    <div class="col-sm-6 col-xs-12">
+                        <label for="fin" class="reg m-cir">Financial Year</label>
+                        <select name="fin" class="form-control" data-ng-options="item.year for item in dropdown " data-ng-model="yearSelected" data-ng-change="onYearChage()" required>
+                        </select>
+                    </div>
+                    <div class="col-sm-6 col-xs-12">
+                        <label for="mon" class="reg m-cir">Month</label>
+                        <select name="mon" class="form-control" data-ng-model="monthSelected" data-ng-options="item.month for item in yearSelected.months" required>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xs-6" data-ng-if="tohide">
+                <h4>To:</h4>
+                <div class="row">
+                    <div class="col-sm-6 col-xs-12">
+                        <label for="tfin" class="reg m-cir" data-ng-bind="trans.LBL_FIN_YR"></label>
+                        <select name="tfin" class="form-control" data-ng-model="tfinyr" data-ng-options="item2.year for item2 in tyears" value="item2.year" data-ng-change="tohidedata(tfinyr)" required>
+					      	</select>
+                        <span class="err" data-ng-show="dashboard.$submitted && dashboard.tfin.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                    </div>
+                    <div class="col-sm-6 col-xs-12">
+                        <label for="tmon" class="reg m-cir" data-ng-bind="trans.LBL_MON"></label>
+                        <select name="tmon" class="form-control" data-ng-model="treqmonth" data-ng-options="item2.month for item2 in treqmonths" value="item2.value" required data-ng-change="returnPrd(tfinyr, treqmonth, 'to')">
+					      	</select>
+                        <span class="err" data-ng-show="dashboard.$submitted && dashboard.tmon.$error.required" data-ng-bind="trans.ERR_MANDATORY"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12 col-xs-12 text-right next-tab-nav">
+                <button type="button" class="btn btn-default" data-ng-bind="trans.LBL_BACK" data-ng-click="page('/gst/home')">Back</button>
+                <button type="submit" class="btn btn-primary accpt" data-ng-bind="trans.BTN_PROCEED">Proceed</button>
+            </div>
+        </div>
+        <!-- </div> -->
+    </div>
+    </div>
+</form>

@@ -1,0 +1,99 @@
+<br>
+<div>
+    <div class="tabpane">
+        <div class="row">
+            <div class="col-sm-12">
+                <h4 class="m0">Summary</h4>
+                <!--                <hr>-->
+            </div>
+        </div>
+        <div class="row">
+            <!--
+            <div class="col-sm-3 col-xs-12">
+                <label for="fin" class="reg">Section : <span class="capz">{{dashBoardDt.tbl_cd}}</span></label>
+            </div>
+-->
+
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="table-responsive">
+                    <table class="table tbl inv table-bordered" ng-show="previewSection.length">
+
+                        <thead>
+                            <tr>
+                                <th class="text-center" data-ng-if="!isGstr2Prvw() && !isGSTR2A()">Section Name</th>
+                                <th class="text-center" data-ng-if="!isGstr2Prvw() && !isGSTR2A()">No. of Invoices </th>
+                                <th class="text-center" data-ng-bind="trans.LBL_TOTAL_IGST" data-ng-if="!isGstr2Prvw() && !isGSTR2A()"></th>
+                                <th class="text-center" data-ng-bind="trans.LBL_TOTAL_CGST" data-ng-if="!isGstr2Prvw() && !isGSTR2A()"></th>
+                                <th class="text-center" data-ng-bind="trans.LBL_TOTAL_SGST" data-ng-if="!isGstr2Prvw() && !isGSTR2A()"></th>
+                                <th class="text-center" data-ng-bind="trans.LBL_TOTAL_CESS" data-ng-if="!isGstr2Prvw() && !isGSTR2A()"></th>
+                                <th class="text-center" data-ng-if="isGSTR2A()">Type of record</th>
+                                <th class="text-center" data-ng-if="isGSTR2A()">No. of records</th>
+                                <th data-ng-bind="trans.LBL_IGST_RUP" style="text-align: right !important;" data-ng-if="isGSTR2A()"></th>
+                                <th data-ng-bind="trans.LBL_CGST_RUP" style="text-align: right !important;" data-ng-if="isGSTR2A()"></th>
+                                <th data-ng-bind="trans.LBL_SGST_RUP" style="text-align: right !important;" data-ng-if="isGSTR2A()"></th>
+                                <th data-ng-bind="trans.LBL_CESS_RUP" style="text-align: right !important;" data-ng-if="isGSTR2A()"></th>
+                                <th class="text-center" rowspan="2" data-ng-if="isGstr2Prvw()">Section Name</th>
+                                <th class="text-center" rowspan="2" data-ng-if="isGstr2Prvw()">No. of Invoices </th>
+                                
+                                <th class="text-center" data-ng-bind="trans.LBL_TOTAL_IGST" rowspan="2" data-ng-if="isGstr2Prvw()"></th>
+                                <th class="text-center" data-ng-bind="trans.LBL_TOTAL_CGST" rowspan="2" data-ng-if="isGstr2Prvw()"></th>
+                                <th class="text-center" data-ng-bind="trans.LBL_TOTAL_SGST" rowspan="2" data-ng-if="isGstr2Prvw()"></th>
+                                <th class="text-center" data-ng-bind="trans.LBL_TOTAL_CESS" rowspan="2" data-ng-if="isGstr2Prvw()"></th>
+                                <!--<th class="text-center " data-ng-bind="trans.LBL_TOTAL_IGST_AVAILABLE_ITC" colspan="4" data-ng-if="isGstr2Prvw()"></th>-->
+                                <th class="text-center " colspan="4" data-ng-if="isGstr2Prvw()">Total Tax availed as ITC </th>
+
+                            </tr>
+                            <tr data-ng-if="isGstr2Prvw()">
+                                
+                                <th class="text-center m80TblHdr" data-ng-bind="trans.LBL_TOTAL_IGST"></th>
+                                <th class="text-center m80TblHdr" data-ng-bind="trans.LBL_TOTAL_CGST"></th>
+                                <th class="text-center m80TblHdr" data-ng-bind="trans.LBL_TOTAL_SGST"></th>
+                                <th class="text-center m80TblHdr" data-ng-bind="trans.LBL_TOTAL_CESS"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="t in previewSection">
+                                <td class="text-left">
+                                    <a data-ng-click="openSection(t.cd)">{{t.name}}</a>
+                                </td>
+                                <td class="text-center">{{t.count}}</td>
+                                <td class="text-center" data-ng-if="!isGstr2Prvw() && !isGSTR2A()">{{t.result.igTl| number:2}}</td>
+                                <td class="text-center" data-ng-if="!isGstr2Prvw() && !isGSTR2A()">{{t.result.cgTl| number:2}}</td>
+                                <td class="text-center" data-ng-if="!isGstr2Prvw() && !isGSTR2A()">{{t.result.sgTl| number:2}}</td>
+                                <td class="text-center" data-ng-if="!isGstr2Prvw() && !isGSTR2A()">{{t.result.csTl| number:2}}</td>
+                                <td class="text-right" data-ng-if="isGSTR2A()">{{t.result.igTl| number:2}}</td>
+                                <td class="text-right" data-ng-if="isGSTR2A()">{{t.result.cgTl| number:2}}</td>
+                                <td class="text-right" data-ng-if="isGSTR2A()">{{t.result.sgTl| number:2}}</td>
+                                <td class="text-right" data-ng-if="isGSTR2A()">{{t.result.csTl| number:2}}</td>
+                                <td class="text-center" data-ng-if="isGstr2Prvw()">{{t.result.itc_igTl| number:2}}</td>
+                                <td class="text-center" data-ng-if="isGstr2Prvw()">{{t.result.itc_cgTl| number:2}}</td>
+                                <td class="text-center" data-ng-if="isGstr2Prvw()">{{t.result.itc_sgTl| number:2}}</td>
+                                <td class="text-center" data-ng-if="isGstr2Prvw()">{{t.result.itc_csTl| number:2}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <a ng-show="!previewSection.length">No records</a>
+                </div>
+            </div>
+        </div>
+        <div class="btn-toolbar">
+
+            <button type="button" class="btn btn-default pull-right btn-primary" ng-click="generateFile()" data-ng-if="!isGSTR2A()"
+                data-toggle="tooltip" title="Generate Json">Generate File</button>
+           
+             <!--<button type="button" class="btn btn-default pull-right btn-primary" ng-click="generateExcel()" data-ng-if="isGSTR2() || isGSTR1()" data-ng-disabled="!previewSection.length"
+                data-toggle="tooltip" title="Export To Excel">Export To Excel</button>-->
+
+            <button type="button" class="btn btn-default pull-right " ng-click="goToSummaryPageUpload()">Back</button>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    .textRight{
+        text-align: right !important;
+    }
+</style>
