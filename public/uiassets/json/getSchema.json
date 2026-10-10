@@ -1,0 +1,129 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"type": "object",
+	"additionalProperties": false,
+	"properties": {
+		"userGstin": {
+			"description": "User GSTIN",
+			"$ref": "#/definitions/gstin",
+			"type": "string"
+		},
+		"productsMasters": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"additionalProperties": false,
+				"properties": {
+					"productName": {
+						"description": "Product Name given by user",
+						"type": "string",
+						"maxLength": 99,
+						"minLength": 1
+					},
+					"hsn": {
+						"description": "HSN code",
+						"$ref": "#/definitions/hsn",
+						"type": "string"
+					},
+					"productDescription": {
+						"description": "HSN description as of HSN book",
+						"type": "string"
+					},
+					"igst": {
+						"description": "Integrated Tax (₹)",
+						"type": "number",
+						"multipleOf": 0.001
+					},
+					"cgst": {
+						"description": "Central Tax (₹)",
+						"type": "number",
+						"multipleOf": 0.001
+					},
+					"sgst": {
+						"description": "State/UT Tax (₹)",
+						"type": "number",
+						"multipleOf": 0.001
+					},
+					"uqc": {
+						"description": "Unit of the product",
+						"type": "string"
+					}
+				},
+				"required": [
+					"productName",
+					"hsn",
+					"productDescription",
+					"igst",
+					"cgst",
+					"sgst"
+				]
+			}
+		},
+		"supplierRecipientMasters": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"additionalProperties": false,
+				"properties": {
+					"gstin": {
+						"description": "GSTIN",
+						"$ref": "#/definitions/gstin",
+						"type": "string"
+					},
+					"supplierRecipientName": {
+						"description": "Vendor Name given by the user",
+						"type": "string",
+						"maxLength": 99,
+						"minLength": 1
+					},
+					"legalName": {
+						"description": "Legal Name of the gstin user",
+						"type": "string"
+					},
+					"tradeName": {
+						"description": "Trade Name of the gstin user",
+						"type": "string"
+					},
+					"supplierRecipientFlag": {
+						"description": "Flag to denote how the added gstin is related to the user ",
+						"type": "string",
+						"maxLength": 2,
+						"minLength": 1
+
+					},
+					"registrationStatus": {
+						"description": "Registration status of the added gstin ",
+						"type": "string"
+
+					},
+					"taxpayerType": {
+						"description": "Taxpayer type of the added gstin ",
+						"type": "string"
+					}
+				},
+				"required": [
+					"gstin",
+					"supplierRecipientName",
+					"supplierRecipientFlag"
+				]
+			}
+		}
+	},
+	"required": [
+		"userGstin"
+	],
+	"definitions": {
+		"gstin": {
+			"type": "string",
+			"maxLength": 15,
+			"minLength": 15
+		},
+		"hsn": {
+			"description": "HSN of Goods or Services as per Invoice line items",
+			"type": "string",
+			"pattern": "^[0-9]{2,8}$",
+			"minLength": 4,
+			"maxLength": 8
+		}
+	}
+}
