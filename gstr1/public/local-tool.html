@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#102b5c">
+  <meta name="description" content="Prepare and save GSTR-1 B2B invoices on this device.">
+  <title>COREBIQ GSTR-1 Local Tool</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="uiassets/css/local-tool.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">COREBIQ <span>GSTR-1</span></div>
+    <span class="device-label">Local device tool</span>
+  </header>
+  <main class="page">
+    <section class="privacy-note" aria-label="Privacy information">
+      <strong>Your return data stays on this device.</strong>
+      <span>This tool saves data in this browser only. It does not send return data to a server or cloud. Data is not shared with your other devices. Export a JSON backup and keep it safe; clearing browser data can erase local returns.</span>
+    </section>
+    <section class="card">
+      <h1>GSTR-1 B2B invoices</h1>
+      <p class="intro">Create a local return, add registered-recipient invoices, and export a GSTR-1 JSON file. This first local version covers B2B invoice entry and JSON export; other return sections and imports are not included.</p>
+      <form id="return-form">
+        <div class="form-grid">
+          <label>Supplier GSTIN
+            <input id="gstin" name="gstin" type="text" maxlength="15" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+          </label>
+          <label>Return period (MMYYYY)
+            <input id="period" name="period" type="text" inputmode="numeric" maxlength="6" placeholder="042026" required>
+          </label>
+          <div class="actions align-end">
+            <button id="open-return" class="button secondary" type="submit">Open / create local return</button>
+          </div>
+        </div>
+      </form>
+      <p id="return-status" class="status" role="status" aria-live="polite">Opening local storage…</p>
+    </section>
+
+    <section id="workspace" class="card" hidden>
+      <div class="section-heading">
+        <div>
+          <h2>Add a B2B invoice</h2>
+          <p id="return-label" class="muted"></p>
+        </div>
+      </div>
+      <form id="invoice-form">
+        <div class="form-grid">
+          <label>Recipient GSTIN
+            <input id="recipient" type="text" maxlength="15" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+          </label>
+          <label>Invoice number
+            <input id="invoice-number" type="text" maxlength="16" autocomplete="off" required>
+          </label>
+          <label>Invoice date
+            <input id="invoice-date" type="date" required>
+          </label>
+          <label>Place of supply (state code)
+            <input id="place-of-supply" type="text" inputmode="numeric" maxlength="2" placeholder="29" required>
+          </label>
+          <label>HSN / SAC
+            <input id="hsn" type="text" inputmode="numeric" maxlength="8" required>
+          </label>
+          <label>Taxable value (INR)
+            <input id="taxable-value" type="number" min="0.01" step="0.01" inputmode="decimal" required>
+          </label>
+          <label>GST rate
+            <select id="tax-rate">
+              <option value="0">0%</option>
+              <option value="5">5%</option>
+              <option value="12">12%</option>
+              <option value="18" selected>18%</option>
+              <option value="28">28%</option>
+              <option value="40">40%</option>
+            </select>
+          </label>
+          <label>Invoice type
+            <select id="invoice-type">
+              <option value="R">Regular</option>
+              <option value="DE">Deemed Exports</option>
+              <option value="SEWP">SEZ supplies with payment</option>
+              <option value="SEWOP">SEZ supplies without payment</option>
+              <option value="CBW">Intra-state supplies attracting IGST</option>
+            </select>
+          </label>
+          <label>Reverse charge
+            <select id="reverse-charge">
+              <option value="N">No</option>
+              <option value="Y">Yes</option>
+            </select>
+          </label>
+        </div>
+        <div class="actions">
+          <button class="button primary" type="submit">Save invoice on this device</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="invoice-section" class="card" hidden>
+      <div class="section-heading">
+        <div>
+          <h2>Saved invoices</h2>
+          <p id="invoice-count" class="muted"></p>
+        </div>
+        <button id="export-json" class="button primary" type="button">Export GSTR-1 JSON</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Invoice</th><th>Date</th><th>Recipient GSTIN</th><th>Taxable (INR)</th><th>Tax (INR)</th><th></th></tr>
+          </thead>
+          <tbody id="invoice-list"></tbody>
+        </table>
+      </div>
+      <div class="actions">
+        <button id="delete-return" class="button danger" type="button">Delete this local return</button>
+      </div>
+    </section>
+    <p id="app-error" class="error" role="alert" hidden></p>
+  </main>
+  <script src="uiassets/js/local-tool-model.js"></script>
+  <script src="uiassets/js/local-tool.js"></script>
+</body>
+</html>

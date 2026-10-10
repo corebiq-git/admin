@@ -7,7 +7,8 @@
     "node": ">=22"
   },
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "test": "node --test tests/*.test.js"
   },
   "dependencies": {
     "adm-zip": "^0.6.1",
@@ -24,7 +25,6 @@
     "jade": "^0.29.0",
     "json-size": "^1.0.0",
     "jsonschema": "^1.2.6",
-    "utf8-length": "^0.0.1",
     "logger": "^0.0.1",
     "mkdirp": "^0.5.1",
     "moment": "^2.18.1",
@@ -36,9 +36,9 @@
     "omit-empty": "^0.4.1",
     "path": "^0.12.7",
     "underscore": "^1.8.3",
+    "utf8-length": "^0.0.1",
     "winston": "^2.3.1",
-    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
-    "firebase-admin": "^14.5.0"
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "overrides": {
     "excel4node": {

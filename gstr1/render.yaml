@@ -8,20 +8,8 @@ services:
     buildCommand: npm ci
     startCommand: npm start
     healthCheckPath: /gstr1/health
-    disk:
-      name: corebiq-gstr1-data
-      mountPath: /var/data/corebiq
-      sizeGB: 1
     envVars:
       - key: NODE_ENV
         value: production
-      - key: REQUIRE_FIREBASE_AUTH
-        value: "true"
-      - key: DATA_ROOT
-        value: /var/data/corebiq
       - key: BASE_PATH
         value: /gstr1
-      - key: FIREBASE_PROJECT_ID
-        value: hexa-5d208
-      - key: FIREBASE_SERVICE_ACCOUNT_JSON
-        sync: false

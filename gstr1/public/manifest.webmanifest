@@ -1,0 +1,18 @@
+{
+  "name": "COREBIQ GSTR-1 Local Tool",
+  "short_name": "GSTR-1",
+  "description": "Prepare GSTR-1 B2B invoices with device-local storage.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f2f5f9",
+  "theme_color": "#102b5c",
+  "icons": [
+    {
+      "src": "images/gstr1-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

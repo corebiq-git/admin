@@ -1,40 +1,19 @@
-# COREBIQ GSTR1 TOOL deployment
+# COREBIQ GSTR-1 local web app
 
-The existing GSTR return processing remains on the Node server. GitHub Pages cannot run this backend; connect the GitHub repository to Render (or another Node host with persistent disk support) to deploy it.
-Use Node.js 22 or later.
+The first online version is a browser-local GSTR-1 B2B invoice tool. It saves returns in IndexedDB in the current browser on the current device, exports a GSTR-1 JSON file, and can be installed as a mobile web app when served over HTTPS. It does not use Firebase, Firestore, or server-side return storage. Other return sections, imports, and the legacy API workflows are not included in this first version.
 
-## Firebase setup
+## Deploy
 
-1. The Firebase Web app config for project `hexa-5d208` is already connected in `public/firebase-config.js`.
-2. In the Firebase console for `hexa-5d208`, enable **Authentication → Sign-in method → Email/Password**.
-3. Create a Firebase service account and store its JSON securely as the Render environment variable `FIREBASE_SERVICE_ACCOUNT_JSON`. Never commit that JSON file. The Blueprint sets `FIREBASE_PROJECT_ID` to `hexa-5d208`.
-4. The Firebase web config and API key are public identifiers, not server credentials. Restrict the API key to the deployed website's HTTP referrers and required Firebase APIs in Google Cloud Console.
+The Express app serves the tool and its static assets. Use Node.js 22 or later. On Render, create a Blueprint from the repository and set the Blueprint file path to `gstr1/render.yaml`. The Blueprint root directory is `gstr1`. No Firebase service account or persistent server disk is required.
 
-## Deploy from GitHub
+The public URL `https://admin.corebiq.com/gstr1/` must be routed by the `admin.corebiq.com` website host or reverse proxy to this Node service, preserving the `/gstr1` path prefix. A GitHub push alone does not configure that routing. If the URL still shows the CM Filings 404 page, ask the domain/site administrator to configure the route; this cannot be fixed from the app repository.
 
-1. Install Git for Windows if `git --version` is not recognized, then open a new terminal.
-2. Create an empty GitHub repository and, from this project folder, run:
+## Local data and privacy
 
-   ```powershell
-   git init
-   git branch -M main
-   git add -A
-   git status --short
-   ```
+- Return data is written to the browser's IndexedDB and is not sent to the app server.
+- Data is isolated to each browser/device and does not sync between devices.
+- Browser storage may be deleted by browser settings or device cleanup. Export JSON backups and store them securely.
+- Static app resources are downloaded from the app host. The service worker caches only the app shell/resources, not return data.
+- Server-side return API routes are disabled and return `410 Gone`.
 
-   Review the staged files before committing. Do not force-add ignored files: local taxpayer files, uploads/downloads, spreadsheets, logs, and secrets must stay out of Git. Then run:
-
-   ```powershell
-   git commit -m "Prepare COREBIQ GSTR1 web deployment"
-   git remote add origin https://github.com/YOUR-ACCOUNT/YOUR-REPOSITORY.git
-   git push -u origin main
-   ```
-
-3. In Render, create a Blueprint from that repository and set the Blueprint file path to `gstr1/render.yaml`. The Blueprint sets the service root to `gstr1`. With `autoDeployTrigger: commit`, later pushes to the linked branch trigger a deployment.
-4. Provide `FIREBASE_SERVICE_ACCOUNT_JSON` when Render requests the secret value.
-5. Configure the reverse proxy for `/gstr1/*` to forward to the Render service **with the `/gstr1` path preserved**. Do not strip the prefix. The Blueprint sets `BASE_PATH=/gstr1`; the Node app serves the page, assets, and API below that path.
-6. In Firebase Authentication's authorized domains, add `admin.corebiq.com`.
-
-The Render disk stores generated and working files below `/var/data/corebiq`, separated by Firebase user ID. Authenticated requests must carry a valid Firebase ID token. The Render health check is at `/health`; the public site health check through the proxy is `/gstr1/health`. Static application assets are served below `/gstr1` and do not expose taxpayer files.
-
-The old offline data under `public/userData` is not migrated automatically; it remains in place and is not served as public content. Export and import existing returns using the tool's supported workflows after signing in.
+The exported JSON contains B2B invoices only. Review and validate the return in the GST portal before filing.
