@@ -1,0 +1,25 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function canReadClientFiles(clientId) {
+      let client = firestore.get(/databases/(default)/documents/clients/$(clientId)).data;
+      return request.auth != null && (
+        (request.auth.token.keys().hasAny(['email']) &&
+          client.clientEmail is string &&
+          request.auth.token.email == client.clientEmail) ||
+        (request.auth.token.keys().hasAny(['phone_number']) &&
+          client.clientMobile is string &&
+          request.auth.token.phone_number == client.clientMobile)
+      );
+    }
+
+    match /clients/{clientId}/{filePath=**} {
+      allow read: if canReadClientFiles(clientId);
+      allow write: if false;
+    }
+
+    match /{filePath=**} {
+      allow read, write: if false;
+    }
+  }
+}
