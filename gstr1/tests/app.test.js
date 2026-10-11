@@ -18,7 +18,30 @@ test('serves the no-auth local app from index.html and blocks server writes', as
     assert.match(html, /COREBIQ GSTR-1/);
     assert.match(html, /download-template/);
     assert.match(html, /import-excel-file/);
+    assert.match(html, /href="corebiq\.css"/);
+    assert.match(html, /id="app-sidebar"/);
+    assert.match(html, /class="bottom-nav"/);
+    assert.match(html, /uiassets\/logo-favicon\.png/);
+    assert.match(html, /uiassets\/app-icon\.png/);
+    assert.match(html, /uiassets\/name-splash\.png/);
+    assert.match(html, /src="uiassets\/name\.png"/);
+    assert.match(html, /og:image" content="uiassets\/logo\.png"/);
     assert.doesNotMatch(html, /firebase-auth|sign-in/i);
+
+    var styles = await fetch(origin + '/corebiq.css');
+    assert.equal(styles.status, 200);
+    assert.match(await styles.text(), /\.sidebar/);
+
+    var brandAssets = ['logo.png', 'name.png', 'logo-favicon.png', 'app-icon.png', 'name-splash.png'];
+    for (var i = 0; i < brandAssets.length; i += 1) {
+        var asset = await fetch(origin + '/uiassets/' + brandAssets[i], { method: 'HEAD' });
+        assert.equal(asset.status, 200, brandAssets[i] + ' should be served');
+        assert.match(asset.headers.get('content-type'), /^image\/png/);
+    }
+
+    var manifest = await fetch(origin + '/manifest.webmanifest');
+    assert.equal(manifest.status, 200);
+    assert.equal((await manifest.json()).icons[0].src, 'uiassets/app-icon.png');
 
     var script = await fetch(origin + '/uiassets/js/local-tool-import.js');
     assert.equal(script.status, 200);

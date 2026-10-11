@@ -1,12 +1,17 @@
 'use strict';
 
-var CACHE_NAME = 'corebiq-gstr1-local-v3';
+var CACHE_NAME = 'corebiq-gstr1-local-v5';
 var CACHE_PREFIX = 'corebiq-gstr1-local-';
 var APP_ASSETS = [
     './',
     './index.html',
     './manifest.webmanifest',
-    './uiassets/css/local-tool.css',
+    './corebiq.css',
+    './uiassets/logo.png',
+    './uiassets/name.png',
+    './uiassets/logo-favicon.png',
+    './uiassets/app-icon.png',
+    './uiassets/name-splash.png',
     './uiassets/javascripts/fwk1/xlsx.full.min.js',
     './uiassets/js/local-tool-model.js',
     './uiassets/js/local-tool-import.js',

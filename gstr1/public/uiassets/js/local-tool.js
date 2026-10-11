@@ -394,6 +394,17 @@
     function selectSection(name) {
         activeSection = name;
         updatePasteSection(name);
+        var sectionTitles = {
+            b2b: 'B2B invoices',
+            b2cs: 'B2C small',
+            nil: 'Exempted supplies',
+            cdnur: 'Credit / debit notes',
+            ecom: 'E-commerce supplies',
+            eco: 'E-commerce operator',
+            doc: 'Documents issued',
+            hsn: 'HSN B2B'
+        };
+        document.getElementById('workspace-title').textContent = sectionTitles[name] || 'Return sections';
         document.querySelectorAll('.section-tab').forEach(function (button) {
             var selected = button.getAttribute('data-section') === name;
             button.classList.toggle('active', selected);
@@ -525,10 +536,34 @@
         });
     }
 
-    document.getElementById('section-tabs').addEventListener('click', function (event) {
+    document.addEventListener('click', function (event) {
         var button = event.target.closest('[data-section]');
-        if (button) selectSection(button.getAttribute('data-section'));
+        if (button) {
+            selectSection(button.getAttribute('data-section'));
+            closeMobileNavigation();
+        }
     });
+
+    var sidebar = document.getElementById('app-sidebar');
+    var sidebarOverlay = document.getElementById('sidebar-overlay');
+    var mobileMenu = document.getElementById('mobile-menu');
+
+    function closeMobileNavigation() {
+        sidebar.classList.remove('open');
+        sidebarOverlay.classList.remove('open');
+        mobileMenu.setAttribute('aria-expanded', 'false');
+    }
+
+    function toggleMobileNavigation() {
+        var open = !sidebar.classList.contains('open');
+        sidebar.classList.toggle('open', open);
+        sidebarOverlay.classList.toggle('open', open);
+        mobileMenu.setAttribute('aria-expanded', String(open));
+    }
+
+    mobileMenu.addEventListener('click', toggleMobileNavigation);
+    sidebarOverlay.addEventListener('click', closeMobileNavigation);
+    document.getElementById('mobile-more').addEventListener('click', toggleMobileNavigation);
 
     function importSectionForTab(name) {
         return name === 'hsn' ? 'hsn' : name;

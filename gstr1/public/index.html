@@ -3,24 +3,59 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#102b5c">
+  <meta name="theme-color" content="#f7f9fc">
   <meta name="description" content="Prepare and save selected GSTR-1 sections on this device.">
+  <meta property="og:image" content="uiassets/logo.png">
   <title>COREBIQ GSTR-1</title>
+  <link rel="icon" type="image/png" href="uiassets/logo-favicon.png">
+  <link rel="apple-touch-icon" href="uiassets/app-icon.png">
+  <link rel="apple-touch-startup-image" href="uiassets/name-splash.png">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="uiassets/css/local-tool.css">
+  <link rel="stylesheet" href="corebiq.css">
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">COREBIQ <span>GSTR-1</span></div>
-    <span class="device-label">Local device tool</span>
-  </header>
-  <main class="page">
-    <section class="privacy-note" aria-label="Privacy information">
+  <div class="app-shell">
+    <aside id="app-sidebar" class="sidebar" aria-label="GSTR-1 navigation">
+      <a class="brand" href="#return-setup" aria-label="COREBIQ GSTR-1 home">
+        <img class="brand-logo" src="uiassets/name.png" alt="COREBIQ">
+        <span class="brand-sub">GSTR-1 WORKSPACE</span>
+      </a>
+      <div class="nav-label">Return sections</div>
+      <nav id="section-tabs" class="sidebar-nav" aria-label="Enabled GSTR-1 sections">
+        <button type="button" class="nav-item section-tab active" data-section="b2b"><span class="nav-icon">B2B</span><span>B2B invoices</span></button>
+        <button type="button" class="nav-item section-tab" data-section="b2cs"><span class="nav-icon">2C</span><span>B2C small</span></button>
+        <button type="button" class="nav-item section-tab" data-section="nil"><span class="nav-icon">EX</span><span>Exempted</span></button>
+        <button type="button" class="nav-item section-tab" data-section="cdnur"><span class="nav-icon">CN</span><span>Credit / debit notes</span></button>
+        <button type="button" class="nav-item section-tab" data-section="ecom"><span class="nav-icon">EC</span><span>E-commerce supplies</span></button>
+        <button type="button" class="nav-item section-tab" data-section="eco"><span class="nav-icon">OP</span><span>E-commerce operator</span></button>
+        <button type="button" class="nav-item section-tab" data-section="doc"><span class="nav-icon">DOC</span><span>Documents</span></button>
+        <button type="button" class="nav-item section-tab" data-section="hsn"><span class="nav-icon">HSN</span><span>HSN B2B</span></button>
+      </nav>
+      <div class="sidebar-foot">
+        <span class="privacy-indicator" aria-hidden="true"></span>
+        <span><strong>Device-only storage</strong><small>Your data stays in this browser</small></span>
+      </div>
+    </aside>
+    <button id="sidebar-overlay" class="sidebar-overlay" type="button" aria-label="Close navigation"></button>
+    <div class="app-main">
+      <header class="topbar">
+        <button id="mobile-menu" class="mobile-menu icon-button" type="button" aria-label="Open navigation" aria-controls="app-sidebar" aria-expanded="false">☰</button>
+        <div class="topbar-title"><strong>GSTR-1</strong><span>Local return workspace</span></div>
+        <span class="local-badge"><span class="privacy-indicator" aria-hidden="true"></span>Saved on this device</span>
+      </header>
+      <main class="content">
+        <div class="module-container">
+    <section id="privacy-note" class="privacy-note" aria-label="Privacy information">
       <strong>Your return data stays on this device.</strong>
       <span>Return data and spreadsheet imports stay in this browser on this device. Nothing is sent to a server or cloud. Data is not shared with your other devices. Keep a secure backup; clearing browser data can erase local returns.</span>
     </section>
-    <section class="card">
-      <h1>GSTR-1 local return</h1>
+    <section id="return-setup" class="card setup-card">
+      <div class="page-header">
+        <div class="page-title">
+          <span class="page-title-icon" aria-hidden="true">01</span>
+          <div><h1>Set up your return</h1><p>Choose a supplier and filing period to get started.</p></div>
+        </div>
+      </div>
       <p class="intro">Enter only the enabled sections below. Return data stays in this browser on this device.</p>
       <form id="return-form">
         <div class="form-grid">
@@ -39,22 +74,10 @@
     </section>
 
     <section id="workspace" class="card" hidden>
-      <div class="section-heading">
-        <div>
-          <h2>Return sections</h2>
-          <p id="return-label" class="muted"></p>
-        </div>
+      <div class="workspace-toolbar">
+        <div><span class="eyebrow">ACTIVE RETURN</span><strong id="workspace-title">Return sections</strong></div>
+        <span id="return-label" class="return-chip muted"></span>
       </div>
-      <nav id="section-tabs" class="section-tabs" aria-label="Enabled GSTR-1 sections">
-        <button type="button" class="section-tab active" data-section="b2b">B2B</button>
-        <button type="button" class="section-tab" data-section="b2cs">B2C small</button>
-        <button type="button" class="section-tab" data-section="nil">Exempted</button>
-        <button type="button" class="section-tab" data-section="cdnur">Credit / debit note — unregistered</button>
-        <button type="button" class="section-tab" data-section="ecom">E-commerce</button>
-        <button type="button" class="section-tab" data-section="eco">E-commerce operator — section 14</button>
-        <button type="button" class="section-tab" data-section="doc">Documents</button>
-        <button type="button" class="section-tab" data-section="hsn">HSN B2B</button>
-      </nav>
       <section class="import-panel" aria-label="Excel import and copy paste">
         <div class="section-heading">
           <div>
@@ -188,7 +211,17 @@
       <div id="other-entry-summary" class="summary-grid"></div>
     </section>
     <p id="app-error" class="error" role="alert" hidden></p>
-  </main>
+        </div>
+      </main>
+      <nav class="bottom-nav" aria-label="Quick section navigation">
+        <button type="button" class="section-tab active" data-section="b2b"><span class="bottom-nav-icon">B2B</span><small>B2B</small></button>
+        <button type="button" class="section-tab" data-section="b2cs"><span class="bottom-nav-icon">2C</span><small>B2C</small></button>
+        <button type="button" class="section-tab" data-section="nil"><span class="bottom-nav-icon">EX</span><small>Exempt</small></button>
+        <button type="button" class="section-tab" data-section="hsn"><span class="bottom-nav-icon">HSN</span><small>HSN</small></button>
+        <button id="mobile-more" type="button"><span class="bottom-nav-icon">···</span><small>More</small></button>
+      </nav>
+    </div>
+  </div>
   <script src="uiassets/javascripts/fwk1/xlsx.full.min.js"></script>
   <script src="uiassets/js/local-tool-model.js"></script>
   <script src="uiassets/js/local-tool-import.js"></script>
