@@ -79,7 +79,9 @@
             throw new Error('An invoice must have at least one item.');
         }
         invoice.itms.forEach(function (item) {
-            validateHsn(item.itm_det && item.itm_det.hsn_sc);
+            if (item.itm_det && item.itm_det.hsn_sc) {
+                validateHsn(item.itm_det.hsn_sc);
+            }
         });
     }
 
@@ -101,6 +103,30 @@
             }
             return;
         }
+        if (section === 'eco') {
+            var supplier = entry.etin || '';
+            if (entry.nat_supp === 'clttx') {
+                if (!/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]C[0-9A-Z]$/.test(supplier)) {
+                    throw new Error('Enter a valid TCS e-commerce operator GSTIN.');
+                }
+            } else {
+                validateGstin(supplier, 'E-commerce operator GSTIN');
+            }
+            if (supplier === gstin) {
+                throw new Error('Enter a valid, different GSTIN for the e-commerce operator.');
+            }
+            if (!['clttx', 'paytx'].includes(entry.nat_supp)) {
+                throw new Error('Select whether the operator collects tax under section 52 or pays tax under section 9(5).');
+            }
+            if (!entry.cname || !Number.isFinite(Number(entry.suppval)) ||
+                    !Number.isFinite(Number(entry.igst)) || !Number.isFinite(Number(entry.cgst)) ||
+                    !Number.isFinite(Number(entry.sgst)) || !Number.isFinite(Number(entry.cess)) ||
+                    Number(entry.suppval) < 0 || Number(entry.igst) < 0 ||
+                    Number(entry.cgst) < 0 || Number(entry.sgst) < 0 || Number(entry.cess) < 0) {
+                throw new Error('Enter the operator name and non-negative supply and tax values.');
+            }
+            return;
+        }
         if (section === 'cdnur') {
             if (!['C', 'D'].includes(entry.ntty)) {
                 throw new Error('Select credit note or debit note.');
@@ -118,16 +144,21 @@
             return;
         }
         if (section === 'doc') {
-            var from = Number(entry.num_from);
-            var to = Number(entry.num_to);
+            var fromText = String(entry.num_from || '').trim();
+            var toText = String(entry.num_to || '').trim();
+            var from = Number(fromText);
+            var to = Number(toText);
             var total = Number(entry.total);
             var cancelled = Number(entry.cancel);
-            if (!entry.doc_typ || !Number.isInteger(from) ||
-                    !Number.isInteger(to) || from < 1 || to < from ||
+            if (!entry.doc_typ || !fromText || fromText.length > 16 ||
+                    !toText || toText.length > 16 ||
                     !Number.isInteger(total) || total < 1 ||
-                    !Number.isInteger(cancelled) || cancelled < 0 || cancelled > total ||
-                    to - from + 1 !== total) {
-                throw new Error('Enter a document type, serial range, total, and valid cancelled count. The range size must equal total documents.');
+                    !Number.isInteger(cancelled) || cancelled < 0 || cancelled > total) {
+                throw new Error('Enter a document type, serial range, total, and valid cancelled count.');
+            }
+            if (/^\d+$/.test(fromText) && /^\d+$/.test(toText) &&
+                    (from < 1 || to < from || to - from + 1 !== total)) {
+                throw new Error('For numeric document ranges, the range size must equal total documents.');
             }
             return;
         }
@@ -135,7 +166,12 @@
     }
 
     function entryTaxes(entry, gstin, interstate) {
-        return calculateTaxes(entry.txval, entry.rt, gstin.substring(0, 2), entry.pos, interstate);
+        var factor = Number(entry.diff_percent || 1);
+        var taxes = calculateTaxes(entry.txval, Number(entry.rt) * factor,
+            gstin.substring(0, 2), entry.pos, interstate);
+        taxes.rt = Number(entry.rt);
+        taxes.csamt = roundMoney(Number(entry.csamt || 0));
+        return taxes;
     }
 
     function summarizeHsn(invoices) {
@@ -143,6 +179,7 @@
         invoices.forEach(function (invoice) {
             invoice.itms.forEach(function (item) {
                 var detail = item.itm_det;
+                if (!detail.hsn_sc) return;
                 var key = [detail.hsn_sc, detail.rt, detail.uqc || 'OTH'].join('|');
                 if (!groups[key]) {
                     groups[key] = {
@@ -170,6 +207,38 @@
                 summary.camt = roundMoney(summary.camt + Number(detail.camt || 0));
                 summary.samt = roundMoney(summary.samt + Number(detail.samt || 0));
                 summary.csamt = roundMoney(summary.csamt + Number(detail.csamt || 0));
+            });
+        });
+        return Object.keys(groups).sort().map(function (key, index) {
+            groups[key].num = index + 1;
+            return groups[key];
+        });
+    }
+
+    function combineHsnSummaries(summaries) {
+        var groups = {};
+        summaries.forEach(function (entries) {
+            entries.forEach(function (entry) {
+                var key = [entry.hsn_sc, Number(entry.rt), entry.uqc || 'OTH'].join('|');
+                if (!groups[key]) {
+                    groups[key] = {
+                        hsn_sc: entry.hsn_sc,
+                        desc: entry.desc || '',
+                        uqc: entry.uqc || 'OTH',
+                        qty: 0,
+                        val: 0,
+                        txval: 0,
+                        rt: Number(entry.rt),
+                        iamt: 0,
+                        camt: 0,
+                        samt: 0,
+                        csamt: 0
+                    };
+                }
+                ['qty', 'val', 'txval', 'iamt', 'camt', 'samt', 'csamt'].forEach(function (field) {
+                    groups[key][field] = roundMoney(groups[key][field] + Number(entry[field] || 0));
+                });
+                if (!groups[key].desc && entry.desc) groups[key].desc = entry.desc;
             });
         });
         return Object.keys(groups).sort().map(function (key, index) {
@@ -224,7 +293,7 @@
             if (!byRecipient[invoice.ctin]) {
                 byRecipient[invoice.ctin] = { ctin: invoice.ctin, inv: [] };
             }
-            byRecipient[invoice.ctin].inv.push({
+            var returnInvoice = {
                 inum: invoice.inum,
                 idt: invoice.idt,
                 val: roundMoney(invoice.val),
@@ -232,7 +301,9 @@
                 rchrg: invoice.rchrg,
                 inv_typ: invoice.inv_typ,
                 itms: invoice.itms
-            });
+            };
+            if (invoice.etin) returnInvoice.etin = invoice.etin;
+            byRecipient[invoice.ctin].inv.push(returnInvoice);
         });
         payload.b2b = Object.keys(byRecipient).sort().map(function (key) {
             return byRecipient[key];
@@ -242,10 +313,15 @@
             validateSectionEntry('b2cs', entry, gstin);
             var taxes = entryTaxes(entry, gstin, false);
             var existing = payload.b2cs.find(function (row) {
-                return row.pos === entry.pos && row.rt === taxes.rt && row.typ === 'OE';
+                return row.pos === entry.pos && row.rt === taxes.rt && row.typ === (entry.typ || 'OE') &&
+                    row.diff_percent === Number(entry.diff_percent || 1);
             });
             if (!existing) {
-                existing = { pos: entry.pos, typ: 'OE', rt: taxes.rt, txval: 0, iamt: 0, camt: 0, samt: 0, csamt: 0 };
+                existing = { pos: entry.pos, typ: entry.typ || 'OE', rt: taxes.rt,
+                    txval: 0, iamt: 0, camt: 0, samt: 0, csamt: 0 };
+                if (Number(entry.diff_percent || 1) !== 1) {
+                    existing.diff_percent = Number(entry.diff_percent);
+                }
                 payload.b2cs.push(existing);
             }
             ['txval', 'iamt', 'camt', 'samt', 'csamt'].forEach(function (key) {
@@ -272,8 +348,9 @@
                 txval: taxes.txval,
                 rt: taxes.rt,
                 iamt: entry.typ === 'EXPWOP' ? 0 : taxes.iamt || taxes.camt + taxes.samt,
-                csamt: 0
+                csamt: taxes.csamt
             };
+            var diffPercent = Number(entry.diff_percent || 1);
             payload.cdnur.push({
                 ntty: entry.ntty,
                 nt_num: entry.nt_num,
@@ -281,7 +358,7 @@
                 val: roundMoney(noteTaxes.txval + noteTaxes.iamt + noteTaxes.csamt),
                 typ: entry.typ,
                 pos: entry.pos,
-                diff_percent: 1,
+                diff_percent: diffPercent,
                 diffval: true,
                 itms: [{ num: index + 1, itm_det: noteTaxes }]
             });
@@ -300,6 +377,19 @@
             }
             ['txval', 'iamt', 'camt', 'samt', 'csamt'].forEach(function (key) {
                 existing[key] = roundMoney(existing[key] + taxes[key]);
+            });
+        });
+
+        (sections.eco || []).forEach(function (entry) {
+            validateSectionEntry('eco', entry, gstin);
+            payload.supeco[entry.nat_supp].push({
+                etin: entry.etin,
+                cname: entry.cname,
+                suppval: roundMoney(Number(entry.suppval)),
+                igst: roundMoney(Number(entry.igst)),
+                cgst: roundMoney(Number(entry.cgst)),
+                sgst: roundMoney(Number(entry.sgst)),
+                cess: roundMoney(Number(entry.cess))
             });
         });
 
@@ -325,7 +415,18 @@
             });
         });
 
-        payload.hsn.hsn_b2b = summarizeHsn(invoices);
+        var importedHsn = data.hsnB2B && data.hsnB2B.length ?
+            data.hsnB2B.map(function (entry) {
+                validateHsn(entry.hsn_sc);
+                if (!Number.isFinite(Number(entry.qty)) || !Number.isFinite(Number(entry.txval)) ||
+                        !Number.isFinite(Number(entry.rt)) || Number(entry.qty) < 0 ||
+                        Number(entry.txval) < 0 || Number(entry.rt) < 0) {
+                    throw new Error('Each imported B2B HSN row must have a quantity, taxable value, and rate.');
+                }
+                return entry;
+            }) : [];
+        payload.hsn.hsn_b2b = importedHsn.length ?
+            combineHsnSummaries([importedHsn]) : summarizeHsn(invoices);
         return payload;
     }
 
@@ -340,8 +441,10 @@
         validateGstin: validateGstin,
         validatePeriod: validatePeriod,
         validateInvoice: validateInvoice,
+        validateHsn: validateHsn,
         validateSectionEntry: validateSectionEntry,
         summarizeHsn: summarizeHsn,
+        combineHsnSummaries: combineHsnSummaries,
         buildReturn: buildReturn,
         roundMoney: roundMoney
     };

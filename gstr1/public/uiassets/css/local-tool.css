@@ -62,7 +62,18 @@ input, select {
   font: inherit;
   font-size: 16px;
 }
+textarea {
+  width: 100%;
+  min-height: 130px;
+  padding: 10px 12px;
+  border: 1px solid #bac6d3;
+  border-radius: 6px;
+  color: #172033;
+  font: 14px/1.45 Consolas, "Courier New", monospace;
+  resize: vertical;
+}
 input:focus, select:focus, button:focus-visible { outline: 3px solid #7cb5ff; outline-offset: 2px; }
+textarea:focus { outline: 3px solid #7cb5ff; outline-offset: 2px; }
 .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
 .actions.align-end { margin-top: 0; }
 .button {
@@ -85,6 +96,15 @@ input:focus, select:focus, button:focus-visible { outline: 3px solid #7cb5ff; ou
 .section-tab { flex: 0 0 auto; min-height: 40px; padding: 8px 12px; border: 1px solid #c7d2df; border-radius: 6px; background: #fff; color: #29415f; font: inherit; cursor: pointer; }
 .section-tab.active { border-color: #1758a6; background: #1758a6; color: #fff; }
 .section-panel h3 { margin: 0 0 14px; color: #173861; }
+.import-panel { margin: 0 0 20px; padding: 16px; border: 1px solid #dce3eb; border-radius: 8px; background: #f8fafc; }
+.import-panel h3 { margin: 0 0 8px; color: #173861; }
+.import-panel .section-heading { margin-bottom: 14px; }
+.file-label { max-width: 480px; }
+.file-label input { padding: 8px; background: #fff; }
+.paste-panel { margin-top: 18px; }
+.paste-panel p { margin: 0 0 10px; }
+.paste-panel .actions { margin-top: 10px; }
+.button:disabled, textarea:disabled { cursor: not-allowed; opacity: .55; }
 .section-table-wrap { margin-top: 16px; }
 .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-top: 14px; }
 .summary-card { padding: 14px; border: 1px solid #dce3eb; border-radius: 7px; background: #f8fafc; }
@@ -107,6 +127,7 @@ td { font-size: 14px; }
   .section-heading { align-items: flex-start; flex-direction: column; }
   .section-tabs { margin-left: -2px; margin-right: -2px; }
   .section-heading .button { width: 100%; }
+  .import-panel { padding: 14px 11px; }
   .actions.align-end .button, .actions .button { width: 100%; }
   th, td { padding: 9px 7px; }
 }

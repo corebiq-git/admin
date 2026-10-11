@@ -6,6 +6,7 @@
     var database;
     var activeReturn = null;
     var model = window.CorebiqLocalModel;
+    var spreadsheetImport = window.CorebiqLocalImport;
     var form = document.getElementById('return-form');
     var invoiceForm = document.getElementById('invoice-form');
     var status = document.getElementById('return-status');
@@ -24,9 +25,10 @@
             fields: [
                 { name: 'pos', label: 'Place of supply (state code)', type: 'text', inputmode: 'numeric', maxlength: 2, required: true },
                 { name: 'txval', label: 'Taxable value (INR)', type: 'number', min: '0.01', step: '0.01', required: true },
-                { name: 'rt', label: 'GST rate', type: 'select', options: [['5', '5%'], ['12', '12%'], ['18', '18%'], ['28', '28%'], ['40', '40%']], required: true }
+                { name: 'rt', label: 'GST rate', type: 'select', options: [['5', '5%'], ['12', '12%'], ['18', '18%'], ['28', '28%'], ['40', '40%']], required: true },
+                { name: 'csamt', label: 'Cess (INR)', type: 'number', min: '0', step: '0.01', value: '0', required: true }
             ],
-            columns: [['pos', 'Place of supply'], ['txval', 'Taxable value'], ['rt', 'Rate']]
+            columns: [['pos', 'Place of supply'], ['txval', 'Taxable value'], ['rt', 'Rate'], ['csamt', 'Cess']]
         },
         nil: {
             title: 'Exempted / nil-rated / non-GST supplies',
@@ -60,12 +62,26 @@
             ],
             columns: [['category', 'Supply category'], ['pos', 'Place of supply'], ['txval', 'Taxable value'], ['rt', 'Rate']]
         },
+        eco: {
+            title: 'E-commerce operator supplies',
+            fields: [
+                { name: 'nat_supp', label: 'Nature of supply', type: 'select', options: [['clttx', 'Liable to collect tax under section 52 (TCS)'], ['paytx', 'Liable to pay tax under section 9(5)']], required: true },
+                { name: 'etin', label: 'E-commerce operator GSTIN', type: 'text', maxlength: 15, required: true },
+                { name: 'cname', label: 'E-commerce operator name', type: 'text', maxlength: 100, required: true },
+                { name: 'suppval', label: 'Net value of supplies (INR)', type: 'number', min: '0', step: '0.01', required: true },
+                { name: 'igst', label: 'Integrated tax (INR)', type: 'number', min: '0', step: '0.01', value: '0', required: true },
+                { name: 'cgst', label: 'Central tax (INR)', type: 'number', min: '0', step: '0.01', value: '0', required: true },
+                { name: 'sgst', label: 'State/UT tax (INR)', type: 'number', min: '0', step: '0.01', value: '0', required: true },
+                { name: 'cess', label: 'Cess (INR)', type: 'number', min: '0', step: '0.01', value: '0', required: true }
+            ],
+            columns: [['nat_supp', 'Nature of supply'], ['etin', 'Operator GSTIN'], ['cname', 'Operator name'], ['suppval', 'Net value'], ['igst', 'IGST'], ['cgst', 'CGST'], ['sgst', 'SGST'], ['cess', 'Cess']]
+        },
         doc: {
             title: 'Documents issued',
             fields: [
                 { name: 'doc_typ', label: 'Document type', type: 'select', options: [['1', 'Invoices for outward supply'], ['2', 'Invoices for inward supply from unregistered person'], ['3', 'Revised invoices'], ['4', 'Debit notes'], ['5', 'Credit notes'], ['6', 'Receipt vouchers'], ['7', 'Payment vouchers'], ['8', 'Refund vouchers'], ['9', 'Delivery challans for job work'], ['10', 'Delivery challans for supply on approval']], required: true },
-                { name: 'num_from', label: 'Serial number from', type: 'number', min: '1', step: '1', required: true },
-                { name: 'num_to', label: 'Serial number to', type: 'number', min: '1', step: '1', required: true },
+                { name: 'num_from', label: 'Serial number from', type: 'text', maxlength: 16, required: true },
+                { name: 'num_to', label: 'Serial number to', type: 'text', maxlength: 16, required: true },
                 { name: 'total', label: 'Total documents', type: 'number', min: '1', step: '1', required: true },
                 { name: 'cancel', label: 'Cancelled documents', type: 'number', min: '0', step: '1', value: '0', required: true }
             ],
@@ -155,9 +171,10 @@
         return transact('readonly', function (store) {
             return store.get(id);
         }).then(function (saved) {
-            activeReturn = saved || { id: id, gstin: gstin, fp: period, invoices: [], sections: {} };
+            activeReturn = saved || { id: id, gstin: gstin, fp: period, invoices: [], sections: {}, hsnB2B: [] };
             activeReturn.invoices = activeReturn.invoices || [];
             activeReturn.sections = activeReturn.sections || {};
+            activeReturn.hsnB2B = activeReturn.hsnB2B || [];
             document.getElementById('return-label').textContent =
                 activeReturn.gstin + ' · ' + activeReturn.fp;
             workspace.hidden = false;
@@ -307,7 +324,7 @@
             if (!activeReturn) {
                 throw new Error('Open or create a local return before exporting.');
             }
-            var hasEntries = activeReturn.invoices.length ||
+            var hasEntries = activeReturn.invoices.length || activeReturn.hsnB2B.length ||
                 Object.keys(activeReturn.sections).some(function (section) {
                     return activeReturn.sections[section] && activeReturn.sections[section].length;
                 });
@@ -376,6 +393,7 @@
 
     function selectSection(name) {
         activeSection = name;
+        updatePasteSection(name);
         document.querySelectorAll('.section-tab').forEach(function (button) {
             var selected = button.getAttribute('data-section') === name;
             button.classList.toggle('active', selected);
@@ -466,7 +484,10 @@
         if (!activeReturn) return;
         var summary = document.getElementById('other-entry-summary');
         summary.textContent = '';
-        var labels = { b2cs: 'B2C small', nil: 'Exempted', cdnur: 'Notes to unregistered', ecom: 'E-commerce', doc: 'Documents' };
+        var labels = {
+            b2cs: 'B2C small', nil: 'Exempted', cdnur: 'Notes to unregistered',
+            ecom: 'E-commerce', eco: 'E-commerce operator', doc: 'Documents'
+        };
         var hasEntries = false;
         Object.keys(labels).forEach(function (section) {
             var count = (activeReturn.sections[section] || []).length;
@@ -488,11 +509,14 @@
     function renderHsn() {
         hsnList.textContent = '';
         if (!activeReturn) return;
-        model.summarizeHsn(activeReturn.invoices).forEach(function (entry) {
+        var entries = model.combineHsnSummaries([
+            activeReturn.hsnB2B, model.summarizeHsn(activeReturn.invoices)
+        ]);
+        entries.forEach(function (entry) {
             var row = document.createElement('tr');
-            [entry.hsn_sc, entry.desc || '-', entry.uqc, entry.qty, entry.txval.toFixed(2),
-                entry.rt, entry.iamt.toFixed(2), entry.camt.toFixed(2),
-                entry.samt.toFixed(2), entry.csamt.toFixed(2)].forEach(function (value) {
+            [entry.hsn_sc, entry.desc || '-', entry.uqc, entry.qty, Number(entry.txval).toFixed(2),
+                entry.rt, Number(entry.iamt).toFixed(2), Number(entry.camt).toFixed(2),
+                Number(entry.samt).toFixed(2), Number(entry.csamt).toFixed(2)].forEach(function (value) {
                 var cell = document.createElement('td');
                 cell.textContent = value;
                 row.appendChild(cell);
@@ -504,6 +528,162 @@
     document.getElementById('section-tabs').addEventListener('click', function (event) {
         var button = event.target.closest('[data-section]');
         if (button) selectSection(button.getAttribute('data-section'));
+    });
+
+    function importSectionForTab(name) {
+        return name === 'hsn' ? 'hsn' : name;
+    }
+
+    function updatePasteSection(name) {
+        var section = importSectionForTab(name);
+        var definition = spreadsheetImport.sheets.find(function (item) {
+            return item.section === section;
+        });
+        document.getElementById('paste-section-title').textContent =
+            'Copy & paste ' + (definition ? definition.title : name);
+        document.getElementById('paste-help').textContent = definition ?
+            'Copy the official column headings and data rows for this section from Excel, then paste them below.' :
+            'This section is calculated from saved B2B invoices.';
+        document.getElementById('paste-data').disabled = !definition;
+        document.getElementById('import-paste').disabled = !definition;
+    }
+
+    function newImportData() {
+        return { invoices: [], sections: {}, hsnB2B: [] };
+    }
+
+    function addParsedImport(target, parsed) {
+        target.invoices = target.invoices.concat(parsed.invoices || []);
+        Object.keys(parsed.sections || {}).forEach(function (section) {
+            target.sections[section] = (target.sections[section] || []).concat(parsed.sections[section]);
+        });
+        target.hsnB2B = target.hsnB2B.concat(parsed.hsnB2B || []);
+    }
+
+    function hasImportRows(data) {
+        return data.invoices.length || data.hsnB2B.length ||
+            Object.keys(data.sections).some(function (section) {
+                return data.sections[section].length;
+            });
+    }
+
+    function finishImport(incoming, source) {
+        if (!hasImportRows(incoming)) {
+            throw new Error('No rows were found in the supported GSTR-1 sections.');
+        }
+        var merged = spreadsheetImport.merge(activeReturn, incoming);
+        model.buildReturn(activeReturn.gstin, activeReturn.fp, merged);
+        activeReturn.invoices = merged.invoices;
+        activeReturn.sections = merged.sections;
+        activeReturn.hsnB2B = merged.hsnB2B;
+        var addedCount = Object.keys(merged.added).reduce(function (total, key) {
+            return total + merged.added[key];
+        }, 0);
+        var skippedCount = Object.keys(merged.skipped).reduce(function (total, key) {
+            return total + merged.skipped[key];
+        }, 0);
+        persistReturn(source + ' imported: ' + addedCount + ' new row(s) added; ' +
+            skippedCount + ' exact duplicate(s) skipped. Data stays on this device.');
+    }
+
+    function parseWorkbook(buffer) {
+        var workbook = window.XLSX.read(new Uint8Array(buffer), { type: 'array', cellDates: true });
+        var incoming = newImportData();
+        var importedSections = {};
+        workbook.SheetNames.forEach(function (sheetName) {
+            var definition = spreadsheetImport.sheets.find(function (item) {
+                return item.names.indexOf(sheetName.toLowerCase().trim()) !== -1;
+            });
+            if (!definition) return;
+            var matrix = window.XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
+                header: 1,
+                raw: false,
+                defval: '',
+                blankrows: false,
+                dateNF: 'dd/mm/yyyy'
+            });
+            addParsedImport(incoming, spreadsheetImport.parseRows(
+                definition.section, matrix, activeReturn.gstin
+            ));
+            importedSections[definition.section] = true;
+        });
+        if (!Object.keys(importedSections).length) {
+            throw new Error('No supported GSTR-1 section sheets were found in this workbook.');
+        }
+        return incoming;
+    }
+
+    document.getElementById('download-template').addEventListener('click', function () {
+        clearError();
+        try {
+            var workbook = window.XLSX.utils.book_new();
+            spreadsheetImport.sheets.forEach(function (definition) {
+                var sheetRows = [
+                    [definition.title],
+                    ['Use the official column headings below. Import only the enabled sections.'],
+                    [],
+                    definition.headers
+                ];
+                var sheet = window.XLSX.utils.aoa_to_sheet(sheetRows);
+                window.XLSX.utils.book_append_sheet(workbook, sheet, definition.names[0]);
+            });
+            window.XLSX.writeFile(workbook, 'COREBIQ_GSTR1_Enabled_Sections_Template.xlsx');
+            status.textContent = 'Excel template downloaded. Fill the relevant section sheets and import the workbook here.';
+        } catch (error) {
+            showError(error);
+        }
+    });
+
+    document.getElementById('import-excel-file').addEventListener('change', function (event) {
+        clearError();
+        var file = event.target.files && event.target.files[0];
+        event.target.value = '';
+        if (!file) return;
+        if (!activeReturn) {
+            showError(new Error('Open or create a local return before importing Excel.'));
+            return;
+        }
+        if (file.size > 20 * 1024 * 1024) {
+            showError(new Error('Excel files must be 20 MB or smaller.'));
+            return;
+        }
+        if (!/\.(xlsx|xls|ods)$/i.test(file.name)) {
+            showError(new Error('Choose an .xlsx, .xls, or .ods workbook.'));
+            return;
+        }
+        var reader = new FileReader();
+        reader.onerror = function () {
+            showError(new Error('The selected workbook could not be read.'));
+        };
+        reader.onload = function () {
+            try {
+                finishImport(parseWorkbook(reader.result), 'Excel workbook');
+            } catch (error) {
+                showError(error);
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    });
+
+    document.getElementById('import-paste').addEventListener('click', function () {
+        clearError();
+        if (!activeReturn) {
+            showError(new Error('Open or create a local return before importing rows.'));
+            return;
+        }
+        try {
+            var section = importSectionForTab(activeSection);
+            var matrix = document.getElementById('paste-data').value.split(/\r?\n/)
+                .filter(function (line) { return line.trim() !== ''; })
+                .map(function (line) { return line.split('\t'); });
+            var incoming = newImportData();
+            addParsedImport(incoming,
+                spreadsheetImport.parseRows(section, matrix, activeReturn.gstin));
+            finishImport(incoming, 'Pasted rows');
+            document.getElementById('paste-data').value = '';
+        } catch (error) {
+            showError(error);
+        }
     });
 
     sectionForm.addEventListener('submit', function (event) {

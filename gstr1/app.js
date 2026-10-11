@@ -1,54 +1,57 @@
-/*
-author @ Shiwali Srivastava
-developed by GSTN
-*/
-
-/**
- *  @author:   Shiwali Srivastava
- *  @created:   Sep 2016
- *  @description: Offline utility
- *  @copyright: (c) Copyright by Infosys technologies
- *  Revision 1.5
- *  Last Updated: Sri Harsha, Dec 19 2017
- **/
-
 'use strict';
+
 var express = require('express');
 var path = require('path');
-var http = require('http');
-var constants = require('./utility/constants');
-var errorConstant = require('./utility/errorconstants');
-var users = require('./routes/users');
 var app = express();
 var basePath = process.env.BASE_PATH || '';
 
 if (basePath && basePath !== '/') {
-    var baseSegments = basePath.split('/').filter(function (segment) {
-        return segment.length > 0;
-    });
-    if (!baseSegments.length || baseSegments.some(function (segment) {
+    var segments = basePath.split('/').filter(Boolean);
+    if (!segments.length || segments.some(function (segment) {
         return !/^[A-Za-z0-9_-]+$/.test(segment);
     })) {
         throw new Error('BASE_PATH must contain only URL-safe path segments.');
     }
-    basePath = '/' + baseSegments.join('/');
+    basePath = '/' + segments.join('/');
 } else {
     basePath = '';
 }
 
-app.set('basePath', basePath);
-app.use(function(req, res, next) {
+var mountPath = basePath || '/';
+app.disable('x-powered-by');
+app.use(function (req, res, next) {
     res.setHeader('Cache-Control', 'no-store');
     next();
 });
 
-app.use(basePath || '/', users);
-app.use(basePath || '/', express.static(path.join(__dirname, 'public')));
-app.set('port', process.env.PORT || +constants.NODE_PORT);
-app.use('*', function(req, res) {
-    res.status(errorConstant.STATUS_404).send(errorConstant.BAD_URL);
+app.get((basePath || '') + '/health', function (req, res) {
+    res.status(200).send('OK');
 });
-http.createServer(app).listen(app.get('port'), function() {
-    var logger = require('./utility/logger').logger;
-    logger.log('info', 'Started COREBIQ GSTR1 local tool server on port %s', app.get('port'));
+
+app.use(mountPath, function (req, res, next) {
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+        return res.status(410).json({
+            error: 'server_processing_disabled',
+            message: 'GSTR-1 return data is handled and stored on this device only.'
+        });
+    }
+    next();
 });
+
+app.use(mountPath, express.static(path.join(__dirname, 'public'), {
+    index: 'index.html',
+    fallthrough: true
+}));
+
+app.use(function (req, res) {
+    res.sendStatus(404);
+});
+
+if (require.main === module) {
+    var port = Number(process.env.PORT || 3000);
+    app.listen(port, '0.0.0.0', function () {
+        console.log('COREBIQ GSTR-1 web app listening on port ' + port);
+    });
+}
+
+module.exports = app;
