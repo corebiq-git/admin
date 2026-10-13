@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b57d0"><title>GSTR-1 JSON Studio</title>
+<link rel="manifest" href="manifest.json"><link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar"><div class="brand"><div class="brand-icon">{ }</div><div><strong>GSTR-1 JSON Studio</strong><small>Excel → validated GST JSON</small></div></div><button id="loadBtn" class="btn primary">Import Excel</button><input id="fileInput" type="file" accept=".xlsx,.xls,.xlsm" hidden></header>
+<main>
+<section class="intro"><div><span class="eyebrow">LOCAL WORKSPACE</span><h1>Prepare your GSTR-1 JSON</h1><p>Import your existing GST workbook. Visible data sheets are included; hidden sheets and Dashboard/README/Help tabs are ignored.</p></div><div class="privacy"><span class="dot"></span> File processed in this browser</div></section>
+<section class="upload" id="dropzone"><div class="upload-icon">↑</div><div><b>Choose your GSTR-1 Excel workbook</b><p>Tap to browse or drop the file here</p><small id="fileName">No workbook loaded</small></div><button id="browseBtn" class="btn secondary">Browse files</button></section>
+<section class="stats" id="stats"><article><span>Included sections</span><strong id="sectionCount">0</strong></article><article><span>Data rows</span><strong id="rowCount">0</strong></article><article><span>Errors</span><strong class="red" id="errorCount">0</strong></article><article><span>Warnings</span><strong class="amber" id="warningCount">0</strong></article></section>
+<nav class="tabs" aria-label="Main navigation"><button class="tab active" data-tab="overview">Overview</button><button class="tab" data-tab="sheets">Sheet data</button><button class="tab" data-tab="validate">Validation <span id="issueBadge" class="badge">0</span></button><button class="tab" data-tab="json">JSON preview</button></nav>
+<section id="view-overview" class="view active"><div class="section-heading"><div><h2>Workbook sections</h2><p>Data is read from the existing worksheet columns and rows.</p></div><button id="validateBtn" class="btn secondary" disabled>Run validation</button></div><div id="sectionCards" class="section-grid"><div class="empty"><div class="empty-icon">▤</div><b>Import a workbook to begin</b><p>Your available sections and row counts will appear here.</p></div></div><div class="notice"><b>Important</b><p>This tool builds a JSON draft from worksheet values. Review the validation results and verify the generated payload with the current GST offline utility before filing.</p></div></section>
+<section id="view-sheets" class="view"><div class="section-heading"><div><h2>Sheet data</h2><p>Review the imported values on mobile or desktop.</p></div><select id="sheetSelect" aria-label="Choose worksheet" disabled><option>Select a sheet</option></select></div><div id="tableWrap" class="table-wrap"><div class="empty"><b>No sheet selected</b><p>Import a workbook first.</p></div></div></section>
+<section id="view-validate" class="view"><div class="section-heading"><div><h2>Validation results</h2><p>Checks for common missing or malformed values.</p></div><select id="validationFilter"><option value="all">All issues</option><option value="error">Errors only</option><option value="warning">Warnings only</option></select></div><div id="issuesList" class="issues"><div class="empty"><b>Nothing to validate yet</b><p>Import a workbook to check the data.</p></div></div></section>
+<section id="view-json" class="view"><div class="section-heading"><div><h2>Generated JSON</h2><p id="jsonMeta">Import a workbook to generate the JSON payload.</p></div><div class="actions"><button id="copyBtn" class="btn secondary" disabled>Copy JSON</button><button id="downloadBtn" class="btn primary" disabled>Save .json</button></div></div><div class="json-toolbar"><span class="live-dot"></span><span>Preview updates when the workbook is imported</span><button id="formatBtn" class="text-btn">Format JSON</button></div><pre id="jsonOutput" class="json-output">{
+  "message": "Import your GSTR-1 workbook to start"
+}</pre></section>
+<footer>GSTR-1 JSON Studio · Client-side processing · Always verify before filing</footer>
+</main><div id="toast" role="status" class="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script><script src="app.js"></script>
+</body></html>
