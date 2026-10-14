@@ -30,12 +30,33 @@ function esc(v) { return String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;",
 function norm(v) { return String(v ?? "").trim(); }
 function first(obj, keys, fallback="") { for (const k of keys) if (obj?.[k] !== undefined && obj[k] !== null && String(obj[k]).trim() !== "") return obj[k]; return fallback; }
 function prettyDate(value) {
-  const s = norm(value); if (!s) return "—";
-  const d = new Date(s);
-  if (!Number.isNaN(d.getTime()) && /\d{4}-\d{2}-\d{2}/.test(s)) return d.toLocaleDateString("en-IN", {day:"2-digit",month:"short",year:"numeric"});
+  const s = norm(value);
+  if (!s) return "—";
+  // Support ISO dates, Google Sheets date strings (e.g. 01-Feb-2026), and dd-MM-yyyy.
+  let d = new Date(s);
+  if (Number.isNaN(d.getTime())) {
+    const m = s.match(/^(\d{1,2})[-/ ]([A-Za-z]{3,}|\d{1,2})[-/ ](\d{4})$/);
+    if (m) {
+      const months = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+      const month = /^[A-Za-z]/.test(m[2]) ? months[m[2].slice(0,3).toLowerCase()] : Number(m[2])-1;
+      d = new Date(Number(m[3]), month, Number(m[1]));
+    }
+  }
+  if (!Number.isNaN(d.getTime()) && d.getFullYear() > 1900) {
+    return d.toLocaleDateString("en-IN", {day:"2-digit",month:"short",year:"numeric"});
+  }
   return s;
 }
-function dateMillis(value) { const d = new Date(value); return Number.isNaN(d.getTime()) ? 0 : d.getTime(); }
+function parseDateMillis(value) {
+  const pretty = prettyDate(value);
+  if (pretty === "—") return 0;
+  const d = new Date(norm(value));
+  if (!Number.isNaN(d.getTime())) return d.getTime();
+  const p = pretty.match(/^(\d{2}) ([A-Za-z]{3}) (\d{4})$/);
+  if (p) return new Date(Number(p[3]), ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].indexOf(p[2]), Number(p[1])).getTime();
+  return 0;
+}
+function dateMillis(value) { return parseDateMillis(value); }
 function statusClass(status) {
   const s = norm(status).toLowerCase();
   if (s.includes("overdue") || s.includes("reject") || s.includes("failed")) return "danger";
@@ -46,8 +67,11 @@ function statusClass(status) {
 }
 function badge(value, extra="") { const v = norm(value) || "Not set"; return `<span class="status-badge ${statusClass(v)} ${extra}">${esc(v)}</span>`; }
 function driveUrl(record, type) {
-  const raw = type === "client" ? first(record,["documentFolderUrl","clientFolderLink","folderUrl","driveUrl"]) : first(record,["taskFolderLink","documentFolderUrl","driveUrl","fileUrl"]);
-  return /^https:\/\/(drive\.google\.com|docs\.google\.com)\//i.test(norm(raw)) ? norm(raw) : "";
+  const raw = type === "client"
+    ? first(record, ["documentFolderUrl","documentFolder","clientFolderLink","clientFolderUrl","folderUrl","driveUrl"])
+    : first(record, ["taskFolderLink","complianceFolderLink","documentFolderUrl","driveUrl","fileUrl"]);
+  const value = norm(raw);
+  return /^https:\/\/(drive\.google\.com|docs\.google\.com)\//i.test(value) ? value : "";
 }
 function showToast(message) { const el = $("toast"); el.textContent = message; el.classList.add("show"); setTimeout(() => el.classList.remove("show"), 3200); }
 function setNotice(message="") { const el = $("globalNotice"); el.textContent = message; el.classList.toggle("show", !!message); }
@@ -165,23 +189,64 @@ function renderClients() {
   $("clientsTable").innerHTML = `<table class="data-table"><thead><tr><th>Client</th><th>Contact</th><th>Constitution</th><th>Status</th><th>Drive folder</th></tr></thead><tbody>${rows.map(c=>{const url=driveUrl(c,"client");return `<tr><td><div class="primary-cell">${esc(first(c,["clientName","legalName","personalName"],"Unnamed client"))}</div><div class="secondary-cell">${esc(c.id)}${c.gstin?` · GSTIN ${esc(c.gstin)}`:""}</div></td><td><div>${esc(first(c,["clientEmail"],"—"))}</div><div class="secondary-cell">${esc(first(c,["clientMobile"],""))}</div></td><td>${esc(first(c,["constitution"],"—"))}</td><td>${badge(first(c,["clientStatus","status"],"Not set"))}</td><td>${url?`<a class="table-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Open folder <i data-lucide="external-link"></i></a>`:"—"}</td></tr>`}).join("")}</tbody></table>`;
 }
 function renderCompliance() {
-  const q = norm($("complianceSearch").value).toLowerCase(); const filter = $("complianceFilter").value;
+  const q = norm($("complianceSearch").value).toLowerCase();
+  const filter = $("complianceFilter").value;
   const rows = state.compliance.filter(c => {
-    const status = norm(first(c,["complianceStatus","status"],"")).toLowerCase();
-    const overdue = dateMillis(first(c,["dueDate","DueDate"])) > 0 && dateMillis(first(c,["dueDate","DueDate"])) < Date.now() && !/filed|complete/i.test(status);
+    const status = norm(first(c, ["complianceStatus","status"], "")).toLowerCase();
+    const due = first(c, ["dueDate","DueDate","complianceDate"], "");
+    const overdue = dateMillis(due) > 0 && dateMillis(due) < Date.now() && !/filed|complete/i.test(status);
     const matchesFilter = filter === "all" || (filter === "overdue" ? overdue : status.includes(filter));
-    const matchesQuery = [c.id,c.complianceId,c.clientId,c.clientName,c.complianceName,c.CompliancePeriod,c.period,c.dueDate,c.complianceStatus].some(v=>norm(v).toLowerCase().includes(q));
+    const matchesQuery = [c.id,c.complianceId,c.clientId,c.clientName,c.complianceName,c.CompliancePeriod,c.compliancePeriod,c.period,due,c.complianceStatus].some(v => norm(v).toLowerCase().includes(q));
     return matchesFilter && matchesQuery;
-  }).sort((a,b)=>dateMillis(first(a,["dueDate","DueDate"]))-dateMillis(first(b,["dueDate","DueDate"])));
+  }).sort((a,b) => dateMillis(first(a,["dueDate","DueDate","complianceDate"])) - dateMillis(first(b,["dueDate","DueDate","complianceDate"])));
+
   $("complianceFoot").textContent = `${rows.length} of ${state.compliance.length} compliance records`;
-  if (!rows.length) { $("complianceTable").innerHTML = `<div class="empty-state">No matching compliance tasks.</div>`; return; }
-  $("complianceTable").innerHTML = `<table class="data-table"><thead><tr><th>Task</th><th>Client</th><th>Period</th><th>Due date</th><th>Fee</th><th>Status</th><th>Payment</th><th>Task folder</th></tr></thead><tbody>${rows.map(c=>{const url=driveUrl(c,"task");const due=first(c,["dueDate","DueDate"]);const st=first(c,["complianceStatus","status"],"Not set");const overdue=dateMillis(due)>0&&dateMillis(due)<Date.now()&&!/filed|complete/i.test(norm(st));return `<tr><td><div class="primary-cell">${esc(first(c,["complianceName","taskName"],"Compliance"))}</div><div class="secondary-cell">${esc(c.id)}</div></td><td><div class="primary-cell">${esc(first(c,["clientName","clientId"],"—"))}</div><div class="secondary-cell">${esc(first(c,["clientId"],""))}</div></td><td>${esc(first(c,["CompliancePeriod","period"],"—"))}</td><td>${overdue?`<span class="status-badge danger">Overdue · ${esc(prettyDate(due))}</span>`:esc(prettyDate(due))}</td><td>${esc(formatMoney(first(c,["complianceFee","fee"],"")))}</td><td>${badge(st)}</td><td>${badge(first(c,["paymentStatus"],"Not set"))}</td><td>${url?`<a class="table-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Open <i data-lucide="external-link"></i></a>`:"—"}</td></tr>`}).join("")}</tbody></table>`;
+  if (!rows.length) {
+    $("complianceTable").innerHTML = `<div class="empty-state">${state.loaded ? "No matching compliance tasks." : "Loading compliance…"}</div>`;
+    return;
+  }
+
+  const renderRow = c => {
+    const due = first(c, ["dueDate","DueDate","complianceDate"], "");
+    const st = first(c, ["complianceStatus","status"], "Not set");
+    const payment = first(c, ["paymentStatus"], "Not set");
+    const taskName = first(c, ["complianceName","taskName","complianceType"], "Compliance");
+    const clientId = first(c, ["clientId"], "");
+    const clientName = first(c, ["clientName"], clientId || "—");
+    const period = first(c, ["CompliancePeriod","compliancePeriod","period"], "—");
+    const fee = first(c, ["complianceFee","fee"], "");
+    const url = driveUrl(c, "task");
+    const overdue = dateMillis(due) > 0 && dateMillis(due) < Date.now() && !/filed|complete/i.test(norm(st));
+    return {c,due,st,payment,taskName,clientId,clientName,period,fee,url,overdue};
+  };
+
+  if (window.matchMedia("(max-width: 680px)").matches) {
+    $("complianceTable").innerHTML = `<div class="compliance-cards">${rows.map(raw => {
+      const x = renderRow(raw);
+      return `<article class="compliance-card">
+        <div class="compliance-card-head"><div><div class="compliance-card-title">${esc(x.taskName)}</div><div class="secondary-cell">${esc(x.c.id)}${x.clientId ? ` · ${esc(x.clientId)}` : ""}</div></div>${badge(x.st)}</div>
+        <div class="compliance-card-client">${esc(x.clientName)}</div>
+        <div class="compliance-card-grid">
+          <div><span>Period</span><strong>${esc(x.period)}</strong></div>
+          <div><span>Due date</span><strong>${x.overdue ? `<em class="overdue-label">Overdue</em> ` : ""}${esc(prettyDate(x.due))}</strong></div>
+          <div><span>Fee</span><strong>${esc(formatMoney(x.fee))}</strong></div>
+          <div><span>Payment</span><strong>${badge(x.payment)}</strong></div>
+        </div>
+        ${x.url ? `<a class="cta light compliance-folder-link" href="${esc(x.url)}" target="_blank" rel="noopener noreferrer"><i data-lucide="folder-open"></i> Open task folder</a>` : `<div class="compliance-folder-missing">No task folder link</div>`}
+      </article>`;
+    }).join("")}</div>`;
+  } else {
+    $("complianceTable").innerHTML = `<table class="data-table"><thead><tr><th>Task</th><th>Client</th><th>Period</th><th>Due date</th><th>Fee</th><th>Status</th><th>Payment</th><th>Task folder</th></tr></thead><tbody>${rows.map(raw => {
+      const x = renderRow(raw);
+      return `<tr><td><div class="primary-cell">${esc(x.taskName)}</div><div class="secondary-cell">${esc(x.c.id)}</div></td><td><div class="primary-cell">${esc(x.clientName)}</div><div class="secondary-cell">${esc(x.clientId)}</div></td><td>${esc(x.period)}</td><td>${x.overdue ? `<span class="status-badge danger">Overdue · ${esc(prettyDate(x.due))}</span>` : esc(prettyDate(x.due))}</td><td>${esc(formatMoney(x.fee))}</td><td>${badge(x.st)}</td><td>${badge(x.payment)}</td><td>${x.url ? `<a class="table-link" href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">Open <i data-lucide="external-link"></i></a>` : "—"}</td></tr>`;
+    }).join("")}</tbody></table>`;
+  }
 }
 function formatMoney(v) { const s=norm(v); if (!s) return "—"; const n=Number(s.replace(/[,₹\s]/g,"")); return Number.isFinite(n) ? n.toLocaleString("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:2}) : s; }
 function renderDocuments() {
   const q=norm($("documentSearch").value).toLowerCase(); const docs=[];
-  state.clients.forEach(c=>{const url=driveUrl(c,"client");if(url) docs.push({id:c.id,name:first(c,["clientName","legalName"],"Client folder"),type:"Client folder",clientId:first(c,["clientId"],c.id),period:"",url});});
-  state.compliance.forEach(c=>{const url=driveUrl(c,"task");if(url) docs.push({id:c.id,name:first(c,["complianceName"],"Task folder"),type:"Task folder",clientId:first(c,["clientId"],""),clientName:first(c,["clientName"],""),period:first(c,["CompliancePeriod","period"],""),url});});
+  state.clients.forEach(c=>{const url=driveUrl(c,"client");if(url) docs.push({id:c.id,name:first(c,["clientName","legalName","personalName"],"Client folder"),type:"Client folder",clientId:first(c,["clientId"],c.id),period:"",url});});
+  state.compliance.forEach(c=>{const url=driveUrl(c,"task");if(url) docs.push({id:c.id,name:first(c,["complianceName"],"Task folder"),type:"Task folder",clientId:first(c,["clientId"],""),clientName:first(c,["clientName"],""),period:first(c,["CompliancePeriod","compliancePeriod","period"],""),url});});
   state.documents.forEach(d=>{const fileId=first(d,["driveFileId","fileId","id"]);const url=first(d,["webViewLink","driveUrl","fileUrl"],fileId?`https://drive.google.com/open?id=${encodeURIComponent(fileId)}`:"");if(/^https:\/\/(drive\.google\.com|docs\.google\.com)\//i.test(url))docs.push({id:d.id,name:first(d,["name","fileName","title"],d.id),type:first(d,["mimeType","type"],"Drive file"),clientId:first(d,["clientId"],""),period:first(d,["period"],""),url});});
   const rows=docs.filter(d=>[d.id,d.name,d.type,d.clientId,d.clientName,d.period].some(v=>norm(v).toLowerCase().includes(q)));
   if(!rows.length){$("documentsTable").innerHTML=`<div class="empty-state">No Drive folder links or indexed file metadata found. Add Drive file metadata to the Firestore documents collection to list individual files.</div>`;return;}
