@@ -604,4 +604,373 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: var
+  color: var(--text-muted);
+}
+.feed-due-date svg { width: 14px; height: 14px; }
+
+.status-chip {
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 600;
+}
+.status-chip.success { background: var(--success-bg); color: var(--success); }
+.status-chip.pending { background: var(--warning-bg); color: var(--warning); }
+.status-chip.danger { background: var(--danger-bg); color: var(--danger); }
+
+/* Quick Action Tiles */
+.action-tiles {
+  display: grid;
+  gap: 12px;
+}
+
+.action-tile {
+  background: var(--surface-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-decoration: none;
+  color: var(--text-main);
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: var(--transition-smooth);
+}
+
+.action-tile:hover {
+  background: var(--surface-alt);
+  transform: translateX(2px);
+}
+
+.tile-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.tile-icon svg { width: 20px; height: 20px; }
+
+.drive-icon { background: #E8F0FE; color: #1A73E8; }
+.service-icon { background: #E6F4EA; color: #137333; }
+.copilot-icon { background: linear-gradient(135deg, #F3E8FD, #E8F0FE); color: #7C4DFF; }
+
+.tile-text {
+  flex: 1;
+}
+
+.tile-text strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.tile-text p {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 3px 0 0;
+}
+
+.tile-arrow {
+  width: 18px;
+  height: 18px;
+  color: #9AA0A6;
+}
+
+/* Mobile Bottom Navigation (Floating Glass Pill) */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(227, 232, 239, 0.85);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  z-index: 90;
+  gap: 8px;
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 6px 18px;
+  border-radius: var(--radius-pill);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.bottom-nav-item svg { width: 20px; height: 20px; }
+.bottom-nav-item.active { background: var(--primary-container); color: var(--primary); }
+.sparkle-bottom-icon {
+  font-size: 16px;
+  background: linear-gradient(90deg, #1A73E8, #7C4DFF);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ================= CM COPILOT MODAL DRAWER ================= */
+.copilot-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  justify-content: flex-end;
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.copilot-sheet {
+  background: var(--surface-card);
+  width: 100%;
+  max-width: 480px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -10px 0 40px rgba(0,0,0,0.1);
+  animation: slideLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideLeft { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+.drawer-drag-handle { display: none; }
+
+.copilot-top-bar {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ai-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.animated-gemini-ring {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1A73E8, #7C4DFF, #E879F9);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  box-shadow: 0 4px 14px rgba(124, 77, 255, 0.28);
+}
+
+.ai-title-wrap h4 { margin: 0; font-size: 16px; font-weight: 600; }
+.ai-title-wrap p { margin: 2px 0 0; font-size: 12px; color: var(--text-muted); }
+
+.close-btn {
+  background: var(--surface-alt);
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.close-btn svg { width: 18px; height: 18px; }
+
+.copilot-dialogue-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ai-bubble, .user-bubble {
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  line-height: 1.5;
+  max-width: 85%;
+}
+
+.ai-bubble {
+  background: var(--surface-alt);
+  color: var(--text-main);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+.user-bubble {
+  background: var(--primary);
+  color: #fff;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+
+.quick-suggestion-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.chip {
+  background: #fff;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-pill);
+  padding: 6px 12px;
+  font-size: 12px;
+  color: var(--primary);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+.chip:hover {
+  background: var(--primary-container);
+  border-color: #B4CCF9;
+}
+
+.copilot-input-container {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border-light);
+  background: var(--surface-card);
+}
+
+.gemini-input-pill {
+  display: flex;
+  align-items: center;
+  background: var(--surface-alt);
+  border-radius: var(--radius-pill);
+  padding: 6px 8px 6px 18px;
+  border: 1.5px solid transparent;
+  transition: var(--transition-smooth);
+}
+
+.gemini-input-pill:focus-within {
+  border-color: var(--gemini-purple);
+  box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.12);
+  background: #fff;
+}
+
+.gemini-input-pill input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 14px;
+  color: var(--text-main);
+}
+
+.gemini-input-pill button {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1A73E8, #7C4DFF);
+  border: none;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.gemini-input-pill button svg { width: 16px; height: 16px; }
+
+/* Pulse Loader */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+  gap: 14px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.gemini-pulse-loader {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1A73E8, #7C4DFF);
+  animation: pulseScale 1.2s infinite ease-in-out;
+}
+
+@keyframes pulseScale {
+  0%, 100% { transform: scale(0.85); opacity: 0.6; }
+  50% { transform: scale(1.15); opacity: 1; }
+}
+
+/* ================= MOBILE OPTIMIZATIONS ================= */
+@media (max-width: 900px) {
+  .dashboard-split {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .mobile-bottom-nav {
+    display: flex;
+  }
+  
+  .header-actions .copilot-pill-btn {
+    display: none;
+  }
+
+  .kpi-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .welcome-hero {
+    padding: 24px 0 16px;
+  }
+
+  .welcome-subtext {
+    font-size: 14px;
+    margin-bottom: 18px;
+  }
+
+  /* Sheet slides up as bottom drawer on small phones */
+  .copilot-drawer-backdrop {
+    align-items: flex-end;
+  }
+
+  .copilot-sheet {
+    max-width: 100%;
+    height: 85vh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  .drawer-drag-handle {
+    display: block;
+    width: 38px;
+    height: 4px;
+    border-radius: 4px;
+    background: #D9D9D9;
+    margin: 10px auto 0;
+  }
+}
