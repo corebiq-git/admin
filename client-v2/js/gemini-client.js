@@ -18,12 +18,13 @@ import {
 
 // --- FIREBASE PROJECT CONFIGURATION ---
 const firebaseConfig = {
-  apiKey: "YOUR_FIREBASE_API_KEY",
+  apiKey: "AIzaSyAY0eJ0iAVxP2tn2RLe7wVNB8Q15Vnjd-g",
   authDomain: "cmb-40001.firebaseapp.com",
   projectId: "cmb-40001",
-  storageBucket: "cmb-40001.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  storageBucket: "cmb-40001.firebasestorage.app",
+  messagingSenderId: "294144253040",
+  appId: "1:294144253040:web:852b7c378ee8049f4268b5",
+  measurementId: "G-RX05KNR8Y3"
 };
 
 const app = initializeApp(firebaseConfig);
