@@ -2,175 +2,276 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#0842A0">
-  <title>CM Filings | Client Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#FFFFFF">
+  <title>CM Filings | Client Workspace</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Google+Sans+Text:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/client.css">
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Google+Sans+Text:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/gemini-client.css">
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-  <!-- LOGIN SCREEN -->
-  <section id="loginScreen" class="login-screen">
-    <div class="login-card">
-      <div class="login-brand">
-        <div class="brand-mark">CM</div>
-        <div><strong>CM Filings</strong><small>Client Portal</small></div>
+
+  <!-- ================= AUTHENTICATION SCREEN ================= -->
+  <section id="loginScreen" class="auth-viewport">
+    <div class="gemini-ambient-glow"></div>
+    <div class="auth-container">
+      <div class="gemini-badge">
+        <span class="sparkle-icon"><i data-lucide="sparkles"></i></span>
+        <span>CM Filings Client Portal</span>
       </div>
-      <div class="login-art gradient-soft"><i data-lucide="user-check"></i></div>
-      
-      <h1>Welcome back.</h1>
-      <p class="muted">Access your compliance dashboard, track pending tasks, and review pending fees.</p>
-      
-      <div class="auth-methods">
-        <!-- Google Sign In -->
-        <button id="googleSignInBtn" class="cta full outlined">
-          <svg viewBox="0 0 24 24" width="18" height="18"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-          Sign in with Google
+
+      <div class="auth-header">
+        <h1 class="gemini-gradient-text">Hello there.</h1>
+        <p>Sign in to track your business tax filings, compliances, and shared Drive vault.</p>
+      </div>
+
+      <div class="auth-card">
+        <button id="googleSignInBtn" class="m3-button google-auth-btn">
+          <svg viewBox="0 0 24 24" width="20" height="20">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          <span>Continue with Google</span>
         </button>
 
-        <div class="divider"><span>OR</span></div>
+        <div class="or-separator">
+          <span>or mobile OTP</span>
+        </div>
 
-        <!-- Phone Sign In -->
-        <form id="phoneAuthForm" class="form">
+        <form id="phoneAuthForm" class="phone-form">
           <div id="phoneStep">
-            <label class="field">
-              <span>Mobile Number</span>
-              <input id="clientMobile" type="tel" required placeholder="+91 9876543210">
-            </label>
-            <div id="recaptcha-container" class="recaptcha-wrap"></div>
-            <button class="cta gradient full mt-3" type="submit" id="sendOtpBtn">Send OTP</button>
+            <div class="input-field-group">
+              <label for="clientMobile">Registered Mobile Number</label>
+              <div class="input-pill">
+                <i data-lucide="phone"></i>
+                <input id="clientMobile" type="tel" placeholder="+91 98765 43210" required>
+              </div>
+            </div>
+            <div id="recaptcha-container"></div>
+            <button class="m3-button primary-pill full-width mt-3" type="submit" id="sendOtpBtn">
+              <span>Get Verification Code</span>
+              <i data-lucide="arrow-right"></i>
+            </button>
           </div>
 
           <div id="otpStep" hidden>
-            <label class="field">
-              <span>Enter OTP</span>
-              <input id="clientOtp" type="text" placeholder="123456" pattern="\d{6}" maxlength="6">
-            </label>
-            <button class="cta gradient full mt-3" type="button" id="verifyOtpBtn">Verify & Login</button>
-            <button class="text-button full mt-2" type="button" id="changePhoneBtn">Change Mobile Number</button>
+            <div class="input-field-group">
+              <label for="clientOtp">6-digit Verification Code</label>
+              <div class="input-pill">
+                <i data-lucide="key"></i>
+                <input id="clientOtp" type="text" placeholder="······" pattern="\d{6}" maxlength="6">
+              </div>
+            </div>
+            <button class="m3-button primary-pill full-width mt-3" type="button" id="verifyOtpBtn">
+              <span>Verify & Continue</span>
+            </button>
+            <button class="text-flat-btn full-width mt-2" type="button" id="changePhoneBtn">Use another phone number</button>
           </div>
         </form>
-      </div>
 
-      <div id="loginMessage" class="notice" role="status"></div>
+        <div id="loginMessage" class="feedback-msg" role="status"></div>
+      </div>
     </div>
   </section>
 
-  <!-- APP WORKSPACE (Hidden until authenticated) -->
-  <div id="app" class="app" hidden>
-    <aside id="sidebar" class="sidebar">
-      <div class="sidebar-brand">
-        <div class="brand-mark">CM</div>
-        <div><strong id="sidebarClientName">Loading...</strong><small>Client Dashboard</small></div>
-      </div>
-      <div class="workspace-pill"><span class="online-dot"></span><span id="sidebarClientId">ID: --</span></div>
-      <nav class="side-nav">
-        <button class="side-link active"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></button>
-        <button class="side-link"><i data-lucide="folder-open"></i><span>My Documents</span></button>
-        <button class="side-link"><i data-lucide="message-square-plus"></i><span>New Request</span></button>
-      </nav>
-      <div class="sidebar-bottom">
-        <button class="side-link" id="signOut"><i data-lucide="log-out"></i><span>Sign out</span></button>
-      </div>
-    </aside>
-
-    <div class="workspace">
-      <header class="site-header">
-        <div class="header-inner container">
-          <div class="header-left">
-            <div class="breadcrumbs"><span>CM Filings</span><i data-lucide="chevron-right"></i><strong>Dashboard</strong></div>
-          </div>
-          <div class="header-actions">
-            <div class="profile-chip">
-              <div class="avatar"><i data-lucide="user"></i></div>
-              <div class="profile-meta"><strong id="headerName">Client</strong><small id="headerContact">Signed in</small></div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main class="main-content container">
-        <div class="page-heading">
+  <!-- ================= MAIN APP WORKSPACE ================= -->
+  <div id="app" class="app-viewport" hidden>
+    
+    <!-- Top Floating Header -->
+    <header class="gemini-header">
+      <div class="header-inner container">
+        <div class="header-brand">
+          <div class="avatar-gemini"><span class="gemini-star">✦</span></div>
           <div>
-            <p class="kicker">OVERVIEW</p>
-            <h1 id="welcomeTitle">Hello, Client.</h1>
-            <p class="muted">Here is the status of your ongoing compliances and pending dues.</p>
+            <h2 id="headerClientName" class="brand-title">Client Workspace</h2>
+            <span id="headerClientId" class="brand-meta">C40001</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="copilot-pill-btn" id="openCopilotBtn">
+            <span class="animated-sparkle">✦</span>
+            <span>Ask CM Copilot</span>
+          </button>
+          <button class="icon-avatar" id="signOutBtn" title="Sign out" aria-label="Sign out">
+            <i data-lucide="log-out"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Scrollable Body -->
+    <main class="main-body container">
+      
+      <!-- Greeting & Search Hero -->
+      <section class="welcome-hero">
+        <span class="welcome-chip">BUSINESS TAX & COMPLIANCE</span>
+        <h1 id="welcomeUserTitle" class="gemini-hero-text">Welcome back.</h1>
+        <p class="welcome-subtext">Real-time overview of your compliance deadlines, tax schedules, and filed records.</p>
+        
+        <!-- Gemini Prompt Trigger Bar -->
+        <div class="gemini-search-trigger" id="copilotSearchBar">
+          <span class="ai-spark"><i data-lucide="sparkles"></i></span>
+          <span class="search-placeholder">Ask Copilot: "What GST filings are due this month?"</span>
+          <span class="send-arrow"><i data-lucide="arrow-up"></i></span>
+        </div>
+      </section>
+
+      <!-- Key KPI Cards -->
+      <section class="kpi-grid">
+        <div class="kpi-card card-dues">
+          <div class="kpi-top">
+            <span>Outstanding Fees</span>
+            <div class="kpi-icon"><i data-lucide="indian-rupee"></i></div>
+          </div>
+          <div class="kpi-value-row">
+            <strong id="statAmountDue">₹0</strong>
+          </div>
+          <p class="kpi-footer-note">Pending professional & tax dues</p>
+        </div>
+
+        <div class="kpi-card card-next">
+          <div class="kpi-top">
+            <span>Next Compliance Due</span>
+            <div class="kpi-icon"><i data-lucide="calendar"></i></div>
+          </div>
+          <div class="kpi-value-row">
+            <strong id="statNextCompliance">All caught up!</strong>
+          </div>
+          <p class="kpi-footer-note" id="statNextSub">No urgent deadlines pending</p>
+        </div>
+
+        <div class="kpi-card card-tasks">
+          <div class="kpi-top">
+            <span>Ongoing Filings</span>
+            <div class="kpi-icon"><i data-lucide="check-circle-2"></i></div>
+          </div>
+          <div class="kpi-value-row">
+            <strong id="statOngoingTasks">0</strong>
+          </div>
+          <p class="kpi-footer-note">Tasks actively being processed</p>
+        </div>
+      </section>
+
+      <!-- Main Layout: Compliance List & Quick Hub -->
+      <div class="dashboard-split">
+        
+        <!-- Compliance Feed -->
+        <section class="dashboard-section list-section">
+          <div class="section-title-row">
+            <div>
+              <h3>Ongoing Compliances</h3>
+              <p>Active tasks monitored by CM Filings</p>
+            </div>
+            <span class="badge-counter" id="activeTaskBadge">0 active</span>
+          </div>
+
+          <div id="complianceContainer" class="compliance-card-list">
+            <div class="loading-state">
+              <div class="gemini-pulse-loader"></div>
+              <span>Fetching latest compliance status…</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Quick Action Hub -->
+        <aside class="dashboard-section hub-section">
+          <div class="section-title-row">
+            <h3>Quick Services</h3>
+          </div>
+
+          <div class="action-tiles">
+            <a id="driveFolderLink" href="#" target="_blank" class="action-tile">
+              <div class="tile-icon drive-icon"><i data-lucide="folder-git-2"></i></div>
+              <div class="tile-text">
+                <strong>Google Drive Repository</strong>
+                <p>View permanent files, returns & challans</p>
+              </div>
+              <i data-lucide="arrow-up-right" class="tile-arrow"></i>
+            </a>
+
+            <button class="action-tile" id="reqNewFiling">
+              <div class="tile-icon service-icon"><i data-lucide="file-plus"></i></div>
+              <div class="tile-text">
+                <strong>Request New Filing</strong>
+                <p>ITR, GST amendment, or registration</p>
+              </div>
+              <i data-lucide="chevron-right" class="tile-arrow"></i>
+            </button>
+
+            <button class="action-tile" id="openAdvisoryChat">
+              <div class="tile-icon copilot-icon"><i data-lucide="sparkles"></i></div>
+              <div class="tile-text">
+                <strong>Tax Advisory Copilot</strong>
+                <p>Instant answers on tax deductions & notices</p>
+              </div>
+              <i data-lucide="chevron-right" class="tile-arrow"></i>
+            </button>
+          </div>
+        </aside>
+
+      </div>
+    </main>
+
+    <!-- Mobile Sticky Navigation Bar -->
+    <nav class="mobile-bottom-nav">
+      <button class="bottom-nav-item active" data-tab="home">
+        <i data-lucide="layout-grid"></i>
+        <span>Home</span>
+      </button>
+      <button class="bottom-nav-item" id="mobileCopilotBtn" data-tab="copilot">
+        <div class="sparkle-bottom-icon">✦</div>
+        <span>Copilot</span>
+      </button>
+      <button class="bottom-nav-item" id="mobileDriveBtn" data-tab="drive">
+        <i data-lucide="folder-closed"></i>
+        <span>Drive</span>
+      </button>
+    </nav>
+
+    <!-- ================= CM COPILOT AI MODAL DRAWER ================= -->
+    <div id="copilotModal" class="copilot-drawer-backdrop" hidden>
+      <div class="copilot-sheet">
+        <div class="drawer-drag-handle"></div>
+        
+        <div class="copilot-top-bar">
+          <div class="ai-title-wrap">
+            <span class="animated-gemini-ring">✦</span>
+            <div>
+              <h4>CM Copilot</h4>
+              <p>Powered by Gemini · Tax Intelligence</p>
+            </div>
+          </div>
+          <button class="close-btn" id="closeCopilotBtn" aria-label="Close Copilot"><i data-lucide="x"></i></button>
+        </div>
+
+        <div class="copilot-dialogue-area" id="copilotMessages">
+          <div class="ai-bubble intro-bubble">
+            <p>Hello! I'm your **CM Copilot**. You can ask me anything about your current filings, pending tax dues, or tax provisions.</p>
+            <div class="quick-suggestion-chips">
+              <button class="chip" data-prompt="What compliances are overdue or pending?">Show pending compliances</button>
+              <button class="chip" data-prompt="Explain my total fees due">Breakdown of fees</button>
+              <button class="chip" data-prompt="How do I upload receipts for GST?">How to upload bills?</button>
+            </div>
           </div>
         </div>
 
-        <!-- Dashboard Stats -->
-        <div class="stat-grid">
-          <article class="stat-card">
-            <div class="stat-top"><span>Total Due Amount</span><span class="stat-icon warning"><i data-lucide="indian-rupee"></i></span></div>
-            <strong id="statAmountDue">₹0</strong>
-            <small>Pending fees & govt dues</small>
-          </article>
-          <article class="stat-card">
-            <div class="stat-top"><span>Next Compliance</span><span class="stat-icon"><i data-lucide="calendar-clock"></i></span></div>
-            <strong id="statNextCompliance">--</strong>
-            <small>Upcoming deadline</small>
-          </article>
-          <article class="stat-card">
-            <div class="stat-top"><span>Ongoing Tasks</span><span class="stat-icon"><i data-lucide="loader"></i></span></div>
-            <strong id="statOngoingTasks">0</strong>
-            <small>Compliances in progress</small>
-          </article>
+        <div class="copilot-input-container">
+          <div class="gemini-input-pill">
+            <input type="text" id="copilotPromptInput" placeholder="Ask anything about your filings…">
+            <button id="sendCopilotPromptBtn" aria-label="Send message">
+              <i data-lucide="arrow-up"></i>
+            </button>
+          </div>
         </div>
-
-        <!-- Content Grid -->
-        <div class="content-grid">
-          <section class="panel">
-            <div class="panel-head">
-              <div><h2>Ongoing Compliances</h2><p>Your active tax and compliance tasks</p></div>
-            </div>
-            <div class="table-wrap">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Task Name</th>
-                    <th>Period</th>
-                    <th>Due Date</th>
-                    <th>Status</th>
-                    <th>Payment</th>
-                  </tr>
-                </thead>
-                <tbody id="complianceTableBody">
-                  <tr><td colspan="5" class="empty-state">Loading your compliances...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
-
-          <section class="panel">
-            <div class="panel-head">
-              <div><h2>Quick Actions</h2></div>
-            </div>
-            <div class="quick-actions">
-              <button class="quick-action" id="payDuesBtn">
-                <span class="quick-icon"><i data-lucide="credit-card"></i></span>
-                <span><strong>Pay Pending Dues</strong><small>Clear outstanding invoices</small></span>
-                <i data-lucide="chevron-right"></i>
-              </button>
-              <button class="quick-action">
-                <span class="quick-icon"><i data-lucide="message-square-plus"></i></span>
-                <span><strong>Request Service</strong><small>Start a new filing or advisory</small></span>
-                <i data-lucide="chevron-right"></i>
-              </button>
-              <a id="clientDriveFolder" href="#" target="_blank" class="quick-action">
-                <span class="quick-icon"><i data-lucide="folder-check"></i></span>
-                <span><strong>Open Shared Drive</strong><small>View your compliance documents</small></span>
-                <i data-lucide="external-link"></i>
-              </a>
-            </div>
-          </section>
-        </div>
-      </main>
+      </div>
     </div>
+
   </div>
 
-  <script type="module" src="js/client.js"></script>
+  <script type="module" src="js/gemini-client.js"></script>
 </body>
 </html>
