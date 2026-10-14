@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0B57D0">
+<title>CM Filings Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Google+Sans+Text:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/admin.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<section id="loginScreen" class="login-screen">
+  <div class="login-card">
+    <div class="login-brand"><div class="brand-mark">CM</div><div><strong>CM Filings Admin</strong><small>Tax · Compliance · Advisory</small></div></div>
+    <div class="login-art gradient-soft"><i data-lucide="shield-check"></i></div>
+    <p class="kicker">SECURE WORKSPACE</p><h1>Welcome back.</h1><p class="muted">Sign in with an authorized administrator account to manage clients, compliance and Drive documents.</p>
+    <form id="loginForm" class="form">
+      <label class="field"><span>Email address</span><input id="loginEmail" type="email" autocomplete="username" required placeholder="admin@company.com"></label>
+      <label class="field"><span>Password</span><input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Your password"></label>
+      <button class="cta gradient full" type="submit"><i data-lucide="log-in"></i> Sign in</button>
+      <button class="text-button" id="forgotPassword" type="button">Forgot password?</button>
+    </form><div id="loginMessage" class="notice" role="status"></div>
+    <p class="security-note"><i data-lucide="lock-keyhole"></i> Admin access is checked against Firestore <code>admins/{uid}</code>.</p>
+  </div>
+</section>
+<div id="app" class="app" hidden>
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-brand"><div class="brand-mark">CM</div><div><strong>CM Filings</strong><small>Admin workspace</small></div><button class="icon-btn sidebar-close mobile-only" id="closeSidebar" aria-label="Close menu"><i data-lucide="x"></i></button></div>
+    <div class="workspace-pill"><span class="online-dot"></span><span>CM Filings Admin</span><span class="pill">PROD</span></div>
+    <nav class="side-nav" aria-label="Main navigation">
+      <button class="side-link active" data-view="overview"><i data-lucide="layout-dashboard"></i><span>Overview</span></button>
+      <button class="side-link" data-view="clients"><i data-lucide="users"></i><span>Clients</span><span class="nav-count" id="clientNavCount">0</span></button>
+      <button class="side-link" data-view="compliance"><i data-lucide="calendar-check"></i><span>Compliance</span><span class="nav-count" id="complianceNavCount">0</span></button>
+      <button class="side-link" data-view="documents"><i data-lucide="folder-open"></i><span>Drive documents</span></button>
+      <button class="side-link" data-view="credentials"><i data-lucide="key-round"></i><span>Credentials</span><span class="admin-only-tag">ADMIN</span></button>
+      <button class="side-link" data-view="sync"><i data-lucide="refresh-cw"></i><span>Sync status</span></button>
+    </nav>
+    <div class="sidebar-bottom"><div class="sidebar-tip"><i data-lucide="shield-check"></i><div><strong>Security first</strong><p>Client files remain in private Google Drive folders.</p></div></div><button class="side-link" id="signOut"><i data-lucide="log-out"></i><span>Sign out</span></button></div>
+  </aside>
+  <div id="sidebarOverlay" class="sidebar-overlay"></div>
+  <div class="workspace">
+    <header class="site-header"><div class="header-inner container">
+      <div class="header-left"><button class="icon-btn mobile-only" id="openSidebar" aria-label="Open menu"><i data-lucide="menu"></i></button><div class="breadcrumbs"><span>CM Filings</span><i data-lucide="chevron-right"></i><strong id="breadcrumbCurrent">Overview</strong></div></div>
+      <div class="header-actions"><button class="icon-btn" id="refreshBtn" title="Refresh data" aria-label="Refresh data"><i data-lucide="refresh-cw"></i></button><div class="profile-chip"><div class="avatar" id="profileAvatar">A</div><div class="profile-meta"><strong id="profileName">Administrator</strong><small id="profileEmail">Signed in</small></div></div></div>
+    </div></header>
+    <main id="main" class="main-content container">
+      <div class="page-heading"><div><p class="kicker" id="pageKicker">ADMINISTRATION</p><h1 id="pageTitle">Overview</h1><p id="pageSubtitle" class="muted">A clear view of clients, compliance work and documents.</p></div><div class="heading-actions"><span class="last-updated" id="lastUpdated">Not refreshed yet</span></div></div>
+      <div id="globalNotice" class="global-notice" role="status"></div>
+      <section class="view active" id="view-overview">
+        <div class="stat-grid">
+          <article class="stat-card"><div class="stat-top"><span>Total clients</span><span class="stat-icon"><i data-lucide="users"></i></span></div><strong id="statClients">—</strong><small>Client records in Firestore</small></article>
+          <article class="stat-card"><div class="stat-top"><span>Compliance tasks</span><span class="stat-icon"><i data-lucide="calendar-check"></i></span></div><strong id="statCompliance">—</strong><small>Synced compliance records</small></article>
+          <article class="stat-card"><div class="stat-top"><span>Pending tasks</span><span class="stat-icon warning"><i data-lucide="clock-3"></i></span></div><strong id="statPending">—</strong><small>Awaiting completion</small></article>
+          <article class="stat-card"><div class="stat-top"><span>Drive folders</span><span class="stat-icon"><i data-lucide="folder-check"></i></span></div><strong id="statFolders">—</strong><small>Records with a Drive folder</small></article>
+        </div>
+        <div class="content-grid">
+          <section class="panel"><div class="panel-head"><div><h2>Recent compliance</h2><p>Latest synced tasks</p></div><button class="link-button" data-goto="compliance">View all <i data-lucide="arrow-up-right"></i></button></div><div id="recentCompliance" class="table-wrap"><div class="empty-state">Loading compliance…</div></div></section>
+          <section class="panel"><div class="panel-head"><div><h2>Quick actions</h2><p>Common admin tasks</p></div></div><div class="quick-actions"><button class="quick-action" data-goto="clients"><span class="quick-icon"><i data-lucide="users"></i></span><span><strong>Browse clients</strong><small>Search client records</small></span><i data-lucide="chevron-right"></i></button><button class="quick-action" data-goto="compliance"><span class="quick-icon"><i data-lucide="calendar-check"></i></span><span><strong>Review compliance</strong><small>Check due dates and status</small></span><i data-lucide="chevron-right"></i></button><button class="quick-action" data-goto="documents"><span class="quick-icon"><i data-lucide="folder-open"></i></span><span><strong>Open Drive folders</strong><small>View existing Drive locations</small></span><i data-lucide="chevron-right"></i></button><button class="quick-action" data-goto="sync"><span class="quick-icon"><i data-lucide="refresh-cw"></i></span><span><strong>Check sync</strong><small>Review data freshness</small></span><i data-lucide="chevron-right"></i></button></div></section>
+        </div>
+      </section>
+      <section class="view" id="view-clients"><section class="panel"><div class="panel-head"><div><h2>Client directory</h2><p>Client data synchronized from Google Sheets</p></div><div class="table-tools"><label class="search-box"><i data-lucide="search"></i><input id="clientSearch" placeholder="Search name, ID, email…"></label><button class="icon-btn" id="exportClients" title="Export visible clients"><i data-lucide="download"></i></button></div></div><div id="clientsTable" class="table-wrap"><div class="empty-state">Loading clients…</div></div><div class="table-foot" id="clientsFoot"></div></section></section>
+      <section class="view" id="view-compliance"><section class="panel"><div class="panel-head"><div><h2>Compliance register</h2><p>Task status, period, due date and linked Drive folder</p></div><div class="table-tools"><label class="search-box"><i data-lucide="search"></i><input id="complianceSearch" placeholder="Search task, client, period…"></label><select id="complianceFilter" class="filter-select" aria-label="Filter by status"><option value="all">All statuses</option><option value="pending">Pending</option><option value="completed">Completed</option><option value="filed">Filed</option><option value="overdue">Overdue</option></select></div></div><div id="complianceTable" class="table-wrap"><div class="empty-state">Loading compliance…</div></div><div class="table-foot" id="complianceFoot"></div></section></section>
+      <section class="view" id="view-documents"><section class="panel"><div class="panel-head"><div><h2>Google Drive documents</h2><p>Links from existing client and task folders; files stay in Drive.</p></div><label class="search-box"><i data-lucide="search"></i><input id="documentSearch" placeholder="Search folder, client or task…"></label></div><div class="callout"><i data-lucide="shield-check"></i><p><strong>Private Drive access.</strong> These links open the existing Drive folder/file. Access still depends on Google Drive sharing permissions; Firestore access alone does not grant Drive access.</p></div><div id="documentsTable" class="table-wrap"><div class="empty-state">Loading Drive links…</div></div></section></section>
+      <section class="view" id="view-credentials"><section class="panel"><div class="panel-head"><div><h2>Portal credentials</h2><p>Administrative inventory only. Password values are never displayed.</p></div><label class="search-box"><i data-lucide="search"></i><input id="credentialSearch" placeholder="Search client, portal, username…"></label></div><div class="callout danger"><i data-lucide="lock-keyhole"></i><p><strong>Restricted data.</strong> This page masks passwords, but the current synced records may contain plaintext passwords in Firestore. Limit this collection to trusted admins and migrate secrets to a secure secret store when possible.</p></div><div id="credentialsTable" class="table-wrap"><div class="empty-state">Loading credentials…</div></div></section></section>
+      <section class="view" id="view-sync"><div class="content-grid sync-grid"><section class="panel"><div class="panel-head"><div><h2>Firestore connection</h2><p>Current browser session and collection status</p></div><span class="status-badge success"><span></span> Connected</span></div><div class="detail-list"><div><span>Firebase project</span><strong>cmb-40001</strong></div><div><span>Authentication</span><strong id="syncAuth">Checking…</strong></div><div><span>Admin authorization</span><strong id="syncAdmin">Checking…</strong></div><div><span>Last browser refresh</span><strong id="syncRefresh">—</strong></div><div><span>Clients loaded</span><strong id="syncClients">—</strong></div><div><span>Compliance loaded</span><strong id="syncCompliance">—</strong></div></div><button class="cta gradient" id="syncRefreshBtn"><i data-lucide="refresh-cw"></i> Refresh from Firestore</button></section><section class="panel"><div class="panel-head"><div><h2>Google Sheets sync</h2><p>Apps Script runs separately from this admin app</p></div></div><div class="sync-steps"><div class="sync-step"><span>1</span><div><strong>Google Sheets</strong><p>Source tabs: <code>clients</code>, <code>compliance</code>, <code>credentials</code>.</p></div></div><div class="sync-step"><span>2</span><div><strong>Apps Script</strong><p>Run initial sync once; then configure the time-driven trigger.</p></div></div><div class="sync-step"><span>3</span><div><strong>Firestore</strong><p>Documents use the ID column as the document ID. This app reads the resulting collections.</p></div></div></div><p class="muted small">The admin app does not create or run your Google Apps Script trigger. Verify the trigger in Apps Script → Triggers.</p></section></div></section>
+      <footer class="app-footer"><span>© <span id="year"></span> CM Filings</span><span>Count. Connect. Grow.</span></footer>
+    </main>
+  </div>
+
+  <nav class="bottom-nav" aria-label="Primary navigation">
+    <button class="bottom-nav-item active" data-view="overview" aria-label="Home"><i data-lucide="house"></i><span>Home</span></button>
+    <button class="bottom-nav-item" data-view="clients" aria-label="Clients"><i data-lucide="users"></i><span>Clients</span><span class="bottom-count" id="bottomClientCount">0</span></button>
+    <button class="bottom-nav-item" data-view="credentials" aria-label="Credentials"><i data-lucide="key-round"></i><span>Credentials</span></button>
+    <button class="bottom-nav-item" data-view="compliance" aria-label="Compliance"><i data-lucide="calendar-check"></i><span>Compliance</span><span class="bottom-count" id="bottomComplianceCount">0</span></button>
+  </nav>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script type="module" src="js/app.js"></script>
+</body></html>
