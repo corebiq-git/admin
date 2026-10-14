@@ -27,3 +27,9 @@ Responsive Firebase admin workspace using the supplied CM Filings / CoreBIQ red-
 - Firestore document access does not grant Google Drive access. Drive folders/files must retain appropriate Drive permissions. Do not make private files public to make links work.
 - This UI is a reader for the synced data; it does not run the Apps Script sync. Keep your time-driven trigger configured in Apps Script and review execution logs.
 - The supplied sheet schema uses fields such as `clientId`, `complianceId`, `complianceName`, `CompliancePeriod`, `complianceFee`, `complianceStatus`, `taskFolderLink`, `documentFolderUrl`, `credentialId`, `PortalName`, and `UserName`. Rendering tolerates a few common aliases.
+
+## Updated mobile/auth handling
+- Explicit `[hidden]` CSS guard prevents the login panel remaining visible after successful sign-in.
+- Compliance renders as compact cards on screens up to 680px, and as a table on wider screens.
+- Date display accepts ISO, dd-MMM-yyyy and dd-MM-yyyy values.
+- Drive link mapping also checks the `documentFolder` field when it contains a valid Drive URL.
